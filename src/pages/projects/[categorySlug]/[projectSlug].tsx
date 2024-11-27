@@ -6,7 +6,7 @@ export default function ProjectDetailPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Проект: {projectSlug}</h1>
+      <h1 className="text-2xl font-bold">Проект: {projectSlug} в категории {categorySlug}</h1>
       {/* Здесь можно добавить компонент для отображения деталей проекта */}
     </div>
   );
