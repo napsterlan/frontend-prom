@@ -1,0 +1,7 @@
+{
+    "method": "DELETE", 
+    "url": "/api/projects/{id}",
+    "params": {
+        "ProjectID": 1
+    }
+}

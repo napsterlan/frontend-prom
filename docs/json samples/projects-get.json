@@ -1,0 +1,41 @@
+{
+    "success": true,
+    "data": [
+        {
+            "ProjectID": 1,
+            "Title": "Проект 1",
+            "Description": "Описание проекта 1",
+            "ProjectImages": [
+                {
+                    "ImageURL": "https://example.com/project-image1.jpg",
+                    "AltText": "Изображение проекта 1"
+                }
+            ],
+            "MetaTitle": "Мета-заголовок для проекта 1",
+            "MetaDescription": "Мета-описание для проекта 1",
+            "MetaKeyword": "Ключевые слова для проекта 1",
+            "SeoURL": "seo-url-проекта-1",
+            "CreatedAt": "2023-01-01T00:00:00Z",
+            "UpdatedAt": "2023-01-02T00:00:00Z",
+            "DeletedAt": null
+        },
+        {
+            "ProjectID": 2,
+            "Title": "Проект 2",
+            "Description": "Описание проекта 2",
+            "ProjectImages": [
+                {
+                    "ImageURL": "https://example.com/project-image3.jpg",
+                    "AltText": "Изображение проекта 3"
+                }
+            ],
+            "MetaTitle": "Мета-заголовок для проекта 2",
+            "MetaDescription": "Мета-описание для проекта 2",
+            "MetaKeyword": "Ключевые слова для проекта 2",
+            "SeoURL": "seo-url-проекта-2",
+            "CreatedAt": "2023-01-03T00:00:00Z",
+            "UpdatedAt": "2023-01-04T00:00:00Z",
+            "DeletedAt": null
+        }
+    ]
+}

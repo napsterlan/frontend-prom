@@ -1,0 +1,30 @@
+{
+    "success": true,
+    "data": [
+      {
+        "ProjectCategoryID": 1,
+        "ProjectCategoryParentID": null,
+        "Title": "Проект 1",
+        "Description": "Описание проекта 1",
+        "MetaTitle": "Мета-заголовок для проекта 1",
+        "MetaDescription": "Мета-описание для проекта 1",
+        "MetaKeyword": "Ключевые слова для проекта 1",
+        "full-path": "full-path",
+        "CreatedAt": "2023-01-01T00:00:00Z",
+        "UpdatedAt": "2023-01-02T00:00:00Z",
+        "DeletedAt": null
+      },{
+        "ProjectCategoryID": 2,
+        "ProjectCategoryParentID": 1,
+        "Title": "Проект 2",
+        "Description": "Описание проекта 2",
+        "MetaTitle": "Мета-заголовок для проекта 2",
+        "MetaDescription": "Мета-описание для проекта 2",
+        "MetaKeyword": "Ключевые слова для проекта 2",
+        "full-path": "full-path",
+        "CreatedAt": "2023-01-01T00:00:00Z",
+        "UpdatedAt": "2023-01-02T00:00:00Z",
+        "DeletedAt": null
+      }
+    ]
+  }

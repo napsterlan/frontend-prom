@@ -1,0 +1,19 @@
+{
+    "method": "PUT",
+    "url": "/api/projects/{id}",
+    "params": {
+        "ProjectID": 1,
+        "Title": "Название проекта",
+        "Description": "Описание проекта",
+        "ProjectImages": [
+        {
+            "ImageURL": "https://example.com/image1.jpg",
+            "AltText": "Изображение проекта"
+        }
+    ],
+    "MetaTitle": "Мета-заголовок для проекта",
+    "MetaDescription": "Мета-описание для проекта",
+    "MetaKeyword": "Ключевые слова для проекта",
+    "Slug": "nazvanie-proekta"
+}
+}

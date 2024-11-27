@@ -1,0 +1,43 @@
+{
+    "success": true,
+    "data": [
+        {
+            "CategoryID": 1,
+            "ParentID": null,
+            "Name": "Примеры категории",
+            "SmallDescription": "Краткое описание категории",
+            "full-path": "primer-kategorii",
+            "CategoryImages": [
+                {
+                    "ImageURL": "https://example.com/image1.jpg",
+                    "AltText": "Изображение категории 1"
+                }
+            ]
+        },
+        {
+            "CategoryID": 2,
+            "ParentID": 1,
+            "Name": "Примеры категории 2",
+            "SmallDescription": "Краткое описание категории 2",
+            "full-path": "primer-kategorii/primer-kategorii-2",
+            "CategoryImages": [
+                {
+                    "ImageURL": "https://example.com/image2.jpg",
+                    "AltText": "Изображение категории 2"
+                }
+            ]
+        },        {
+            "CategoryID": 3,
+            "ParentID": 2,
+            "Name": "Примеры категории 3",
+            "SmallDescription": "Краткое описание категории 3",
+            "full-path": "primer-kategorii/primer-kategorii-2/primer-kategorii-3",
+            "CategoryImages": [
+                {
+                    "ImageURL": "https://example.com/image2.jpg",
+                    "AltText": "Изображение категории 2"
+                }
+            ]
+        }
+    ]
+}

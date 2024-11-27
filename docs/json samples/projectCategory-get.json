@@ -1,0 +1,51 @@
+{
+    "success": true,
+    "data": {
+      "ProjectCategoryID": 1,
+      "Title": "Проект 1",
+      "Description": "Описание проекта 1",
+      "ProjectCategoryChildren": [
+        {
+          "ProjectCategoryID": 2,
+          "Title": "Проект 2",
+          "full-path": "full-path"
+        },
+        {
+          "ProjectCategoryID": 3,
+          "Title": "Проект 3",
+          "full-path": "full-path"
+        }
+      ],
+      "Projects": [
+        {
+          "ProjectID": 1,
+          "Title": "Проект 1",
+          "ProjectImages": [
+            {
+              "ImageURL": "https://example.com/project-image1.jpg",
+              "AltText": "Изображение проекта 1"
+            }
+          ],
+          "full-path": "full-path"
+        },
+        {
+          "ProjectID": 2,
+          "Title": "Проект 2",
+          "ProjectImages": [
+            {
+              "ImageURL": "https://example.com/project-image2.jpg",
+              "AltText": "Изображение проекта 2"
+            }
+          ],
+          "full-path": "full-path"  
+        }
+      ],
+      "MetaTitle": "Мета-заголовок для проекта 1",
+      "MetaDescription": "Мета-описание для проекта 1",
+      "MetaKeyword": "Ключевые слова для проекта 1",
+      "full-path": "full-path",
+      "CreatedAt": "2023-01-01T00:00:00Z",
+      "UpdatedAt": "2023-01-02T00:00:00Z",
+      "DeletedAt": null
+    }
+  }

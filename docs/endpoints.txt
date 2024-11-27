@@ -1,0 +1,36 @@
+Эндпоинты
+1. Категории (без CRUD)
+1.1 Получить все категории: GET /api/categories
+1.2 Получить категорию по Slug: GET /api/category/{slug}
+
+2. Продукты (без CRUD)
+2.1 Получить продукты в категории: GET /api/products/{slug}
+2.2 Получить продукт по Slug: GET /api/product/{slug}
+
+3. Новости
+3.1 Получить все новости: GET /api/news
+3.2 Получить новость по Slug: GET /api/news/{slug}
+3.3 Создать новость: POST /api/news
+3.4 Обновить новость по ID: PUT /api/news/{id}
+3.5 Удалить новость по ID: DELETE /api/news/{id}
+
+4. Категории проектов	
+4.1 Получить все категории проектов: GET /api/project-categories
+4.2 Получить категорию проектов по Slug: GET /api/project-categories/{slug}
+4.3 Создать категорию проектов: POST /api/project-categories
+4.4 Обновить категорию проектов по ID: PUT /api/project-categories/{id}
+4.5 Удалить категорию проектов по ID: DELETE /api/project-categories/{id}
+
+5. Проекты
+5.1 Получить все проекты: GET /api/projects
+5.2 Получить проект по Slug: GET /api/projects/{slug}
+5.3 Создать проект: POST /api/projects
+5.4 Обновить проект по ID: PUT /api/projects/{id}
+5.5 Удалить проект по ID: DELETE /api/projects/{id}
+
+6. Информационные страницы
+6.1 Получить все информационные страницы: GET /api/info-pages
+6.2 Получить информационную страницу по Slug: GET /api/info-pages/{slug}
+6.3 Создать информационную страницу: POST /api/info-pages
+6.4 Обновить информационную страницу по ID: PUT /api/info-pages/{id}
+6.5 Удалить информационную страницу по ID: DELETE /api/info-pages/{id}

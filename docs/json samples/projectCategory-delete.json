@@ -1,0 +1,7 @@
+{
+  "method": "DELETE",
+  "url": "/api/projectCategories",
+  "params": {
+      "ProjectCategoryID": 1
+    }
+  }

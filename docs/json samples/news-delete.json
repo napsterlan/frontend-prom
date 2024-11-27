@@ -1,0 +1,7 @@
+{
+    "method": "DELETE",
+    "url": "/api/news",
+    "params": {
+        "NewsID": 1
+    }
+}

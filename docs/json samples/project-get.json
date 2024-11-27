@@ -1,0 +1,83 @@
+{
+    "success": true,
+    "data": {
+      "ProjectID": 1,
+      "Title": "Проект 1",
+      "Description": "Описание проекта 1",
+      "ProjectsCategories": [
+        {
+          "CategoryID": 1,
+          "Name": "Категория 1"
+        },
+        {
+          "CategoryID": 2,
+          "Name": "Категория 2"
+        }
+      ],
+      "RelatedProducts": [
+        {
+          "ProductID": 1,
+          "Name": "Продукт 1",
+          "ProductImages": [
+            {
+              "ImageURL": "https://example.com/image1.jpg",
+              "AltText": "Изображение продукта 1"
+            }
+          ],
+          "full-path": "full-path"
+        },
+        {
+          "ProductID": 2,
+          "Name": "Продукт 2",
+          "ProductImages": [
+            {
+              "ImageURL": "https://example.com/image2.jpg",
+              "AltText": "Изображение продукта 2"
+            }
+          ],
+          "full-path": "full-path"
+        }
+      ],
+      "RelatedNews": [
+        {
+          "NewsID": 201,
+          "Title": "Новости 1",
+          "NewsImages": [
+            {
+              "ImageURL": "https://example.com/image1.jpg",
+              "AltText": "Изображение новости 1"
+            }
+          ],
+          "full-path": "full-path"
+        },
+        {
+          "NewsID": 202,
+          "Title": "Новости 2",
+          "NewsImages": [
+            {
+              "ImageURL": "https://example.com/image2.jpg",
+              "AltText": "Изображение новости 2"
+            }
+          ],
+          "full-path": "full-path"
+        }
+      ],
+      "ProjectImages": [
+        {
+          "ImageURL": "https://example.com/project-image1.jpg",
+          "AltText": "Изображение проекта 1"
+        },
+        {
+          "ImageURL": "https://example.com/project-image2.jpg",
+          "AltText": "Изображение проекта 2"
+        }
+      ],
+      "MetaTitle": "Мета-заголовок для проекта 1",
+      "MetaDescription": "Мета-описание для проекта 1",
+      "MetaKeyword": "Ключевые слова для проекта 1",
+      "full-path": "full-path",
+      "CreatedAt": "2023-01-01T00:00:00Z",
+      "UpdatedAt": "2023-01-02T00:00:00Z",
+      "DeletedAt": null
+    }
+  }

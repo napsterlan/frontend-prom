@@ -1,0 +1,49 @@
+{
+    "success": true,
+    "data": {
+      "NewsID": 1,
+      "Title": "Новости 1",
+      "Description": "Описание новости 1",
+      "RelatedProducts": [
+        {
+          "ProductID": 1,
+          "Name": "Продукт 1",
+          "ProductImages": [
+            {
+              "ImageURL": "https://example.com/image1.jpg",
+              "AltText": "Изображение продукта 1"
+            }
+          ],
+          "full-path": "full-product-path"
+        },
+        {
+          "ProductID": 2,
+          "Name": "Продукт 2",
+          "ProductImages": [
+            {
+              "ImageURL": "https://example.com/image2.jpg",
+              "AltText": "Изображение продукта 2"
+            }
+          ],
+          "full-path": "full-product-path"
+        }
+      ],
+      "NewsImages": [
+        {
+          "ImageURL": "https://example.com/news-image1.jpg",
+          "AltText": "Изображение новости 1"
+        },
+        {
+          "ImageURL": "https://example.com/news-image2.jpg",
+          "AltText": "Изображение новости 2"
+        }
+      ],
+      "MetaTitle": "Мета-заголовок для проекта 1",
+      "MetaDescription": "Мета-описание для новости 1",
+      "MetaKeyword": "Ключевые слова для новости 1",
+      "full-path": "news-1",
+      "CreatedAt": "2023-01-01T00:00:00Z",
+      "UpdatedAt": "2023-01-02T00:00:00Z",
+      "DeletedAt": null
+    }
+  }

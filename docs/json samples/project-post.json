@@ -1,0 +1,18 @@
+{
+    "method": "POST",
+    "url": "/api/projects",
+    "params": {
+        "Title": "Название проекта",
+        "Description": "Описание проекта",
+        "ProjectImages": [
+            {
+                "ImageURL": "https://example.com/image1.jpg",
+                "AltText": "Изображение проекта"
+            }
+        ],
+        "MetaTitle": "Мета-заголовок для проекта",
+        "MetaDescription": "Мета-описание для проекта",
+        "MetaKeyword": "Ключевые слова для проекта",
+        "Slug": "nazvanie-proekta"
+    }
+}

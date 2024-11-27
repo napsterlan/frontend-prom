@@ -1,0 +1,129 @@
+{
+    "success": true,
+    "data": {
+      "ProductID": 1,
+      "Name": "Продукт 1",
+      "Article": "Артикул 12345",
+      "SKU": "SKU-12345",
+      "Description": "Описание продукта 1",
+      "ProductImages": [
+        {
+          "ImageURL": "https://example.com/product-image1.jpg",
+          "AltText": "Изображение продукта 1"
+        },
+        {
+          "ImageURL": "https://example.com/product-image2.jpg",
+          "AltText": "Изображение продукта 2"
+        }
+      ],
+      "ProductAttributes": [
+        {
+          "AttributeID": 1,
+          "Value": "Значение атрибута 1"
+        },
+        {
+          "AttributeID": 2,
+          "Value": "Значение атрибута 2"
+        }
+      ],
+      "ProductFiles": [
+        {
+          "FileURL": "https://example.com/product-file1.pdf",
+          "FileName": "Файл продукта 1"
+        }
+      ],
+      "RelatedProjects": [      {
+        "ProjectID": 101,
+        "Title": "Проект 1",
+        "ProjectImages": [
+          {
+            "ImageURL": "https://example.com/image1.jpg",
+            "AltText": "Изображение проекта 1"
+          }
+        ],
+        "full-path": "/project1"    
+      },
+      {
+        "ProjectID": 102,
+        "Title": "Проект 2",
+        "ProjectImages": [
+          {
+            "ImageURL": "https://example.com/image2.jpg",
+            "AltText": "Изображение проекта 2"
+          }
+        ],
+        "full-path": "/project2"    
+      }],
+      "RelatedNews": [
+        {
+          "NewsID": 201,
+          "Title": "Новости 1",
+          "NewsImages": [
+            {
+              "ImageURL": "https://example.com/image1.jpg",
+              "AltText": "Изображение новости 1"
+            }
+        ],
+          "full-path": "/news1"
+        },
+        {
+          "NewsID": 202,
+          "Title": "Новости 2",
+          "NewsImages": [
+            {
+              "ImageURL": "https://example.com/image2.jpg",
+              "AltText": "Изображение новости 2"
+            }
+          ],
+          "full-path": "/news2"
+        }
+      ],
+      "RelatedProducts": [
+        {
+          "ProductID": 301,
+          "Name": "Продукт 3",
+          "ProductImages": [
+            {
+              "ImageURL": "https://example.com/image3.jpg",
+              "AltText": "Изображение продукта 3"
+            }
+          ],
+          "full-path": "/product3"
+        },
+        {
+          "ProductID": 302,
+          "Name": "Продукт 4",
+          "ProductImages": [
+            {
+              "ImageURL": "https://example.com/image4.jpg",
+              "AltText": "Изображение продукта 4"
+            }
+          ],
+          "full-path": "/product4"
+        }
+      ],
+      "Tags": [
+        {
+          "TagID": 401,
+          "Name": "Тег 1"
+        },
+        {
+          "TagID": 402,
+          "Name": "Тег 2"
+        }
+      ],
+      "Price": 100.00,
+      "OptPrice": 80.00,
+      "DealerPrice1": 70.00,
+      "DealerPrice2": 65.00,
+      "DealerPrice3": 60.00,
+      "MetaTitle": "Мета-заголовок для продукта 1",
+      "MetaDescription": "Мета-описание для продукта 1",
+      "MetaKeyword": "Ключевые слова для продукта 1",
+      "full-path": "full-path",
+      "Status": "Активен",
+      "CreatedAt": "2023-01-01T00:00:00Z",
+      "UpdatedAt": "2023-01-02T00:00:00Z",
+      "DeletedAt": null
+        }
+  }

@@ -1,0 +1,16 @@
+{
+  "method": "POST",
+  "url": "/api/projectCategories",
+  "params": {
+      "ProjectCategoryParentID": null,
+      "Title": "Проект 1",
+      "Description": "Описание проекта 1",
+      "MetaTitle": "Мета-заголовок для проекта 1",
+      "MetaDescription": "Мета-описание для проекта 1",
+      "MetaKeyword": "Ключевые слова для проекта 1",
+      "Slug": "nazvanie-proekta",
+      "CreatedAt": "2023-01-01T00:00:00Z",
+      "UpdatedAt": "2023-01-02T00:00:00Z",
+      "DeletedAt": null
+    }
+  }

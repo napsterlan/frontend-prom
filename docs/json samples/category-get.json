@@ -1,0 +1,97 @@
+{
+  "success": true,
+  "data": {
+    "CategoryID": 1,
+    "ParentID": null,
+    "Name": "Примеры категории",
+    "Description": "Описание категории",
+    "RelatedProjects": [
+      {
+        "ProjectID": 101,
+        "Title": "Проект 1",
+        "ProjectImages": [
+          {
+            "ImageURL": "https://example.com/image1.jpg",
+            "AltText": "Изображение проекта 1"
+          }
+        ],
+        "full-path": "project-1"
+      },
+      {
+        "ProjectID": 102,
+        "Title": "Проект 2",
+        "ProjectImages": [
+          {
+            "ImageURL": "https://example.com/image2.jpg",
+            "AltText": "Изображение проекта 2"
+          }
+        ],
+        "full-path": "project-2"
+      }
+    ],
+    "RelatedNews": [
+      {
+        "NewsID": 201,
+        "Title": "Новости 1",
+        "NewsImages": [
+          {
+            "ImageURL": "https://example.com/image1.jpg",
+            "AltText": "Изображение новости 1"
+          }
+        ],
+        "full-path": "news-1"
+      },
+      {
+        "NewsID": 202,
+        "Title": "Новости 2",
+        "NewsImages": [
+          {
+            "ImageURL": "https://example.com/image2.jpg",
+            "AltText": "Изображение новости 2"
+          }
+        ],
+        "full-path": "news-2"
+      }
+    ],
+    "ChildrenCategories": [
+      {
+        "CategoryID": 2,
+        "ParentID": 1,
+        "Name": "Примеры категории 1",
+        "SmallDescription": "Краткое описание категории 1",
+        "full-path": "/primer-kategorii/primer-kategorii-2",
+        "CategoryImages": [
+          {
+            "ImageURL": "https://example.com/image1.jpg",
+            "AltText": "Изображение категории 1"
+          },
+          {
+          "ImageURL": "https://example.com/image2.jpg",
+            "AltText": "Изображение категории 2"
+          }
+        ]
+      },
+      {
+        "CategoryID": 3,
+        "ParentID": 1,
+        "Name": "Примеры категории 2",
+        "SmallDescription": "Краткое описание категории 2",
+        "full-path": "/primer-kategorii/primer-kategorii-2",
+        "CategoryImages": [
+          {
+            "ImageURL": "https://example.com/image1.jpg",
+            "AltText": "Изображение категории 1"
+          }
+        ]
+      }
+    ],
+    "MetaTitle": "Мета-заголовок для категории",
+    "MetaDescription": "Мета-описание для категории",
+    "MetaKeyword": "Ключевые слова для категории",
+    "full-path": "primer-kategorii",
+    "Status": "Активен",
+    "CreatedAt": "2023-01-01T00:00:00Z",
+    "UpdatedAt": "2023-01-02T00:00:00Z",
+    "DeletedAt": null
+  }
+}

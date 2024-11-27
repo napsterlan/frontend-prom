@@ -1,0 +1,410 @@
+На сайте есть разделы:
+Открытые разделы для всех пользователей:
+1. Категория (иерархическая вложенность через parentId)
+2. Продукт
+3. Проекты (имеют связь с продуктами и категориями)
+4. Новости (имеют связь с продуктами и категориями)
+5. Информационные страницы
+
+Закрытые разделы для зарегистрированных пользователей (дилеров):
+1. Личный кабинет
+2. Корзина
+3. Форма защиты проектов
+4. Статусы заказов
+5. История заказов
+6. База знаний
+
+Закрытые разделы для администраторов:
+1. Админка с возможностью управлять следующими разделами:
+    - Проекты
+    - Новости
+    - Информационные страницы
+
+Основные таблицы:
+
+1. Категория
+	CategoryID              // Идентификатор категории 
+	ParentID                // Идентификатор родительской категории
+	Name                    // Название категории
+	Description             // Описание категории
+	SmallDescription        // Краткое описание категории
+	MetaTitle               // Мета-заголовок для SEO
+	MetaDescription         // Мета-описание для SEO
+	MetaKeyword             // Мета-ключевые слова для SEO
+	SeoURL                  // SEO ключ URL
+	Status                  // Статус категории
+	CreatedAt               // Дата и время создания категории
+	UpdatedAt               // Дата и время последнего обновления категории
+	DeletedAt               // Дата и время удаления категории
+
+2. Продукт
+    ProductID               // Уникальный идентификатор базы данных
+	Name                    // Название продукта
+	Article                 // Артикул продукта
+	SKU                     // Уникальный идентификатор SKU продукта
+	Description             // Описание продукта
+	Price                   // Цена продукта
+	MetaTitle               // Мета-заголовок для SEO
+	MetaDescription         // Мета-описание для SEO
+	MetaKeyword             // Мета-ключевые слова для SEO
+	SeoURL                  // SEO ключ URL
+	Status                  // Статус продукта
+	CreatedAt               // Дата и время создания продукта
+	UpdatedAt               // Дата и время последнего обновления продукта
+	DeletedAt               // Дата и время удаления продукта
+
+3. Проект
+	ProjectID               // Уникальный идентификатор базы данных
+	ProjectCategoryID       // Идентификатор категории проекта
+	Title                   // Заголовок проекта
+	Description             // Описание проекта
+    MetaTitle               // Мета-заголовок для SEO
+	MetaDescription         // Мета-описание для SEO
+	MetaKeyword             // Мета-ключевые слова для SEO
+	SeoURL                  // SEO ключ URL
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удалена
+
+4. Новости
+	NewsID                  // Уникальный идентификатор базы данных
+	Title                   // Заголовок новости
+	Description             // Содержимое новости
+	Date                    // Дата публикации новости
+    MetaTitle               // Мета-заголовок для SEO
+	MetaDescription         // Мета-описание для SEO
+	MetaKeyword             // Мета-ключевые слова для SEO
+	SeoURL                  // SEO ключ URL
+
+5. Информационные страницы
+	PageID                  // Уникальный идентификатор базы данных
+	Title                   // Заголовок страницы
+	Description             // Содержимое страницы
+    MetaTitle               // Мета-заголовок для SEO
+	MetaDescription         // Мета-описание для SEO
+	MetaKeyword             // Мета-ключевые слова для SEO
+	SeoURL                  // SEO ключ URL
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+
+Связи основных таблиц:
+1. Связь продукта с категорией
+    ProductID               // Идентификатор продукта
+	CategoryID              // Идентификатор категории
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+
+Вспомогательные таблицы:
+
+1. Представление продукта в категории
+	ID                      // Уникальный идентификатор записи
+	ProductID               // Идентификатор продукта, не может быть пустым
+	SKU                     // Артикул продукта
+	Name                    // Название продукта, не может быть пустым
+	Power                   // Мощность
+	LuminousFlux            // Световой поток
+	Efficiency              // Эффективность
+	ColorTemp               // Цветовая температура
+	CRI                     // Индекс цветопередачи
+	ProtectionClass         // Степень защиты
+	ClimateExecution        // Климатическое исполнение
+	EmergencyPowerUnit      // Блок аварийного питания
+	BeamAngle               // Угол рассеивания
+	KCC                     // КСС
+	Warranty                // Гарантия
+	Price	                // Розничная цена
+	OptPrice                // Оптовая цена
+	DealerPrice1            // Дилерская 1
+	DealerPrice2            // Дилерская 2
+	DealerPrice3            // Дилерская 3
+	SeoURL                  // SEO ключ URL
+	Product                 // Связь с продуктом
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+
+2. Атрибуты
+    AttributeID             // Уникальный идентификатор базы данных
+    AttributeGroupName      // Название группы атрибутов
+	AttributeName           // Название атрибута
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удалена
+
+3. Аттрибуты продукта
+	AttributeID             // Идентификатор атрибута
+    ProductID               // Идентификатор продукта
+	Value                   // Значение атрибута
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удалена
+
+4. Изображения продукта
+    ProductID               // Идентификатор продукта
+	ImageURL                // URL изображения
+    AltText                 // Альтернативный текст изображения
+	Sort                    // Порядок сортировки
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удалена
+
+5. Файлы продукта
+    ProductID               // Идентификатор продукта
+	FileURL                 // URL файла
+    FileName                // Название файла
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удалена
+
+6. Теги
+    TagID                   // Идентификатор тега
+	Name                    // Название тега
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удален
+
+7. Теги продукта    
+    ProductID               // Идентификатор продукта
+	TagID                   // Идентификатор тега
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удалена
+
+8. Связи продукт-проект/проект-продукт
+    ProductID               // Идентификатор продукта
+	ProjectID               // Идентификатор проекта
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удалена
+
+9. Связи продукт-новость/новость-продукт
+    ProductID               // Идентификатор продукта
+	NewsID                  // Идентификатор новости
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удалена
+
+10. Изображения проекта
+    ProjectID               // Идентификатор проекта
+	ImageURL                // URL изображения
+    AltText                 // Альтернативный текст изображения
+	Sort                    // Порядок сортировки
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удалена
+
+11. Изображения новости
+    NewsID                  // Идентификатор новости
+	ImageURL                // URL изображения
+    AltText                 // Альтернативный текст изображения
+	Sort                    // Порядок сортировки
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удалена
+
+12. Изображения категории
+    CategoryID              // Идентификатор категории
+	ImageURL                // URL изображения
+    AltText                 // Альтернативный текст изображения
+	Sort                    // Порядок сортировки
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удалена	
+
+13.Пользователи
+    UserID                  // Идентификатор пользователя
+	Email                   // Email пользователя
+	Role                    // Роль пользователя
+	CompanyID               // Идентификатор компании
+	Password                // Пароль пользователя
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удалена
+
+14.Компании
+    CompanyID               // Идентификатор компании
+	Name                    // Название компании
+	INN                     // ИНН компании
+	KPP                     // КПП компании
+	PriceGroup              // Группа цен
+	Address                 // Адрес компании
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удалена	
+
+15. Категории проектов
+    ProjectCategoryID       // Идентификатор категории проекта
+	ProjectCategoryParentID  // Идентификатор родительской категории проекта
+	Title                   // Заголовок категории проекта
+	Description             // Описание категории проекта
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удалена
+
+
+Что должен получать фронтенд:
+
+Поля "Категория":
+	CategoryID              // Идентификатор категории 
+	ParentID                // Идентификатор родительской категории
+	Name                    // Название категории
+	Description             // Описание категории
+	SmallDescription        // Краткое описание категории
+	RelatedProjects         // Массив проектов, связанных с категорией
+	RelatedNews             // Массив новостей, связанных с категорией
+	MetaTitle               // Мета-заголовок для SEO
+	MetaDescription         // Мета-описание для SEO
+	MetaKeyword             // Мета-ключевые слова для SEO
+	SeoURL                  // SEO ключ URL
+	Status                  // Статус категории
+	CreatedAt               // Дата и время создания категории
+	UpdatedAt               // Дата и время последнего обновления категории
+	DeletedAt               // Дата и время удаления категории
+
+Поля "Продукт":
+	ProductID               // Уникальный идентификатор базы данных
+	Name                    // Название продукта
+	Article                 // Артикул продукта
+	SKU                     // Уникальный идентификатор SKU продукта
+	Description             // Описание продукта
+	ProductImages           // Массив изображений продукта
+	ProductAttributes       // Массив атрибутов продукта
+	ProductFiles            // Массив файлов продукта
+    RelatedProjects         // Массив проектов, связанных с продуктом
+	RelatedNews             // Массив новостей, связанных с продуктом
+	RelatedProducts         // Массив связанных продуктов
+	Tags                    // Массив тегов, связанных с продуктом
+	Price	                // Розничная цена
+	OptPrice                // Оптовая цена
+	DealerPrice1            // Дилерская 1
+	DealerPrice2            // Дилерская 2
+	DealerPrice3            // Дилерская 3
+	MetaTitle               // Мета-заголовок для SEO
+	MetaDescription         // Мета-описание для SEO
+	MetaKeyword             // Мета-ключевые слова для SEO
+	SeoURL                  // SEO ключ URL
+	Status                  // Статус продукта
+	CreatedAt               // Дата и время создания продукта
+	UpdatedAt               // Дата и время последнего обновления продукта
+	DeletedAt               // Дата и время удаления продукта
+
+Поля "Проект":
+	ProjectID               // Уникальный идентификатор базы данных
+	ProjectCategoryID       // Идентификатор категории проекта
+	Title                   // Заголовок проекта
+	Description             // Описание проекта
+    RelatedProducts         // Массив продуктов, связанных с проектом
+	RelatedNews             // Массив новостей, связанных с проектом
+	ProjectImages           // Массив изображений проекта
+    MetaTitle               // Мета-заголовок для SEO
+	MetaDescription         // Мета-описание для SEO
+	MetaKeyword             // Мета-ключевые слова для SEO
+	SeoURL                  // SEO ключ URL
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удалена
+
+Поля "Новости":
+	NewsID                  // Уникальный идентификатор базы данных
+	Title                   // Заголовок новости
+	Description             // Содержимое новости
+	Date                    // Дата публикации новости
+    MetaTitle               // Мета-заголовок для SEO
+	MetaDescription         // Мета-описание для SEO
+	MetaKeyword             // Мета-ключевые слова для SEO
+	SeoURL                  // SEO ключ URL
+	RelatedProducts         // Массив продуктов, связанных с новостью
+	RelatedProjects         // Массив проектов, связанных с новостью
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удалена
+
+Поля "Информационные страницы":
+	InfoPageID              // Уникальный идентификатор базы данных
+	Title                   // Заголовок страницы
+	Description             // Содержимое страницы
+	MetaTitle               // Мета-заголовок для SEO
+	MetaDescription         // Мета-описание для SEO
+	MetaKeyword             // Мета-ключевые слова для SEO
+	SeoURL                  // SEO ключ URL
+	CreatedAt               // Дата и время создания записи
+	UpdatedAt               // Дата и время последнего обновления записи
+	DeletedAt               // Дата и время удаления записи, если она была удалена
+
+
+
+Эндпоинты
+1. Категории (без CRUD)
+1.1 Получить все категории: GET /api/categories
+1.2 Получить категорию по Slug: GET /api/category/{slug}
+
+2. Продукты (без CRUD)
+2.1 Получить продукты в категории: GET /api/products/{slug}
+2.2 Получить продукт по Slug: GET /api/product/{slug}
+
+3. Новости
+3.1 Получить все новости: GET /api/news
+3.2 Получить новость по Slug: GET /api/news/{slug}
+3.3 Создать новость: POST /api/news
+3.4 Обновить новость по ID: PUT /api/news/{id}
+3.5 Удалить новость по ID: DELETE /api/news/{id}
+
+4. Категории проектов	
+4.1 Получить все категории проектов: GET /api/project-categories
+4.2 Получить категорию проектов по Slug: GET /api/project-categories/{slug}
+4.3 Создать категорию проектов: POST /api/project-categories
+4.4 Обновить категорию проектов по ID: PUT /api/project-categories/{id}
+4.5 Удалить категорию проектов по ID: DELETE /api/project-categories/{id}
+
+5. Проекты
+5.1 Получить все проекты: GET /api/projects
+5.2 Получить проект по Slug: GET /api/projects/{slug}
+5.3 Создать проект: POST /api/projects
+5.4 Обновить проект по ID: PUT /api/projects/{id}
+5.5 Удалить проект по ID: DELETE /api/projects/{id}
+
+6. Информационные страницы
+6.1 Получить все информационные страницы: GET /api/info-pages
+6.2 Получить информационную страницу по Slug: GET /api/info-pages/{slug}
+6.3 Создать информационную страницу: POST /api/info-pages
+6.4 Обновить информационную страницу по ID: PUT /api/info-pages/{id}
+6.5 Удалить информационную страницу по ID: DELETE /api/info-pages/{id}
+
+
+Примеры ответов от бэкенда:
+1. Категории
+1.1 Получить все категории: {"success": true, "data": [{"CategoryID": 1,"ParentID": null,"Name": "Примеры категории","SmallDescription": "Краткое описание категории","SeoURL": "seo-url-категории-1","CategoryImages": [{"ImageURL": "https://example.com/image1.jpg","AltText": "Изображение категории 1"}]},{"CategoryID": 2,"ParentID": null,"Name": "Примеры категории 2","SmallDescription": "Краткое описание категории 2","SeoURL": "seo-url-категории-2","CategoryImages": [{"ImageURL": "https://example.com/image2.jpg","AltText": "Изображение категории 2"}]}]}
+1.2 Получить категорию по Slug: {"success": true, "data": {"CategoryID": 1,"ParentID": null,"Name": "Примеры категории","SmallDescription": "Краткое описание категории","SeoURL": "seo-url-категории-1","CategoryImages": [{"ImageURL": "https://example.com/image1.jpg","AltText": "Изображение категории 1"}],"ChildrenCategories": [{"CategoryID": 2,"ParentID": 1,"Name": "Примеры категории 1","SmallDescription": "Краткое описание категории 1","SeoURL": "seo-url-категории-1","CategoryImages": [{"ImageURL": "https://example.com/image1.jpg","AltText": "Изображение категории 1"}]}]}}
+
+2. Продукты
+2.1 Получить продукты в категории: {"success": true, "data": [{"ID": 1,"ProductID": 1,"SKU": "SKU-12345","Name": "Продукт 1","Power": "100W","LuminousFlux": "12000lm","Efficiency": "120lm/W","ColorTemp": "4000K","CRI": "Ra>80","ProtectionClass": "IP65","ClimateExecution": "Умеренный","EmergencyPowerUnit": "Есть","BeamAngle": "120°","KCC": "KCC-12345","Warranty": "2 года","RetailPrice": 150.00,"WholesalePrice": 120.00,"DealerPrice1": 110.00,"DealerPrice2": 105.00,"SeoURL": "seo-url-продукта-1"}]}
+2.2 Получить продукт по Slug: {"success":true, data":{"ProductID":1,"Name":"Продукт 1","Article":"Артикул 12345","SKU":"SKU-12345","Description":"Описание продукта 1","ProductImages":[{"ImageURL":"https://example.com/product-image1.jpg","AltText":"Изображение продукта 1"},{"ImageURL":"https://example.com/product-image2.jpg","AltText":"Изображение продукта 2"}],"ProductAttributes":[{"AttributeID":1,"Value":"Значение атрибута 1"},{"AttributeID":2,"Value":"Значение атрибута 2"}],"ProductFiles":[{"FileURL":"https://example.com/product-file1.pdf","FileName":"Файл продукта 1"}],"RelatedProjects":[{"ProjectID":101,"Title":"Проект 1","ProjectImages":[{"ImageURL":"https://example.com/image1.jpg","AltText":"Изображение проекта 1"}],"ProjectURL":"https://example.com/project1"},{"ProjectID":102,"Title":"Проект 2","ProjectImages":[{"ImageURL":"https://example.com/image2.jpg","AltText":"Изображение проекта 2"}],"ProjectURL":"https://example.com/project2"}],"RelatedNews":[{"NewsID":201,"Title":"Новости 1","NewsImages":[{"ImageURL":"https://example.com/image1.jpg","AltText":"Изображение новости 1"}],"NewsURL":"https://example.com/news1"},{"NewsID":202,"Title":"Новости 2","NewsImages":[{"ImageURL":"https://example.com/image2.jpg","AltText":"Изображение новости 2"}],"NewsURL":"https://example.com/news2"}],"RelatedProducts":[{"ProductID":301,"Name":"Продукт 3","ProductImages":[{"ImageURL":"https://example.com/image3.jpg","AltText":"Изображение продукта 3"}],"ProductURL":"https://example.com/product3"},{"ProductID":302,"Name":"Продукт 4","ProductImages":[{"ImageURL":"https://example.com/image4.jpg","AltText":"Изображение продукта 4"}],"ProductURL":"https://example.com/product4"}],"Tags":[{"TagID":401,"Name":"Тег 1"},{"TagID":402,"Name":"Тег 2"}],"Price":100.00,"OptPrice":80.00,"DealerPrice1":70.00,"DealerPrice2":65.00,"DealerPrice3":60.00,"MetaTitle":"Мета-заголовок для продукта 1","MetaDescription":"Мета-описание для продукта 1","MetaKeyword":"Ключевые слова для продукта 1","SeoURL":"seo-url-продукта-1","Status":"Активен","CreatedAt":"2023-01-01T00:00:00Z","UpdatedAt":"2023-01-02T00:00:00Z","DeletedAt":null}}
+
+3. Новости
+3.1 Получить все новости: {"success":true, "data":[{"NewsID":1,"Title":"Новости 1","Description":"Описание новости 1","NewsImages":[{"ImageURL":"https://example.com/news-image1.jpg","AltText":"Изображение новости 1"}],"SeoURL":"seo-url-новости-1"},{"NewsID":2,"Title":"Новости 2","Description":"Описание новости 2","NewsImages":[{"ImageURL":"https://example.com/news-image2.jpg","AltText":"Изображение новости 2"}],"SeoURL":"seo-url-новости-2"}]}
+3.2 Получить новость по Slug: {"success":true, "data":{"NewsID":1,"Title":"Новости 1","Description":"Описание новости 1","RelatedProducts":[{"ProductID":1,"Name":"Продукт 1","ProductImages":[{"ImageURL":"https://example.com/image1.jpg","AltText":"Изображение продукта 1"}],"ProductURL":"https://example.com/product1"},{"ProductID":2,"Name":"Продукт 2","ProductImages":[{"ImageURL":"https://example.com/image2.jpg","AltText":"Изображение продукта 2"}],"ProductURL":"https://example.com/product2"}],"NewsImages":[{"ImageURL":"https://example.com/news-image1.jpg","AltText":"Изображение новости 1"},{"ImageURL":"https://example.com/news-image2.jpg","AltText":"Изображение новости 2"}],"MetaTitle":"Мета-заголовок для проекта 1","MetaDescription":"Мета-описание для новости 1","MetaKeyword":"Ключевые слова для новости 1","SeoURL":"seo-url-новости-1","CreatedAt":"2023-01-01T00:00:00Z","UpdatedAt":"2023-01-02T00:00:00Z","DeletedAt":null}}
+3.3 Создать новость: Запрос: {"method":"POST","url":"/api/news","params":{"Title":"Название новости","Description":"Описание новости","NewsImages":[{"ImageURL":"https://example.com/image1.jpg","AltText":"Изображение новости"}],"MetaTitle":"Мета-заголовок для новости","MetaDescription":"Мета-описание для новости","MetaKeyword":"Ключевые слова для новости","SeoURL":"seo-url-новости"}} Ответ: {"success":true,"data":{"NewsID":1}}
+3.4 Обновить новость по ID: Запрос: {"method":"PUT","url":"/api/news","params":{"NewsID":1,"Title":"Название новости","Description":"Описание новости","NewsImages":[{"ImageURL":"https://example.com/image1.jpg","AltText":"Изображение новости"}],"MetaTitle":"Мета-заголовок для новости","MetaDescription":"Мета-описание для новости","MetaKeyword":"Ключевые слова для новости","SeoURL":"seo-url-новости"}} Ответ: {"success":true,"data":{"NewsID":1}}
+3.5 Удалить новость по ID: Запрос: {"method":"DELETE","url":"/api/news","params":{"NewsID":1}} Ответ: {"success":true}
+
+4. Категории проектов
+4.1 Получить все категории проектов: {"success":true,"data":[{"ProjectCategoryID":1,"ProjectCategoryParentID":null,"Title":"Проект 1","Description":"Описание проекта 1","MetaTitle":"Мета-заголовок для проекта 1","MetaDescription":"Мета-описание для проекта 1","MetaKeyword":"Ключевые слова для проекта 1","full-path":"full-path","CreatedAt":"2023-01-01T00:00:00Z","UpdatedAt":"2023-01-02T00:00:00Z","DeletedAt":null},{"ProjectCategoryID":2,"ProjectCategoryParentID":1,"Title":"Проект 2","Description":"Описание проекта 2","MetaTitle":"Мета-заголовок для проекта 2","MetaDescription":"Мета-описание для проекта 2","MetaKeyword":"Ключевые слова для проекта 2","full-path":"full-path","CreatedAt":"2023-01-01T00:00:00Z","UpdatedAt":"2023-01-02T00:00:00Z","DeletedAt":null}]}
+4.2 Получить категорию проектов по Slug: {"success":true,"data":{"ProjectCategoryID":1,"Title":"Проект 1","Description":"Описание проекта 1","ProjectCategoryChildren":[{"ProjectCategoryID":2,"Title":"Проект 2","full-path":"full-path"},{"ProjectCategoryID":3,"Title":"Проект 3","full-path":"full-path"}],"Projects":[{"ProjectID":1,"Title":"Проект 1","ProjectImages":[{"ImageURL":"https://example.com/project-image1.jpg","AltText":"Изображение проекта 1"}],"full-path":"full-path"},{"ProjectID":2,"Title":"Проект 2","ProjectImages":[{"ImageURL":"https://example.com/project-image2.jpg","AltText":"Изображение проекта 2"}],"full-path":"full-path"}],"MetaTitle":"Мета-заголовок для проекта 1","MetaDescription":"Мета-описание для проекта 1","MetaKeyword":"Ключевые слова для проекта 1","full-path":"full-path","CreatedAt":"2023-01-01T00:00:00Z","UpdatedAt":"2023-01-02T00:00:00Z","DeletedAt":null}}
+4.3 Создать категорию проектов: Запрос: {"method":"POST","url":"/api/projectCategories","params":{"ProjectCategoryParentID":null,"Title":"Проект 1","Description":"Описание проекта 1","MetaTitle":"Мета-заголовок для проекта 1","MetaDescription":"Мета-описание для проекта 1","MetaKeyword":"Ключевые слова для проекта 1","Slug":"nazvanie-proekta","CreatedAt":"2023-01-01T00:00:00Z","UpdatedAt":"2023-01-02T00:00:00Z","DeletedAt":null}}
+4.4 Обновить категорию проектов по ID: {"method":"PUT","url":"/api/projectCategories","params":{"ProjectCategoryID":1,"ProjectCategoryParentID":null,"Title":"Проект 1","Description":"Описание проекта 1","MetaTitle":"Мета-заголовок для проекта 1","MetaDescription":"Мета-описание для проекта 1","MetaKeyword":"Ключевые слова для проекта 1","Slug":"nazvanie-proekta","CreatedAt":"2023-01-01T00:00:00Z","UpdatedAt":"2023-01-02T00:00:00Z","DeletedAt":null}}
+4.5 Удалить категорию проектов по ID: {"method":"DELETE","url":"/api/projectCategories","params":{"ProjectCategoryID":1}}
+
+5. Проекты
+5.1 Получить все проекты: {"success":true, "data":[{"ProjectID":1,"Title":"Проект 1","Description":"Описание проекта 1","ProjectImages":[{"ImageURL":"https://example.com/image1.jpg","AltText":"Изображение проекта 1"}],"SeoURL":"seo-url-проекта-1"},{"ProjectID":2,"Title":"Проект 2","Description":"Описание проекта 2","ProjectImages":[{"ImageURL":"https://example.com/image2.jpg","AltText":"Изображение проекта 2"}],"SeoURL":"seo-url-проекта-2"}]}
+5.2 Получить проект по Slug: {"success":true, "data":{"ProjectID":1,"Title":"Проект 1","Description":"Описание проекта 1","RelatedProducts":[{"ProductID":1,"Name":"Продукт 1","ProductImages":[{"ImageURL":"https://example.com/image1.jpg","AltText":"Изображение продукта 1"}],"ProductURL":"https://example.com/product1"},{"ProductID":2,"Name":"Продукт 2","ProductImages":[{"ImageURL":"https://example.com/image2.jpg","AltText":"Изображение продукта 2"}],"ProductURL":"https://example.com/product2"}],"ProjectImages":[{"ImageURL":"https://example.com/image1.jpg","AltText":"Изображение проекта 1"}],"MetaTitle":"Мета-заголовок для проекта 1","MetaDescription":"Мета-описание для проекта 1","MetaKeyword":"Ключевые слова для проекта 1","SeoURL":"seo-url-проекта-1","CreatedAt":"2023-01-01T00:00:00Z","UpdatedAt":"2023-01-02T00:00:00Z","DeletedAt":null}}
+5.3 Создать проект: Запрос: {"method":"POST","url":"/api/projects","params":{"Title":"Название проекта","Description":"Описание проекта","ProjectImages":[{"ImageURL":"https://example.com/image1.jpg","AltText":"Изображение проекта"}],"MetaTitle":"Мета-заголовок для проекта","MetaDescription":"Мета-описание для проекта","MetaKeyword":"Ключевые слова для проекта","SeoURL":"seo-url-проекта"}} Ответ: {"success":true,"data":{"ProjectID":1}}
+5.4 Обновить проект по ID: Запрос: {"method":"PUT","url":"/api/projects","params":{"ProjectID":1,"Title":"Название проекта","Description":"Описание проекта","ProjectImages":[{"ImageURL":"https://example.com/image1.jpg","AltText":"Изображение проекта"}],"MetaTitle":"Мета-заголовок для проекта","MetaDescription":"Мета-описание для проекта","MetaKeyword":"Ключевые слова для проекта","SeoURL":"seo-url-проекта"}} Ответ: {"success":true,"data":{"ProjectID":1}}	
+5.5 Удалить проект по ID: Запрос: {"method":"DELETE","url":"/api/projects","params":{"ProjectID":1}} Ответ: {"success":true}
+
+6. Информационные страницы
+6.1 Получить все информационные страницы: {"success":true, "data":[{"InfoPageID":1,"Title":"Информационная страница 1","Description":"Описание информационной страницы 1","SeoURL":"seo-url-информационной-страницы-1"},{"InfoPageID":2,"Title":"Информационная страница 2","Description":"Описание информационной страницы 2","SeoURL":"seo-url-информационной-страницы-2"}]}
+6.2 Получить информационную страницу по Slug: {"success":true, "data":{"InfoPageID":1,"Title":"Информационная страница 1","Description":"Описание информационной страницы 1","SeoURL":"seo-url-информационной-страницы-1","CreatedAt":"2023-01-01T00:00:00Z","UpdatedAt":"2023-01-02T00:00:00Z","DeletedAt":null}}
+6.3 Создать информационную страницу: Запрос: {"method":"POST","url":"/api/info-pages","params":{"Title":"Название информационной страницы","Description":"Описание информационной страницы","SeoURL":"seo-url-информационной-страницы"}} Ответ: {"success":true,"data":{"InfoPageID":1}}
+6.4 Обновить информационную страницу по ID: Запрос: {"method":"PUT","url":"/api/info-pages","params":{"ID":1,"Title":"Название информационной страницы","Description":"Описание информационной страницы","SeoURL":"seo-url-информационной-страницы"}} Ответ: {"success":true,"data":{"ID":1}}
+6.5 Удалить информационную страницу по ID: Запрос: {"method":"DELETE","url":"/api/info-pages","params":{"ID":1}} Ответ: {"success":true}
+
+

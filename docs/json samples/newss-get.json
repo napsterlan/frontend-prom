@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "data": [
+    {
+      "NewsID": 1,
+      "Title": "Новости 1",
+      "Description": "Описание новости 1",
+      "NewsImages": [
+        {
+          "ImageURL": "https://example.com/news-image1.jpg",
+          "AltText": "Изображение новости 1"
+        }
+      ],
+      "full-path": "full-path"
+    },
+    {
+      "NewsID": 2,
+      "Title": "Новости 2",
+      "Description": "Описание новости 2",
+      "NewsImages": [
+        {
+          "ImageURL": "https://example.com/news-image2.jpg",
+          "AltText": "Изображение новости 2"
+        }
+      ],
+      "full-path": "full-path"
+    }
+  ]
+}

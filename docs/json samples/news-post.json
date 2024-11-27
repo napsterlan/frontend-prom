@@ -1,0 +1,18 @@
+{
+    "method": "POST",
+    "url": "/api/news",
+    "params": {
+        "Title": "Название новости",
+        "Description": "Описание новости",
+        "NewsImages": [
+        {
+            "ImageURL": "https://example.com/image1.jpg",
+            "AltText": "Изображение новости"
+        }
+    ],
+        "MetaTitle": "Мета-заголовок для новости",
+        "MetaDescription": "Мета-описание для новости",
+        "MetaKeyword": "Ключевые слова для новости",
+        "Slug": "nazvanie-novosti"
+    }
+}

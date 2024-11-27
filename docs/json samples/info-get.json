@@ -1,0 +1,25 @@
+{
+    "success": true,
+    "data": {
+      "PageID": 1,
+      "Title": "Информационная страница 1",
+      "Description": "Описание информационной страницы 1",
+      "PageImages": [
+        {
+          "ImageURL": "https://example.com/page-image1.jpg",
+          "AltText": "Изображение информационной страницы 1"
+        },
+        {
+          "ImageURL": "https://example.com/page-image2.jpg",
+          "AltText": "Изображение информационной страницы 2"
+        }
+      ],
+      "MetaTitle": "Мета-заголовок для информационной страницы 1",
+      "MetaDescription": "Мета-описание для информационной страницы 1",
+      "MetaKeyword": "Ключевые слова для информационной страницы 1",
+      "full-path": "informaciya-1",
+      "CreatedAt": "2023-01-01T00:00:00Z",
+      "UpdatedAt": "2023-01-02T00:00:00Z",
+      "DeletedAt": null
+    }
+  }
