@@ -1,4 +1,4 @@
-import CategoryList from '../components/CategoryList';
+import CategoryList from '../components/MainCategories';
 import '../app/globals.css';
 import Layout from './layout';
 
