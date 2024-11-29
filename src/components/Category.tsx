@@ -4,6 +4,7 @@ import { getCategoryBySlug } from '../api/apiClient';
 // Функция для получения категории по SEO URL
 const fetchCategoryBySlug = async (seoURL: string) => {
   try {
+    console.log(seoURL);
     const data = await getCategoryBySlug(seoURL); // Запрос к API для получения данных категории
     return data; // Возвращаем полученные данные
   } catch (error) {
@@ -15,9 +16,8 @@ const fetchCategoryBySlug = async (seoURL: string) => {
 // Компонент для отображения категории
 export default function Category({ seoURL }: { seoURL: string }) {
   // Используем хук useQuery для получения данных категории
-    
+  console.log('Category ', seoURL);
   const { data, error, isLoading } = useQuery('category', () => fetchCategoryBySlug(seoURL));
-  console.log("1");
 
   // Проверяем состояние загрузки
   if (isLoading) return <div>Загрузка...</div>; // Показываем индикатор загрузки

@@ -3,8 +3,8 @@ import { useRouter } from 'next/router';
 
 export default function CategoryPage() {
   const router = useRouter();
+  
   const { slugs } = router.query;
-  console.log(slugs?.[0]);
   return (
     <div>
       <h1 className="text-2xl font-bold">
