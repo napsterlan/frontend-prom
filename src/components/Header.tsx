@@ -33,26 +33,40 @@ export default function Header() {
                     <a href="https://telegram.org" className="ml-2">Telegram</a>
                 </div>
             </div>
-            <div className="bg-[rgba(255,255,255,0.95)] h-[80px] flex">
-                <div className="flex-1 max-w-[248px] min-w-[167px] flex items-center pl-8">
-                    <img src="/promled.svg" alt="Логотип" className="transition-all duration-300" style={{ height: '60px' }} />
+            <div className="bg-[rgba(255,255,255,0.95)] h-[80px] flex justify-center">
+                <div className="justify-end flex items-center pl-8">
+                    <img src="/promled.svg" alt="Логотип" className="transition-all duration-300 h-[40px]" />
                 </div>
-                <div className="flex-1 max-w-[1100px] min-w-[873px] flex items-center justify-end">
-                    <ul className="flex space-x-4">
+                <div className="justify-start flex items-center">
+                    <ul className="flex justify-start space-x-4 text-black">
                         <li>
-                            <Link href="/catalog">Каталог</Link>
+                            <Link href="/catalog" className="px-[15px]">Каталог</Link>
                         </li>
                         <li>
-                            <Link href="/news">Новости</Link>
+                            <Link href="/news" className="px-[15px]">Новости</Link>
                         </li>
                         <li>
-                            <Link href="/projects">Проекты</Link>
+                            <Link href="/about-company" className="px-[15px]">О компании</Link>
                         </li>
                         <li>
-                            <Link href="/info">Информация</Link>
+                            <Link href="/projects" className="px-[15px]">Реализованные проекты</Link>
                         </li>
                         <li>
-                            <Link href="/contact-us">Связь с нами</Link>
+                            <Link href="/info" className="px-[15px] ">Информация</Link>
+                        </li>
+                        <li>
+                            <Link href="/services" className="px-[15px]">Услуги</Link>
+                        </li>
+                        <li>
+                            <Link href="/contact-us" className="px-[15px]">Контакты</Link>
+                        </li>
+                        <li>
+                            <Link href="/partners" className="px-[15px]">Партнерам</Link>
+                        </li>
+                        <li>
+                            <Link href="/account" className="w-8 h-8 flex items-center justify-center border-2  border-black rounded-full">
+                                <i className="fas fa-user text-gray-600"></i>
+                            </Link>
                         </li>
                     </ul>
                 </div>
