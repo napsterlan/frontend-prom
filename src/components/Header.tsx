@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { auth } from '@/utils/auth';
 import { useState, useEffect } from 'react';
 
+
 export default function Header() {
     const router = useRouter();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -104,9 +105,30 @@ export default function Header() {
                           </Link>
                          </li>
                         )}
+                        
+                        {isAuthenticated ? (
+                         <li> 
+                          <button
+                            onClick={handleLogout}
+                            className="text-red-500 hover:text-red-600"
+                          >
+                            Выйти
+                          </button>
+                         </li>
+                        ) : (
+                         <li>
+                          <Link
+                            href="/login"
+                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                          >
+                            Войти
+                          </Link>
+                         </li>
+                        )}
                     </ul>
                 </div>
             </div>
         </header>
     );
 }             
+           
