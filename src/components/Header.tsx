@@ -1,6 +1,22 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { auth } from '@/utils/auth';
+import { useState, useEffect } from 'react';
 
 export default function Header() {
+    const router = useRouter();
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+    useEffect(() => {
+        setIsAuthenticated(auth.isAuthenticated());
+    }, []);
+
+    const handleLogout = () => {
+        auth.logout();
+        setIsAuthenticated(false);
+        router.push('/login');
+    };
+
     return (
         <header className="relative w-full" style={{ height: '160px' }}>
             <div className="bg-[#1A1F2A] h-[80px] flex rounded-b-3xl">
@@ -33,7 +49,7 @@ export default function Header() {
                     <a href="https://telegram.org" className="ml-2">Telegram</a>
                 </div>
             </div>
-            <div className="bg-[rgba(255,255,255,0.95)] h-[80px] flex">
+            <div className="bg-[rgba(255,255,255,0.95)] h-[80px] flex sticky top-0 z-10 relative">
                 <div className="flex-1 max-w-[248px] min-w-[167px] flex items-center pl-8">
                     <img src="/promled.svg" alt="Логотип" className="transition-all duration-300" style={{ height: '60px' }} />
                 </div>
@@ -54,9 +70,29 @@ export default function Header() {
                         <li>
                             <Link href="/contact-us">Связь с нами</Link>
                         </li>
+                        
+                        {isAuthenticated ? (
+                         <li> 
+                          <button
+                            onClick={handleLogout}
+                            className="text-red-500 hover:text-red-600"
+                          >
+                            Выйти
+                          </button>
+                         </li>
+                        ) : (
+                         <li>
+                          <Link
+                            href="/login"
+                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                          >
+                            Войти
+                          </Link>
+                         </li>
+                        )}
                     </ul>
                 </div>
             </div>
         </header>
     );
-} 
+}             

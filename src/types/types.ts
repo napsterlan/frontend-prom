@@ -8,7 +8,7 @@ export interface Category {
     MetaTitle: string;
     MetaDescription: string;
     MetaKeyword: string;
-    SeoURL: string;
+    Slug: string;
     Status: boolean;
     FullPath: string;
     CreatedAt: string;
@@ -19,33 +19,41 @@ export interface Category {
         alt_text: string;
     }[] | null;
     ChildrenCategories: Category[] | null;
-    Products: ProductInCategory[] | null;
+    ProductView: ProductView[] | null;
 }
 
-export interface ProductInCategory {
+export interface ProductView {
     ID: number;
     ProductID: number;
-    Name: string;
-    Article: string;
     SKU: string;
-    Description: string;
+    Name: string;
+    Power: string;
+    LuminousFlux: string;
+    Efficiency: string;
+    ColorTemp: string;
+    CRI: string;
+    ProtectionClass: string;
+    ClimateExecution: string;
+    EmergencyPowerUnit: string;
+    BeamAngle: string;
+    KCC: string;
+    Warranty: string;
     Price: number;
-    MetaTitle: string;
-    MetaDescription: string;
-    MetaKeyword: string;
-    SeoURL: string;
-    Status: boolean;
-    FullPath: string;
+    OptPrice?: number;
+    DealerPrice1?: number;
+    DealerPrice2?: number;
+    DealerPrice3?: number;
+    Slug: string;
     CreatedAt: string;
     UpdatedAt: string;
-    DeletedAt: string | null;
-    Images: string[] | null;
-    ProductAttributes: any | null;
-    Files: any | null;
-    RelatedProjects: any | null;
-    RelatedNews: any | null;
-    RelatedProducts: any | null;
-    Tags: any | null;
+    DeletedAt?: string | null;
+    Images?: string[] | null;
+    ProductAttributes?: any | null;
+    Files?: any | null;
+    RelatedProjects?: any | null;
+    RelatedNews?: any | null;
+    RelatedProducts?: any | null;
+    Tags?: any | null;
 }
 
 export interface Response {
@@ -69,10 +77,7 @@ export interface Product {
         ImageURL: string;
         AltText: string;
     }[] | null;
-    ProductAttributes: {
-        AttributeID: number;
-        Value: string;
-    }[] | null;
+    ProductAttributes: ProductAttribute[] | null;
     ProductFiles: {
         FileURL: string;
         FileName: string;
@@ -112,10 +117,18 @@ export interface Product {
     MetaDescription: string;
     MetaKeyword: string;
     FullPath: string;
+    Slug: string;
     Status: string;
     CreatedAt: string;
     UpdatedAt: string;
     DeletedAt: string | null;
+}
+
+export interface ProductAttribute {
+    AttributeID: number;
+    AttributeName: string;
+    AttributeGroupName: string;
+    Value: string;
 }
 
 export interface ProjectCategory {
@@ -191,4 +204,28 @@ export interface Breadcrumb {
 
 export interface BreadcrumbsState {
     currentPath: Breadcrumb[];
+}
+
+export interface User {
+    id: string;
+    email: string;
+    name: string;
+    role: 'user' | 'admin';
+}
+
+export interface AuthFormData {
+    email: string;
+    password: string;
+    name?: string; // опционально для регистрации
+}
+
+export interface Project {
+    id: string;
+    title: string;
+    description: string;
+    imageUrl: string;
+    createdAt: Date;
+    updatedAt: Date;
+    userId: string;
+    Slug: string;
 }
