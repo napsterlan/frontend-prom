@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { getProductBySlug } from '@/api/apiClient'; // Импортируйте функцию для получения данных продукта
-import { Product } from '@/types/types'; // Предполагается, что у вас есть тип Product
+import { Breadcrumb, Product, ProductAttribute } from '@/types/types'; // Предполагается, что у вас есть тип Product
 import Image from 'next/image';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 
@@ -11,6 +11,7 @@ export default function ProductPage() {
   const [productData, setProductData] = useState<Product | null>(null); // Состояние для данных продукта
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
   
   // Состояние для модального окна
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,6 +32,15 @@ export default function ProductPage() {
         try {
           const productData = await getProductBySlug(productSlug);
           setProductData(productData.data); // Сохраняем данные продукта
+          const existingBreadcrumbs: Breadcrumb[] = JSON.parse(sessionStorage.getItem('breadcrumbs') || '[]');
+          const newBreadcrumbs: Breadcrumb[] = existingBreadcrumbs.filter(crumb => crumb.href !== `/product/${productSlug}`); // Удаляем дублирующий сегмент
+          newBreadcrumbs.push({
+            label: productData.data.Name,
+            href: `/product/${productSlug}`
+          });
+          // Сохраняем новый путь
+          sessionStorage.setItem('breadcrumbs', JSON.stringify(newBreadcrumbs));
+          setBreadcrumbs(newBreadcrumbs);
         } catch (err) {
           setError('Ошибка при загрузке данных продукта');
         } finally {
@@ -84,11 +94,25 @@ export default function ProductPage() {
       <div className="mt-4">
         <h2 className="text-xl font-semibold">Технические характеристики</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {productData?.ProductAttributes?.map(attr => (
-            <div key={attr.AttributeID}>
-              <strong>{attr.AttributeID}</strong>: {attr.Value}
-            </div>
-          )) || <div>Нет технических характеристик</div>}
+          {productData?.ProductAttributes?.length && productData.ProductAttributes.length > 0 ? (
+            Object.entries(productData.ProductAttributes.reduce((acc, attr) => {
+              const group = acc[attr.AttributeGroupName] || [];
+              group.push(attr);
+              acc[attr.AttributeGroupName] = group;
+              return acc;
+            }, {} as Record<string, ProductAttribute[]>)).map(([groupName, attrs]) => (
+              <div key={groupName} className="col-span-1">
+                <h3 className="font-semibold">{groupName}</h3>
+                {attrs.map((attr: ProductAttribute) => (
+                  <div key={attr.AttributeID}>
+                    <strong>{attr.AttributeName}</strong>: {attr.Value}
+                  </div>
+                ))}
+              </div>
+            ))
+          ) : (
+            <div>Нет технических характеристик</div>
+          )}
         </div>
       </div>
       {/* Габаритный чертеж и файл светораспределения */}

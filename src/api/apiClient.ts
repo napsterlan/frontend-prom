@@ -13,8 +13,10 @@ export const getCategories = async () => {
   return response.data;
 };
 
-export const getCategoryBySlug = async (slug: string) => {
-  const response = await apiClient.get(`/category/${slug}`);
+export const getCategoryBySlug = async (slug: string, page_size: number = 10, page: number = 1) => {
+  const response = await apiClient.get(`/category/${slug}`, {
+    params: { page_size, page }
+  });
   return response.data;
 };
 
@@ -89,6 +91,11 @@ export const getAllProjects = async () => {
 
 export const getProjectBySlug = async (slug: string) => {
   const response = await apiClient.get(`/projects/${slug}`);
+  return response.data;
+};
+
+export const getProjectById = async (id: number) => {
+  const response = await apiClient.get(`/projects/${id}`);
   return response.data;
 };
 
