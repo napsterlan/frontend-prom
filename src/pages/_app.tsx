@@ -1,6 +1,5 @@
 import type { AppProps } from 'next/app';
 import Layout from '@/app/layout';
-import ProtectedRoute from '@/components/ProtectedRoute';
 
 const protectedPaths = ['/projects/edit', '/projects/add'];
 
@@ -14,10 +13,6 @@ function MyApp({ Component, pageProps, router }: AppProps) {
       <Component {...pageProps} />
     </Layout>
   );
-
-  if (isProtectedRoute) {
-    return <ProtectedRoute>{content}</ProtectedRoute>;
-  }
 
   return content;
 }
