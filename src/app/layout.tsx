@@ -5,7 +5,9 @@ import { QueryClientProvider } from 'react-query';
 import queryClient from './queryClient';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+
 import '../app/globals.css';
+import '../app/font.css';
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (

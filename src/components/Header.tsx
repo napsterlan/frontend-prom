@@ -2,14 +2,43 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { auth } from '@/utils/auth';
 import { useState, useEffect } from 'react';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons'
 
 export default function Header() {
     const router = useRouter();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isSticky, setIsSticky] = useState(false);
   
     useEffect(() => {
         setIsAuthenticated(auth.isAuthenticated());
+    }, []);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const navigationElement = document.getElementById('navigation');
+            if (!navigationElement) return;
+            
+            const navigationOffset = navigationElement.offsetTop;
+            const navigationOffsetBottom = navigationElement.offsetTop + navigationElement.offsetHeight;
+            const scrollPosition = window.scrollY;
+            let status = 0;
+            console.clear();
+            console.log(navigationOffset);
+            console.log(navigationOffsetBottom);
+            console.log(scrollPosition);
+            console.log(isSticky);
+            if (!isSticky && document.getElementById('navigation-fakebox')) {
+                setIsSticky(scrollPosition > navigationOffset);
+            } else {
+                setIsSticky(scrollPosition < navigationOffsetBottom);
+            }
+
+
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     const handleLogout = () => {
@@ -17,6 +46,8 @@ export default function Header() {
         setIsAuthenticated(false);
         router.push('/login');
     };
+    const button = "px-[5px]  py-[2px] font-normal border-2 border-transparent text-[14px] rounded-[10px] hover:border-PLGreen font-commissioner";
+    const catalogButton = "bg-[#f0f0f0] px-[10px]  py-[2px] [&>*]:border-0 s border-2 border-[#f0f0f0] hover:border-PLGreen rounded-[10px] flex";
 
     return (
         <header className="relative w-full" style={{ height: '160px' }}>
@@ -50,52 +81,65 @@ export default function Header() {
                     <a href="https://telegram.org" className="ml-2">Telegram</a>
                 </div>
             </div>
-            <div className="bg-[rgba(255,255,255,0.95)] h-[80px] flex justify-center">
-                <div className="justify-end flex items-center pl-8">
+            {isSticky ? <div id='navigation-fakebox' style={{ height: '80px' }} /> : ''}
+            <div id="navigation" className={`bg-[rgba(255,255,255,0.95)] h-[80px] flex justify-center
+                ${isSticky ? 'fixed top-0 left-0 right-0 z-50 shadow-md' : ''}`}>
+
+                <div className="justify-end flex items-center pr-8">
                     <img src="/promled.svg" alt="Логотип" className="transition-all duration-300 h-[40px]" />
                 </div>
                 <div className="justify-start flex items-center">
-                    <ul className="flex justify-start space-x-4 text-black">
-                        <li>
-                            <Link href="/catalog" className="px-[15px]">Каталог</Link>
+                    <ul className="flex justify-start space-x-4 text-black items-center font-commissioner">
+                        <li className={catalogButton} >
+                            <div className="flex items-center gap-2">
+                                <div className="grid grid-cols-3 gap-[4px]">
+                                    <div className="w-[2px] h-[2px] bg-black rounded-full"></div>
+                                    <div className="w-[2px] h-[2px] bg-black rounded-full"></div>
+                                    <div className="w-[2px] h-[2px] bg-black rounded-full"></div>
+                                    <div className="w-[2px] h-[2px] bg-black rounded-full"></div>
+                                    <div className="w-[2px] h-[2px] bg-black rounded-full"></div>
+                                    <div className="w-[2px] h-[2px] bg-black rounded-full"></div>
+                                    <div className="w-[2px] h-[2px] bg-black rounded-full"></div>
+                                    <div className="w-[2px] h-[2px] bg-black rounded-full"></div>
+                                    <div className="w-[2px] h-[2px] bg-black rounded-full"></div>
+                                </div>
+                            </div>
+                            <Link style={{paddingLeft: '10px'}} href="/catalog" className={button}>Каталог</Link>
                         </li>
                         <li>
-                            <Link href="/news" className="px-[15px]">Новости</Link>
+                            <Link href="/news" className={button}>Новости</Link>
                         </li>
                         <li>
-                            <Link href="/about-company" className="px-[15px]">О компании</Link>
+                            <Link href="/about-company" className={button}>О компании</Link>
                         </li>
                         <li>
-                            <Link href="/projects" className="px-[15px]">Реализованные проекты</Link>
+                            <Link href="/projects" className={button}>Реализованные проекты</Link>
                         </li>
                         <li>
-                            <Link href="/info" className="px-[15px] ">Информация</Link>
+                            <Link href="/info" className={button}>Информация</Link>
                         </li>
                         <li>
-                            <Link href="/services" className="px-[15px]">Услуги</Link>
+                            <Link href="/services" className={button}>Услуги</Link>
                         </li>
                         <li>
-                            <Link href="/contact-us" className="px-[15px]">Контакты</Link>
+                            <Link href="/contact-us" className={button}>Контакты</Link>
                         </li>
                         <li>
-                            <Link href="/partners" className="px-[15px]">Партнерам</Link>
+                            <Link href="/partners" className={button}>Партнерам</Link>
                         </li>
-                        <li>
-                            <Link href="/account" className="w-8 h-8 flex items-center justify-center border-2  border-black rounded-full">
-                                <i className="fas fa-user text-gray-600"></i>
-                            </Link>
-                        </li>
-                        
+
                         {isAuthenticated ? (
                         <li>
-                            <Link href="/account" className="w-8 h-8 flex items-center justify-center border-2  rounded-full border-PLGreen">
+                            <Link href="/account" className="w-15 h-10 flex items-center justify-center border-2 rounded-full border-PLGreen">
                                 <i className="fas fa-user text-gray-600"></i>
+                                {/* <FontAwesomeIcon icon={faCat} /> */}
                             </Link>
                         </li>
                         ) : (
                             <li>
-                                <Link href="/account" className="w-8 h-8 flex items-center justify-center border-2   rounded-full border-PLGreen">
-                                    <i className="fas fa-user text-gray-600"></i>
+                                <Link href="/account" className="w-10 h-10 flex items-center justify-center border-3 rounded-full border-PLGreen">
+                                    {/* <i className="fas fa-user text-gray-600"></i> */}
+                                    <FontAwesomeIcon className='text-base' icon={faUser}  />
                                 </Link>
                             </li>
                         )}
