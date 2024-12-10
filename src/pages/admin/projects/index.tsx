@@ -20,6 +20,7 @@ export default function ProjectsPage() {
       try {
         const response = await getAllProjects();
         setProjects(response.data);
+        console.log(response.data);
       } catch (err) {
         setError('Ошибка при загрузке данных проектов');
       } finally {
@@ -42,7 +43,7 @@ export default function ProjectsPage() {
 
         if (response.ok) {
           // Обновляем список проектов после удаления
-          const updatedProjects = projects.filter(p => Number(p.id) !== projectId);
+          const updatedProjects = projects.filter(p => Number(p.ID) !== projectId);
           setProjects(updatedProjects);
         }
       } catch (error) {
@@ -72,7 +73,7 @@ export default function ProjectsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.map(project => (
-          <div key={project.ProjectID} className="relative border rounded-lg p-4">
+          <div key={project.ID} className="relative border rounded-lg p-4">
             {project.ProjectImages?.[0] && (
               <img 
                 src={project.ProjectImages[0].ImageURL} 
@@ -86,13 +87,13 @@ export default function ProjectsPage() {
             {isAuthenticated && (
               <div className="absolute top-2 right-2 flex gap-2">
                 <Link
-                  href={`/admin/projects/edit/${project.id}`}
+                  href={`/admin/projects/edit/${project.ID}`}
                   className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                 >
                   Редактировать
                 </Link>
                 <button
-                  onClick={() => handleDelete(Number(project.id))}
+                  onClick={() => handleDelete(project.ID)}
                   className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
                 >
                   Удалить

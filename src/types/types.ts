@@ -220,12 +220,15 @@ export interface AuthFormData {
 }
 
 export interface Project {
-    id: string;
-    title: string;
-    description: string;
-    imageUrl: string;
-    createdAt: Date;
-    updatedAt: Date;
-    userId: string;
+    ID: number;
+    Title: string;
+    Description: string;
+    ProjectImages: {
+        ImageURL: string;
+        AltText: string;
+    }[];
+    CreatedAt: string;
+    UpdatedAt: string;
+    UserID: string;
     Slug: string;
 }
