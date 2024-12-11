@@ -1,21 +1,74 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { getProductBySlug } from '@/api/apiClient'; // Импортируйте функцию для получения данных продукта
-import { Breadcrumb, Product, ProductAttribute } from '@/types/types'; // Предполагается, что у вас есть тип Product
+import { useState } from 'react';
+import axios from 'axios';
+import { Breadcrumb, Product, ProductAttribute } from '@/types/types';
 import Image from 'next/image';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 
-export default function ProductPage() {
+import minioClient from '@/utils/minioClient';
+
+interface ProductPageProps {
+  initialProductData: Product | null;
+}
+// Экспортируем асинхронную функцию getServerSideProps, которая будет вызываться на сервере перед рендерингом страницы
+export async function getServerSideProps({ params }: { params: { productSlug: string } }) {
+  // Проверяем, существует ли параметр productSlug в объекте params
+  if (!params?.productSlug) {
+    // Если productSlug отсутствует, выводим сообщение в консоль
+    console.log('productSlug отсутствует');
+    // Возвращаем объект с полем notFound, чтобы указать, что страница не найдена
+    return {
+      notFound: true,
+    };
+  }
+
+  try {
+    const response = await axios.get(`http://192.168.31.40:4000/api/product/${params.productSlug}`);
+    const productData = response.data;
+    if (!productData || !productData.data) {
+      console.log('Данные продукта отсутствуют');
+      return {
+        notFound: true,
+      };
+    }
+
+    // Получаем URL изображений из MinIO
+    const updatedImages = await Promise.all(
+      productData.data.Images.map(async (image: any) => {
+        try {
+          const url = await minioClient.presignedGetObject('promled-website-test', image.ImageURL, 24 * 60 * 60);
+          return { ...image, ImageURL: url };
+        } catch (err) {
+          console.error('Ошибка при получении URL изображения:', err);
+          return { ...image, ImageURL: '/placeholder.png' };
+        }
+      })
+    );
+
+    return {
+      props: {
+        initialProductData: { ...productData.data, Images: updatedImages },
+      },
+    };
+
+  } catch (error) {
+    console.error('Ошибка в getServerSideProps:', error);
+    return {
+      notFound: true,
+    };
+  }
+}
+
+export default function ProductPage({ initialProductData }: ProductPageProps) {
   const router = useRouter();
-  const { productSlug } = router.query; // Получаем slug продукта из URL
-  const [productData, setProductData] = useState<Product | null>(null); // Состояние для данных продукта
-  const [loading, setLoading] = useState(true);
+  const [productData, setProductData] = useState<Product | null>(initialProductData);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
-  
+
   // Состояние для модального окна
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0); // Индекс текущего изображения
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const openModal = (index: number) => {
     setCurrentImageIndex(index);
@@ -26,55 +79,50 @@ export default function ProductPage() {
     setIsModalOpen(false);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (typeof productSlug === 'string') {
-        try {
-          const productData = await getProductBySlug(productSlug);
-          setProductData(productData.data); // Сохраняем данные продукта
-          const existingBreadcrumbs: Breadcrumb[] = JSON.parse(sessionStorage.getItem('breadcrumbs') || '[]');
-          const newBreadcrumbs: Breadcrumb[] = existingBreadcrumbs.filter(crumb => crumb.href !== `/product/${productSlug}`); // Удаляем дублирующий сегмент
-          newBreadcrumbs.push({
-            label: productData.data.Name,
-            href: `/product/${productSlug}`
-          });
-          // Сохраняем новый путь
-          sessionStorage.setItem('breadcrumbs', JSON.stringify(newBreadcrumbs));
-          setBreadcrumbs(newBreadcrumbs);
-        } catch (err) {
-          setError('Ошибка при загрузке данных продукта');
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchData();
-  }, [productSlug]);
-
   if (loading) return <div className="text-center">Загрузка...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
 
+  if (!productData) {
+    return <div>Продукт не найден</div>;
+  }
+
   return (
     <div className="container mx-auto p-4">
-      <Breadcrumbs/>
+      <Breadcrumbs />
       {productData ? (
         <div className="flex flex-col md:flex-row">
           <div className="flex-1 md:mr-4">
-            {/* Слайдер изображений продукта с миниатюрами */}
             <div className="relative">
+              <div className="mb-4">
+                {productData.Images?.[currentImageIndex] ? (
+                  <Image
+                    src={productData.Images[currentImageIndex].ImageURL}
+                    alt={productData.Name}
+                    className="w-full h-auto"
+                    width={500}
+                    height={500}
+                  />
+                ) : (
+                  <Image src="/placeholder.png" alt="Нет изображения" width={500} height={500} />
+                )}
+              </div>
               <div className="flex overflow-x-auto">
                 {productData.Images?.map((image, index) => (
-                  <Image 
-                    key={index} 
-                    src={`/${encodeURIComponent(image.ImageURL)}`} 
-                    alt={productData.Name} 
-                    className="flex-shrink-0 cursor-pointer" 
-                    onClick={() => openModal(index)} 
-                    width={100} 
-                    height={100} 
-                    style={{ marginRight: '10px' }} 
-                  />
+                  <div className="flex flex-col">
+                    <Image
+                      key={index}
+                      src={image.ImageURL}
+                      alt={productData.Name}
+                      className="flex-shrink-0 cursor-pointer"
+                      onClick={() => {
+                        setCurrentImageIndex(index); // Обновляем индекс текущего изображения
+                        closeModal(); // Закрываем модальное окно, если оно открыто
+                      }}
+                      width={100}
+                      height={100}
+                      style={{ marginRight: '10px' }}
+                    />
+                  </div>
                 )) || <Image src="/placeholder.png" alt="Нет изображения" width={100} height={100} />}
               </div>
             </div>

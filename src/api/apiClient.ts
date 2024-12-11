@@ -7,6 +7,15 @@ const apiClient = axios.create({
   },
 });
 
+// Добавляем интерсептор для добавления токена в заголовки
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('auth_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 // Категории
 export const getCategories = async () => {
   const response = await apiClient.get('/categories');
@@ -137,5 +146,39 @@ export const updateInfoPageById = async (id: number, pageData: any) => {
 
 export const deleteInfoPageById = async (id: number) => {
   const response = await apiClient.delete(`/info-pages/${id}`);
+  return response.data;
+};
+
+export const login = async (email: string, password: string) => {
+  const response = await apiClient.post('/login', {
+    email,
+    password
+  });
+  return response.data;
+};
+
+// Пользователи
+export const getAllUsers = async () => {
+  const response = await apiClient.get('/users');
+  return response.data;
+};
+
+export const getUserById = async (id: number) => {
+  const response = await apiClient.get(`/users/${id}`);
+  return response.data;
+};
+
+export const createUser = async (userData: any) => {
+  const response = await apiClient.post('/users', userData);
+  return response.data;
+};
+
+export const updateUserById = async (id: number, userData: any) => {
+  const response = await apiClient.put(`/users/${id}`, userData);
+  return response.data;
+};
+
+export const deleteUserById = async (id: number) => {
+  const response = await apiClient.delete(`/users/${id}`);
   return response.data;
 };

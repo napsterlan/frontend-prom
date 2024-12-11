@@ -207,10 +207,19 @@ export interface BreadcrumbsState {
 }
 
 export interface User {
-    id: string;
-    email: string;
-    name: string;
-    role: 'user' | 'admin';
+    ID: number;
+    CreatedAt: string;
+    UpdatedAt: string;
+    DeletedAt: string | null;
+    Username: string;
+    Email: string;
+    Role: string;
+    FirstName: string;
+    LastName: string;
+    Phone: string;
+    Activated: boolean;
+    Status: boolean;
+    Company: string | null;
 }
 
 export interface AuthFormData {
