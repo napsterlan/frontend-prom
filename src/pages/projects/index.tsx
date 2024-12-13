@@ -38,7 +38,7 @@ export default function ProjectsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.map(project => (
-          <div key={project.ProjectID} className="relative border rounded-lg p-4">
+          <Link href={`/projects/${project.Slug}`} key={project.ProjectID} className="relative border rounded-lg p-4">
             {project.ProjectImages?.[0] && (
               <img 
                 src={project.ProjectImages[0].ImageURL} 
@@ -48,7 +48,7 @@ export default function ProjectsPage() {
             )}
             <h3 className="text-xl font-semibold mb-2">{project.Title}</h3>
             <p className="text-gray-600">{project.Description}</p>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

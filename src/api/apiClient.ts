@@ -8,13 +8,15 @@ const apiClient = axios.create({
 });
 
 // Добавляем интерсептор для добавления токена в заголовки
-apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+if (typeof window !== 'undefined') {
+  apiClient.interceptors.request.use((config) => {
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  });
+}
 
 // Категории
 export const getCategories = async () => {
@@ -182,3 +184,4 @@ export const deleteUserById = async (id: number) => {
   const response = await apiClient.delete(`/users/${id}`);
   return response.data;
 };
+

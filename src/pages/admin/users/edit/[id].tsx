@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { getUserById } from '../../../api/apiClient';
-import { User } from '../../../types/types';
+import { getUserById } from '../../../../api/apiClient';
+import { User } from '../../../../types/types';
 
 const UserDetail: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -12,7 +12,7 @@ const UserDetail: React.FC = () => {
     if (id) {
       const fetchUser = async () => {
         const data = await getUserById(Number(id));
-        setUser(data);
+        setUser(data.data);
       };
       fetchUser();
     }

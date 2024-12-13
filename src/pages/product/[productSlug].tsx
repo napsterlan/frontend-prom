@@ -4,7 +4,6 @@ import axios from 'axios';
 import { Breadcrumb, Product, ProductAttribute } from '@/types/types';
 import Image from 'next/image';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
-
 import minioClient from '@/utils/minioClient';
 
 interface ProductPageProps {
@@ -108,9 +107,8 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
               </div>
               <div className="flex overflow-x-auto">
                 {productData.Images?.map((image, index) => (
-                  <div className="flex flex-col">
+                  <div className="flex flex-col" key={image.ID || index}>
                     <Image
-                      key={index}
                       src={image.ImageURL}
                       alt={productData.Name}
                       className="flex-shrink-0 cursor-pointer"

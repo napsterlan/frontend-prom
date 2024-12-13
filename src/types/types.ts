@@ -74,6 +74,7 @@ export interface Product {
     DealerPrice2?: number;
     DealerPrice3?: number;
     Images: {
+        ID: number;
         ImageURL: string;
         AltText: string;
     }[] | null;

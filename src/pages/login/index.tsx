@@ -9,8 +9,8 @@ import { login } from '@/api/apiClient';
 export default function LoginPage() {
   const router = useRouter();
   const [formData, setFormData] = useState<AuthFormData>({
-    email: 'helge.starman@gmail.co',
-    password: 'tg2vm'
+    email: '',
+    password: ''
   });
   const [error, setError] = useState('');
 

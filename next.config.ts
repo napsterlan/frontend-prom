@@ -11,7 +11,12 @@ const nextConfig: NextConfig = {
         pathname: '/**', // Указывает, что разрешены все пути
       },
     ],
-  }
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb',
+    },
+  },
 };
 
 export default nextConfig;
