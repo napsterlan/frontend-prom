@@ -1,8 +1,30 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { getProjectById, updateProjectById } from '../../../../api/apiClient';
+import { useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-// import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import minioClient from '@/utils/minioClient';
+import axios from 'axios';
+import { updateProjectById } from '@/api/apiClient';
+import { useRouter } from 'next/router';
+
+// Функция для получения данных на сервере
+export const getServerSideProps = async (context: { params: { id: number } }) => {
+  const { id } = context.params;
+  let project = {};
+  
+
+  try {
+    const response = await axios.get(`http://192.168.31.40:4000/api/projects/${Number(id)}`);
+    console.log(response);
+    project = response.data.data; // Получаем данные проекта
+  } catch (error) {
+    console.error('Ошибка загрузки проекта:', error);
+  }
+
+  return {
+    props: {
+      project, // Передаем данные проекта в компонент
+    },
+  };
+};
 
 const EditProject = () => {
   const router = useRouter();
@@ -61,6 +83,11 @@ const EditProject = () => {
     e.preventDefault();
     console.log('Отправляемые данные:', formData);
     try {
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> bd44493 (ColunmVisibility changes)
       const projectData = {
         Title: formData.title,
         ProjectCategories: formData.ProjectCategories,
@@ -69,6 +96,11 @@ const EditProject = () => {
         MetaDescription: formData.metaDescription,
         MetaKeyword: formData.metaKeyword,
         Slug: formData.Slug || formData.title.replace(/\s+/g, '-').toLowerCase() || '',
+<<<<<<< HEAD
+=======
+        RelatedProducts: formData.relatedProducts,
+        //ProjectImages: uploadedImages,
+>>>>>>> bd44493 (ColunmVisibility changes)
       };
 
       const response = await updateProjectById(Number(router.query.id), projectData);
@@ -240,27 +272,6 @@ const EditProject = () => {
       </div>
     </div>
   );
-};
-
-// Функция для получения данных на сервере
-export const getServerSideProps = async (context: any) => {
-  const { id } = context.params;
-  let project = {};
-  console.log(id);
-
-  try {
-    const response = await getProjectById(Number(id));
-    project = response.data; // Получаем данные проекта
-    console.log(project);
-  } catch (error) {
-    console.error('Ошибка загрузки проекта:', error);
-  }
-
-  return {
-    props: {
-      project, // Передаем данные проекта в компонент
-    },
-  };
 };
 
 export default EditProject;
