@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 import axios from 'axios';
 import { Breadcrumb, Product, ProductAttribute } from '@/types/types';
@@ -59,7 +58,6 @@ export async function getServerSideProps({ params }: { params: { productSlug: st
 }
 
 export default function ProductPage({ initialProductData }: ProductPageProps) {
-  const router = useRouter();
   const [productData, setProductData] = useState<Product | null>(initialProductData);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

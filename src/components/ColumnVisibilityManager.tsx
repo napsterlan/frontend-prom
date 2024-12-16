@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-//import { useUserId } from './UserIdProvider';
 
 export interface ColumnVisibility {
   Name: boolean;
@@ -32,25 +31,6 @@ export const ColumnVisibilityManager = ({
 }: ColumnVisibilityManagerProps) => {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
- // const userId = useUserId();
-
-  useEffect(() => {
-    const savedColumns = localStorage.getItem(`columns-${Category}`);
-    if (savedColumns) {
-      const parsedColumns: ColumnVisibility = JSON.parse(savedColumns);
-      // Здесь можно обновить состояние видимости колонок, если нужно
-    }
-  }, [Category]);
-
-  useEffect(() => {
-    localStorage.setItem(`columns-${Category}`, JSON.stringify(visibleColumns));
-  }, [Category, visibleColumns]);
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-      setShowMenu(false);
-    }
-  };
 
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
@@ -58,6 +38,12 @@ export const ColumnVisibilityManager = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      setShowMenu(false);
+    }
+  };
 
   const columnLabels: Record<keyof ColumnVisibility, string> = {
     Name: 'Название',
@@ -110,20 +96,4 @@ export const ColumnVisibilityManager = ({
       </div>
     </div>
   );
-};
-
-export const defaultColumns: ColumnVisibility = {
-  Name: true,
-  Price: true,
-  SKU: true,
-  Power: false,
-  LuminousFlux: false,
-  Efficiency: false,
-  ColorTemp: false,
-  CRI: false,
-  ProtectionClass: false,
-  ClimateExecution: false,
-  EmergencyPowerUnit: false,
-  BeamAngle: false,
-  Warranty: false,
 }; 

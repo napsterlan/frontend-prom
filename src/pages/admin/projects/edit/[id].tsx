@@ -1,8 +1,30 @@
 import { useState } from 'react';
-import { useRouter } from 'next/router';
-import { getProjectById, updateProjectById } from '../../../../api/apiClient';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import minioClient from '@/utils/minioClient';
+import axios from 'axios';
+import { updateProjectById } from '@/api/apiClient';
+import { useRouter } from 'next/router';
+
+// Функция для получения данных на сервере
+export const getServerSideProps = async (context: { params: { id: number } }) => {
+  const { id } = context.params;
+  let project = {};
+  
+
+  try {
+    const response = await axios.get(`http://192.168.31.40:4000/api/projects/${Number(id)}`);
+    console.log(response);
+    project = response.data.data; // Получаем данные проекта
+  } catch (error) {
+    console.error('Ошибка загрузки проекта:', error);
+  }
+
+  return {
+    props: {
+      project, // Передаем данные проекта в компонент
+    },
+  };
+};
 
 const EditProject = ({ project }: { project: any }) => {
   const router = useRouter();
@@ -24,33 +46,7 @@ const EditProject = ({ project }: { project: any }) => {
     e.preventDefault();
     console.log('Отправляемые данные:', formData);
     try {
-      const uploadedImages = await Promise.all(
-        (formData.projectImages || []).map(async (file: any) => {
-          const imageBuffer = await file.arrayBuffer();
 
-          // Функция для отправки изображения в MinIO
-          const uploadImageToMinIO = async (file: File): Promise<string> => {
-            const objectName = `projects/${formData.title}/${file.name}`;
-            
-            await minioClient.putObject(
-              'promled-website-test',
-              objectName,
-              Buffer.from(imageBuffer)
-            );
-
-            // Получаем временный URL, который истекает через 7 дней
-            const url = await minioClient.presignedGetObject(
-              'promled-website-test',
-              objectName,
-              7 * 24 * 60 * 60
-            );
-
-            return url;
-          };
-
-          return { ImageURL: await uploadImageToMinIO(file), AltText: file.name };
-        })
-      );
 
       const projectData = {
         Title: formData.title,
@@ -60,7 +56,7 @@ const EditProject = ({ project }: { project: any }) => {
         MetaKeyword: formData.metaKeyword,
         Slug: formData.Slug || formData.title.replace(/\s+/g, '-').toLowerCase() || '',
         RelatedProducts: formData.relatedProducts,
-        ProjectImages: uploadedImages,
+        //ProjectImages: uploadedImages,
       };
 
       const response = await updateProjectById(Number(router.query.id), projectData);
@@ -217,27 +213,6 @@ const EditProject = ({ project }: { project: any }) => {
       </div>
     </div>
   );
-};
-
-// Функция для получения данных на сервере
-export const getServerSideProps = async (context: any) => {
-  const { id } = context.params;
-  let project = {};
-  console.log(id);
-
-  try {
-    const response = await getProjectById(Number(id));
-    project = response.data; // Получаем данные проекта
-    console.log(project);
-  } catch (error) {
-    console.error('Ошибка загрузки проекта:', error);
-  }
-
-  return {
-    props: {
-      project, // Передаем данные проекта в компонент
-    },
-  };
 };
 
 export default EditProject;

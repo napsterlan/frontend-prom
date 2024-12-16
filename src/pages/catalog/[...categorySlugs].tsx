@@ -2,11 +2,12 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query'; // Импортируем useQuery из react-query
 import { getCategoryBySlug } from '@/api/apiClient';
-import { Category, Product, ProductView } from '@/types/types';
+import { Category, ProductView } from '@/types/types';
 import Image from 'next/image';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Breadcrumb } from '@/types/types';
-import { ColumnVisibilityManager, ColumnVisibility, defaultColumns } from '@/components/ColumnVisibilityManager';
+import { ColumnVisibilityManager, ColumnVisibility } from '@/components/ColumnVisibilityManager';
+import { getColumnSettings } from '@/utils/columnSettings';
 
 export default function CategoryPage() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function CategoryPage() {
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
   const [showMenu, setShowMenu] = useState(false);
   const [page, setPage] = useState(1);
-  const pageSize = 10; // Установите размер страницы
+  const pageSize = 100; // Установите размер страницы
 
   // Используем useQuery для получения данных категории с пагинацией
   const { data: categoryData, isLoading, error } = useQuery(
@@ -31,14 +32,15 @@ export default function CategoryPage() {
     }
   );
 
-  const [visibleColumns, setVisibleColumns] = useState<ColumnVisibility>(defaultColumns);
+  const Category = Array.isArray(categorySlugs) ? categorySlugs[categorySlugs.length - 1] : '';
+  const [visibleColumns, setVisibleColumns] = useState<ColumnVisibility>(() => 
+    getColumnSettings(Category)
+  );
 
+  // Обновляем при изменении категории
   useEffect(() => {
-    const savedColumns = JSON.parse(sessionStorage.getItem('visibleColumns') || 'null');
-    if (savedColumns) {
-      setVisibleColumns(savedColumns);
-    }
-  }, []);
+    setVisibleColumns(getColumnSettings(Category));
+  }, [Category]);
 
   useEffect(() => {
     if (categoryData) {
@@ -83,15 +85,14 @@ export default function CategoryPage() {
       [column]: !visibleColumns[column]
     };
     setVisibleColumns(newColumns);
-    sessionStorage.setItem('visibleColumns', JSON.stringify(newColumns));
+    localStorage.setItem(`columns-${Category}`, JSON.stringify(newColumns));
   };
 
   const resetColumns = () => {
-    setVisibleColumns(defaultColumns);
-    sessionStorage.setItem('visibleColumns', JSON.stringify(defaultColumns));
+    const defaultSettings = getColumnSettings(Category);
+    setVisibleColumns(defaultSettings);
+    localStorage.setItem(`columns-${Category}`, JSON.stringify(defaultSettings));
   };
-
-  const Category = Array.isArray(categorySlugs) ? categorySlugs[categorySlugs.length - 1] : ''; // Определяем выбранную категорию
 
   return (  
     <div>
