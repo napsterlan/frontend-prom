@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { deleteProjectById, getAllProjects } from '@/api/apiClient';
 import { Project } from '@/types/types';
 import Link from 'next/link';
@@ -10,6 +11,7 @@ export const getServerSideProps = async () => {
   try {
     const response = await getAllProjects();
     projects = response.data;
+    console.log(projects);
   } catch (err) {
     error = 'Ошибка при загрузке данных проектов';
   }
