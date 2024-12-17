@@ -70,7 +70,7 @@ export const deleteNewsById = async (id: number) => {
 
 // Категории проектов
 export const getAllProjectCategories = async () => {
-  const response = await apiClient.get('/project-categories');
+  const response = await apiClient.get('/projects-categories');
   return response.data;
 };
 
@@ -182,6 +182,27 @@ export const updateUserById = async (id: number, userData: any) => {
 
 export const deleteUserById = async (id: number) => {
   const response = await apiClient.delete(`/users/${id}`);
+  return response.data;
+};
+
+// Загрузка файлов
+export const uploadFiles = async (files: File[], path: string) => {
+  const formData = new FormData();
+  
+  // Добавляем файлы
+  files.forEach((file) => {
+    formData.append('files', file);
+  });
+  
+  // Добавляем путь
+  formData.append('path', path);
+
+  const response = await apiClient.post('/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  
   return response.data;
 };
 

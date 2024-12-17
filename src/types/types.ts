@@ -233,7 +233,7 @@ export interface Project {
     ID: number;
     Title: string;
     Description: string;
-    ProjectImages: {
+    Images: {
         ImageURL: string;
         AltText: string;
     }[];
@@ -241,4 +241,8 @@ export interface Project {
     UpdatedAt: string;
     UserID: string;
     Slug: string;
+    ProjectCategories: {
+        CategoryID: number;
+        Name: string;
+    }[];
 }
