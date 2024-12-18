@@ -10,6 +10,9 @@ export default function Header() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isSticky, setIsSticky] = useState(false);
     const [showCatalog, setShowCatalog] = useState(false);
+    const [isProductLightboxOpen, setIsProductLightboxOpen] = useState(false);
+    const [isDrawingLightboxOpen, setIsDrawingLightboxOpen] = useState(false);
+    const [isDistributionLightboxOpen, setIsDistributionLightboxOpen] = useState(false);
 
     useEffect(() => {
         setIsAuthenticated(auth.isAuthenticated());
@@ -41,6 +44,26 @@ export default function Header() {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    useEffect(() => {
+        const navigation = document.getElementById('navigation');
+        const isAnyLightboxOpen = isProductLightboxOpen || isDrawingLightboxOpen || isDistributionLightboxOpen;
+
+        if (navigation && isSticky && isAnyLightboxOpen) {
+            // Получаем ширину скроллбара
+            const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+            navigation.style.marginRight = `${scrollbarWidth}px`;
+        } else if (navigation) {
+            navigation.style.marginRight = '0';
+        }
+
+        // Очистка стилей при размонтировании
+        return () => {
+            if (navigation) {
+                navigation.style.marginRight = '0';
+            }
+        };
+    }, [isSticky, isProductLightboxOpen, isDrawingLightboxOpen, isDistributionLightboxOpen]);
 
     const handleLogout = () => {
         auth.logout();
@@ -75,17 +98,17 @@ export default function Header() {
                     <div className="flex w-full justify-end">
                         <div className="flex flex-col text-left text-xs pl-8 h-full align-middle inline-block">
                             <div className="text-[12px] leading-[15px] text-white font-medium">Санкт-Петербург</div>
-                            <div className="text-[12px] leading-[14px] text-white font-extralight"><a href="tel:+78129997420" className="text-[12px] leading-[14px] text-white font-extralight" itemprop="telephone">8-812-999-74-20</a></div>
+                            <div className="text-[12px] leading-[14px] text-white font-extralight"><a href="tel:+78129997420" className="text-[12px] leading-[14px] text-white font-extralight" itemProp="telephone">8-812-999-74-20</a></div>
                             <div className="text-[12px] leading-[16px] text-white font-extralight"><a href="mailto:info@promled.com">info@promled.com</a></div>
                         </div>
                         <div className="flex flex-col text-left text-xs pl-4 h-full align-middle inline-block">
                             <div className="text-[12px] leading-[15px] text-white font-medium">Москва</div>
-                            <div className="text-[12px] leading-[14px] text-white font-extralight"><a href="tel:+74957447861" className="text-[12px] leading-[14px] text-white font-extralight" itemprop="telephone">8-495-744-78-61</a></div>
+                            <div className="text-[12px] leading-[14px] text-white font-extralight"><a href="tel:+74957447861" className="text-[12px] leading-[14px] text-white font-extralight" itemProp="telephone">8-495-744-78-61</a></div>
                             <div className="text-[12px] leading-[16px] text-white font-extralight"><a href="mailto:msk@promled.com">msk@promled.com</a></div>
                         </div>
                         <div className="flex flex-col text-left text-xs pl-4 h-full align-middle inline-block">
                             <div className="text-[12px] leading-[15px] text-white font-medium">Казахстан</div>
-                            <div className="text-[12px] leading-[14px] text-white font-extralight"><a href="tel:+77273123437" className="text-[12px] leading-[14px] text-white font-extralight" itemprop="telephone">8-727-312-34-37</a></div>
+                            <div className="text-[12px] leading-[14px] text-white font-extralight"><a href="tel:+77273123437" className="text-[12px] leading-[14px] text-white font-extralight" itemProp="telephone">8-727-312-34-37</a></div>
                             <div className="text-[12px] leading-[16px] text-white font-extralight"><a href="mailto:kz@promled.com">kz@promled.com</a></div>
                         </div>
                     </div>
@@ -107,7 +130,7 @@ export default function Header() {
                 </div>
                 <div className="flex-1 flex items-center text-white justify-start">
                     <div className="inline-block text-white flex-shrink-0 ml-[0px]">
-                        <div className="mainphone"><a href="tel:+78005503922" className="leading-[27px] text-PLGreen text-[19px] font-extrabold font-Commissioner tracking-[0.475px]" itemprop="telephone">8 (800) 550-39-22</a> </div>
+                        <div className="mainphone"><a href="tel:+78005503922" className="leading-[27px] text-PLGreen text-[19px] font-extrabold font-Commissioner tracking-[0.475px]" itemProp="telephone">8 (800) 550-39-22</a> </div>
                         <div className="text-[14px] font-Commissioner font-normal [&>strong]:ml-[13px]">Звонки по РФ <strong>Бесплатно</strong></div>
                     </div>
                     <div className="flex text-white flex-shrink-0 pt-[8px]">
@@ -133,7 +156,7 @@ export default function Header() {
             {isSticky && <div id="navigation-fakebox" style={{ height: '80px' }} />}
             <div
                 id="navigation"
-                className={`${isSticky ? 'fixed top-0 left-0 right-0 z-50 transition-all duration-300' : ''}`}
+                className={`${isSticky ? 'fixed top-0 left-0 right-0 z-50' : ''}`}
             >
                 <div className="bg-[rgba(255,255,255)] h-[80px] flex justify-center">
                     <div className="justify-end flex items-center pr-8">

@@ -37,25 +37,30 @@ export const Breadcrumbs = () => {
   };
 
   return (
-    <nav className="flex gap-2 py-4">
-      <Link href="/" className="hover:text-gray-600">
-        Главная
-      </Link>
-      {breadcrumbs.map((crumb, index) => (
-        <div key={crumb.href} className="flex items-center gap-2">
-          <span>/</span>
-          {index === breadcrumbs.length - 1 ? (
-            <span className="text-gray-500">{crumb.label}</span>
-          ) : (
-            <span 
-              className="hover:text-gray-600 cursor-pointer"
-              onClick={() => handleCrumbClick(crumb, index)}
-            >
-              {crumb.label}
-            </span>
-          )}
+    <nav className="flex gap-2 pt-[2px] px-[15%] justify-end bg-[#e9e9e9]">
+      <div>
+        <div className="flex gap-2 ml-[10px]">
+          <Link href="/" className="hover:text-gray-600">
+            Главная
+          </Link>
+          {breadcrumbs.map((crumb, index) => (
+            <div key={crumb.href} className="flex items-center gap-2">
+              <span>/</span>
+              {index === breadcrumbs.length - 1 ? (
+                <span className="text-gray-500">{crumb.label}</span>
+              ) : (
+                <span
+                  className="hover:text-gray-600 cursor-pointer"
+                  onClick={() => handleCrumbClick(crumb, index)}
+                >
+                  {crumb.label}
+                </span>
+              )}
+            </div>
+          ))}
         </div>
-      ))}
+        <div className="h-[3px] w-full bg-[rgb(92,214,156)] [clip-path:polygon(4px_0%,100%_0%,100%_100%,0%_100%)]"/>
+      </div>
     </nav>
   );
 }; 
