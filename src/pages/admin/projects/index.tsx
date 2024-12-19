@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-import { useEffect, useState } from 'react';
-=======
->>>>>>> c96f7fbacee0fc8d42527efb02b2842583c89c20
 import { deleteProjectById, getAllProjects } from '@/api/apiClient';
 import { Project } from '@/types/types';
 import Link from 'next/link';
@@ -14,10 +10,6 @@ export const getServerSideProps = async () => {
   try {
     const response = await getAllProjects();
     projects = response.data;
-<<<<<<< HEAD
-    console.log(projects);
-=======
->>>>>>> c96f7fbacee0fc8d42527efb02b2842583c89c20
   } catch (err) {
     error = 'Ошибка при загрузке данных проектов';
   }

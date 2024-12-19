@@ -1,16 +1,9 @@
 import { useState } from 'react';
-<<<<<<< HEAD
-import axios from 'axios';
-import { updateProjectById, uploadFiles } from '@/api/apiClient';
-import { useRouter } from 'next/router';
-import minioClient from '@/utils/minioClient';
-=======
 import { updateProjectById, uploadFiles } from '@/api/apiClient';
 import { getAllProjectCategories, getProjectById } from '@/api/apiClient';
 import { useRouter } from 'next/router';
 import { ProjectCategory } from '@/types/types';
 import { Project } from '@/types/types';
->>>>>>> c96f7fbacee0fc8d42527efb02b2842583c89c20
 
 // Функция для получения данных на сервере
 export const getServerSideProps = async (context: { params: { id: number } }) => {
@@ -19,20 +12,11 @@ export const getServerSideProps = async (context: { params: { id: number } }) =>
   let categories = [];
   
   try {
-<<<<<<< HEAD
-    const apiUrl = process.env.API_URL; // Получаем адрес API из .env файла
-    const categoriesResponse = await axios.get(`${apiUrl}/projects-categories/`);
-    categories = categoriesResponse.data.data;
-
-    const response = await axios.get(`${apiUrl}/projects/${Number(id)}`);
-    project = response.data.data; // Получаем данные проекта
-=======
     const categoriesResponse = await getAllProjectCategories();
     categories = categoriesResponse.data;
 
     const response = await getProjectById(Number(id));
     project = response.data; // Получаем данные проекта
->>>>>>> c96f7fbacee0fc8d42527efb02b2842583c89c20
     console.log(project);
   } catch (error) {
     console.error('Ошибка загрузки проекта:', error);
@@ -46,11 +30,7 @@ export const getServerSideProps = async (context: { params: { id: number } }) =>
   };
 };
 
-<<<<<<< HEAD
-const EditProject = ({ project, categories }: { project: any, categories: any }) => {
-=======
 const EditProject = ({ project, categories }: { project: Project, categories: ProjectCategory[] }) => {
->>>>>>> c96f7fbacee0fc8d42527efb02b2842583c89c20
   const router = useRouter();
   const [formData, setFormData] = useState<{
     title: string;
@@ -60,11 +40,7 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
     metaKeyword: string;
     ProjectCategories: any[];
     Slug: string;
-<<<<<<< HEAD
-    relatedProducts: string;
-=======
     relatedProducts: any[];
->>>>>>> c96f7fbacee0fc8d42527efb02b2842583c89c20
     existingImages: any[];
     newImages: File[];
     deletedImageIds: number[];
@@ -76,11 +52,7 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
     metaKeyword: project.MetaKeyword || '',
     ProjectCategories: project.ProjectCategories || [],
     Slug: project.Slug || '',
-<<<<<<< HEAD
-    relatedProducts: project.RelatedProducts || '',
-=======
     relatedProducts: project.RelatedProducts || [],
->>>>>>> c96f7fbacee0fc8d42527efb02b2842583c89c20
     existingImages: project.Images || [],
     newImages: [],
     deletedImageIds: [],
