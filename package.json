@@ -15,7 +15,9 @@
     "next": "15.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-query": "^3.39.3"
+    "react-lightbox-component": "^1.2.1",
+    "react-query": "^3.39.3",
+    "yet-another-react-lightbox": "^3.21.7"
   },
   "devDependencies": {
     "@types/node": "^20",
