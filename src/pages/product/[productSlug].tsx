@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Breadcrumb, Product, ProductAttribute } from '@/types/types';
@@ -9,7 +8,6 @@ import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
-import minioClient from '@/utils/minioClient';
 import { auth } from '@/utils/auth';
 
 interface ProductPageProps {
@@ -287,7 +285,6 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
           ) : (
             <div>Продукт не найден</div>
           )}
-          {console.log(productData)}
           {/* Технические характеристики */}
           <div className="mt-4">
             <h2 className="text-[20px] text-[#2c364c] font-semibold border-b-[2px] border-PLGreen pb-[10px]">Характеристики</h2>
@@ -336,7 +333,7 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
               <div onClick={() => setIsDistributionLightboxOpen(true)}>
                 <Image 
                   src="/files_for_test/KC-promled-projector-430x430.jpg"
-                  alt="Cветора��пределения"
+                  alt="Cветораcпределения"
                   className="w-full h-auto p-[15px] cursor-pointer"
                   width={500}
                   height={500}
@@ -390,7 +387,7 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
           )}
 
           {/* Связанные продукты */}
-          {productData?.RelatedProducts?.length > 0 && (
+          {productData?.RelatedProducts && productData.RelatedProducts.length > 0 && (
             <div className="mt-4 w-full">
               <h2 className="text-xl font-semibold">Связанные продукты</h2>
               <ul>
@@ -403,7 +400,7 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
             </div>
           )}
           {/* Связанные проекты */}
-          {productData?.RelatedProjects?.length > 0 && (
+          {productData?.RelatedProjects && productData.RelatedProjects.length > 0 && (
             <div className="mt-4">
               <h2 className="border-b-2 border-[#5cd69c] leading-[32px] mb-[25px] text-[20px] font-semibold">
                 Связанные проекты
