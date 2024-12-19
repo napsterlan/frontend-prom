@@ -159,7 +159,7 @@ const lightboxConfig = {
     }
   },
   zoom: {
-    maxZoomPixelRatio: 100, // Максимальное соотношение пикселей для увеличения
+    maxZoomPixelRatio: 100, // Максимальное соотнош��ние пикселей для увеличения
     zoomInMultiplier: 2, // Множитель для увеличения при зуме
     doubleTapDelay: 300, // Задержка для двойного нажатия в миллисекундах
     doubleClickDelay: 300, // Задержка для двойного клика в миллисекундах
@@ -187,23 +187,6 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
   useEffect(() => {
     setIsAuthenticated(auth.isAuthenticated());
   }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (typeof productSlug === 'string') {
-        try {
-          const productData = await getProductBySlug(productSlug);
-          setProductData(productData.data); // Сохраняем данные продукта
-        } catch (err) {
-          setError('Ошибка при загрузке данных продукта');
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchData();
-  }, [productSlug]);
 
   if (loading) return <div className="text-center">Загрузка...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
@@ -327,7 +310,7 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
               )}
             </div>
           </div>
-          {/* Габаритный чертеж  файл светораспределения */}
+          {/* Габаритный чертеж и светораспределение */}
           <div className="mt-4 flex flex-row p-[35px]">
             <div className='w-1/2'>
               <div className='border-b-2 border-[#5cd69c] leading-[32px] mb-[25px] text-[20px] font-semibold mb-[5px] w-fit'>

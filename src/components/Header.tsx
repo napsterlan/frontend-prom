@@ -1,4 +1,9 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { auth } from '@/utils/auth';
+import { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons'
 
 export default function Header() {
     const router = useRouter();
@@ -88,23 +93,23 @@ export default function Header() {
 
     return (
         <header className="relative w-full" style={{ height: '160px' }}>
-            <div className="bg-[#1A1F2A] h-[80px] flex rounded-b-3xl">
+            <div id='info-header' className="bg-[#1A1F2A] h-[80px] flex rounded-b-3xl ">
                 <div className="flex-1 flex flex-col justify-center text-center text-white">
-                    <div className="flex justify-between w-full">
-                        <div className="flex flex-col text-left text-xs pl-8">
-                            <span>Санкт-Петербург</span>
-                            <span>8-812-999-74-20</span>
-                            <span>info@promled.com</span>
+                    <div className="flex w-full justify-end">
+                        <div className="flex flex-col text-left text-xs pl-8 h-full align-middle inline-block">
+                            <div className="text-[12px] leading-[15px] text-white font-medium">Санкт-Петербург</div>
+                            <div className="text-[12px] leading-[14px] text-white font-extralight"><a href="tel:+78129997420" className="text-[12px] leading-[14px] text-white font-extralight" itemProp="telephone">8-812-999-74-20</a></div>
+                            <div className="text-[12px] leading-[16px] text-white font-extralight"><a href="mailto:info@promled.com">info@promled.com</a></div>
                         </div>
-                        <div className="flex flex-col text-left text-xs pl-4">
-                            <span>Москва</span>
-                            <span>8-495-744-78-61</span>
-                            <span>msk@promled.com</span>
+                        <div className="flex flex-col text-left text-xs pl-4 h-full align-middle inline-block">
+                            <div className="text-[12px] leading-[15px] text-white font-medium">Москва</div>
+                            <div className="text-[12px] leading-[14px] text-white font-extralight"><a href="tel:+74957447861" className="text-[12px] leading-[14px] text-white font-extralight" itemProp="telephone">8-495-744-78-61</a></div>
+                            <div className="text-[12px] leading-[16px] text-white font-extralight"><a href="mailto:msk@promled.com">msk@promled.com</a></div>
                         </div>
-                        <div className="flex flex-col text-left text-xs pl-4">
-                            <span>Казахстан</span>
-                            <span>8-727-312-34-37</span>
-                            <span>kz@promled.com</span>
+                        <div className="flex flex-col text-left text-xs pl-4 h-full align-middle inline-block">
+                            <div className="text-[12px] leading-[15px] text-white font-medium">Казахстан</div>
+                            <div className="text-[12px] leading-[14px] text-white font-extralight"><a href="tel:+77273123437" className="text-[12px] leading-[14px] text-white font-extralight" itemProp="telephone">8-727-312-34-37</a></div>
+                            <div className="text-[12px] leading-[16px] text-white font-extralight"><a href="mailto:kz@promled.com">kz@promled.com</a></div>
                         </div>
                     </div>
                 </div>

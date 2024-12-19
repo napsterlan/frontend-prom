@@ -1,16 +1,32 @@
-import { AppProps } from 'next/app';
-import Layout from '../app/layout';
+import type { AppProps } from 'next/app';
+import { QueryClientProvider } from 'react-query';
+import queryClient from '../app/queryClient';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import '../app/globals.css';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import '../app/font.css';
 
-const queryClient = new QueryClient();
+const protectedPaths = ['/projects/edit', '/projects/add'];
 
-export default function MyApp({ Component, pageProps }: AppProps) {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
-    </QueryClientProvider>
+function MyApp({ Component, pageProps, router }: AppProps) {
+  const isProtectedRoute = protectedPaths.some(path => 
+    router.pathname.startsWith(path)
   );
-} 
+
+
+  const content = (
+    <QueryClientProvider client={queryClient}>
+      <Header />
+        <main className="">
+         <Component {...pageProps} />
+        </main>
+      <Footer />
+    </QueryClientProvider>
+      
+
+  );
+
+  return content;
+}
+
+export default MyApp; 
