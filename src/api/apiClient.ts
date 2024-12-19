@@ -75,22 +75,27 @@ export const getAllProjectCategories = async () => {
 };
 
 export const getProjectCategoryBySlug = async (slug: string) => {
-  const response = await apiClient.get(`/project-categories/${slug}`);
+  const response = await apiClient.get(`/projects-categories/${slug}`);
+  return response.data;
+};
+
+export const getProjectCategoryById = async (id: number) => {
+  const response = await apiClient.get(`/projects-categories/${id}`);
   return response.data;
 };
 
 export const createProjectCategory = async (categoryData: any) => {
-  const response = await apiClient.post('/project-categories', categoryData);
+  const response = await apiClient.post('/projects-categories', categoryData);
   return response.data;
 };
 
 export const updateProjectCategoryById = async (id: number, categoryData: any) => {
-  const response = await apiClient.put(`/project-categories/${id}`, categoryData);
+  const response = await apiClient.put(`/projects-categories/${id}`, categoryData);
   return response.data;
 };
 
 export const deleteProjectCategoryById = async (id: number) => {
-  const response = await apiClient.delete(`/project-categories/${id}`);
+  const response = await apiClient.delete(`/projects-categories/${id}`);
   return response.data;
 };
 

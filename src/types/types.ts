@@ -133,13 +133,18 @@ export interface ProductAttribute {
 }
 
 export interface ProjectCategory {
-    ProjectCategoryID: number;
-    Title: string;
+    ID: number;
+    Name: string;
     Description: string;
     ProjectCategoryChildren: {
         ProjectCategoryID: number;
         Title: string;
         fullPath: string;
+    }[];
+    Images: {
+        ID: number;
+        ImageURL: string;
+        AltText: string;
     }[];
     Projects: {
         ProjectID: number;
@@ -148,7 +153,7 @@ export interface ProjectCategory {
             ImageURL: string;
             AltText: string;
         }[];
-        fullPath: string;
+        Slug: string;
     }[];
     MetaTitle: string;
     MetaDescription: string;
@@ -157,6 +162,7 @@ export interface ProjectCategory {
     CreatedAt: string;
     UpdatedAt: string;
     DeletedAt: string | null;
+    Slug: string;
 }
 
 export interface Project {
@@ -166,6 +172,7 @@ export interface Project {
     ProjectsCategories: {
         CategoryID: number;
         Name: string;
+        Slug: string;
     }[];
     RelatedProducts: {
         ProductID: number;
@@ -193,6 +200,7 @@ export interface Project {
     MetaDescription: string;
     MetaKeyword: string;
     fullPath: string;
+    Slug: string;
     CreatedAt: string;
     UpdatedAt: string;
     DeletedAt: string | null;
