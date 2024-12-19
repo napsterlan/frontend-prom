@@ -1,32 +1,34 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { getProjectBySlug } from '@/api/apiClient'; // Импортируем функцию для получения данных проекта
 import { Project } from '@/types/types';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 
-export default function ProjectDetailPage() {
+export async function getServerSideProps(context: { params: { categorySlug: string; projectSlug: string } }) {
+  const categorySlug = context.params.categorySlug;
+  const projectSlug = context.params.projectSlug;
+  console.log(projectSlug);
+  
+  try {
+    const response = await getProjectBySlug(projectSlug);
+    console.log(projectSlug);
+    console.log(response);
+    
+    return {
+      props: {
+        project: response.data,
+      },
+    };
+  } catch (error) {
+    return {
+      notFound: true,
+    };
+  }
+}
+
+export default function ProjectDetailPage({ project }: { project: Project }) {
   const router = useRouter();
   const { categorySlug, projectSlug } = router.query;
-  const [project, setProject] = useState<Project | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchProject = async () => {
-      if (projectSlug) {
-        try {
-          const response = await getProjectBySlug(projectSlug as string);
-          setProject(response.data);
-        } catch (err) {
-          setError('Ошибка при загрузке данных проекта');
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchProject();
-  }, [projectSlug]);
 
   useEffect(() => {
     // Получаем существующие крошки из sessionStorage
@@ -43,9 +45,6 @@ export default function ProjectDetailPage() {
     
     sessionStorage.setItem('breadcrumbs', JSON.stringify(updatedBreadcrumbs));
   }, [project, categorySlug, projectSlug]);
-
-  if (loading) return <div>Загрузка...</div>;
-  if (error) return <div>{error}</div>;
 
   return (
     <div>
