@@ -7,6 +7,17 @@ const apiClient = axios.create({
   },
 });
 
+// Добавляем интерсептор для добавления токена в заголовки
+if (typeof window !== 'undefined') {
+  apiClient.interceptors.request.use((config) => {
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  });
+}
+
 // Категории
 export const getCategories = async () => {
   const response = await apiClient.get('/categories');
@@ -59,27 +70,32 @@ export const deleteNewsById = async (id: number) => {
 
 // Категории проектов
 export const getAllProjectCategories = async () => {
-  const response = await apiClient.get('/project-categories');
+  const response = await apiClient.get('/projects-categories');
   return response.data;
 };
 
 export const getProjectCategoryBySlug = async (slug: string) => {
-  const response = await apiClient.get(`/project-categories/${slug}`);
+  const response = await apiClient.get(`/projects-categories/${slug}`);
+  return response.data;
+};
+
+export const getProjectCategoryById = async (id: number) => {
+  const response = await apiClient.get(`/projects-categories/${id}`);
   return response.data;
 };
 
 export const createProjectCategory = async (categoryData: any) => {
-  const response = await apiClient.post('/project-categories', categoryData);
+  const response = await apiClient.post('/projects-categories', categoryData);
   return response.data;
 };
 
 export const updateProjectCategoryById = async (id: number, categoryData: any) => {
-  const response = await apiClient.put(`/project-categories/${id}`, categoryData);
+  const response = await apiClient.put(`/projects-categories/${id}`, categoryData);
   return response.data;
 };
 
 export const deleteProjectCategoryById = async (id: number) => {
-  const response = await apiClient.delete(`/project-categories/${id}`);
+  const response = await apiClient.delete(`/projects-categories/${id}`);
   return response.data;
 };
 
@@ -139,3 +155,59 @@ export const deleteInfoPageById = async (id: number) => {
   const response = await apiClient.delete(`/info-pages/${id}`);
   return response.data;
 };
+
+export const login = async (email: string, password: string) => {
+  const response = await apiClient.post('/login', {
+    email,
+    password
+  });
+  return response.data;
+};
+
+// Пользователи
+export const getAllUsers = async () => {
+  const response = await apiClient.get('/users');
+  return response.data;
+};
+
+export const getUserById = async (id: number) => {
+  const response = await apiClient.get(`/users/${id}`);
+  return response.data;
+};
+
+export const createUser = async (userData: any) => {
+  const response = await apiClient.post('/users', userData);
+  return response.data;
+};
+
+export const updateUserById = async (id: number, userData: any) => {
+  const response = await apiClient.put(`/users/${id}`, userData);
+  return response.data;
+};
+
+export const deleteUserById = async (id: number) => {
+  const response = await apiClient.delete(`/users/${id}`);
+  return response.data;
+};
+
+// Загрузка файлов
+export const uploadFiles = async (files: File[], path: string) => {
+  const formData = new FormData();
+  
+  // Добавляем файлы
+  files.forEach((file) => {
+    formData.append('files', file);
+  });
+  
+  // Добавляем путь
+  formData.append('path', path);
+
+  const response = await apiClient.post('/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  
+  return response.data;
+};
+

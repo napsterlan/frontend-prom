@@ -74,6 +74,7 @@ export interface Product {
     DealerPrice2?: number;
     DealerPrice3?: number;
     Images: {
+        ID: number;
         ImageURL: string;
         AltText: string;
     }[] | null;
@@ -132,13 +133,18 @@ export interface ProductAttribute {
 }
 
 export interface ProjectCategory {
-    ProjectCategoryID: number;
-    Title: string;
+    ID: number;
+    Name: string;
     Description: string;
     ProjectCategoryChildren: {
         ProjectCategoryID: number;
         Title: string;
         fullPath: string;
+    }[];
+    Images: {
+        ID: number;
+        ImageURL: string;
+        AltText: string;
     }[];
     Projects: {
         ProjectID: number;
@@ -147,7 +153,7 @@ export interface ProjectCategory {
             ImageURL: string;
             AltText: string;
         }[];
-        fullPath: string;
+        Slug: string;
     }[];
     MetaTitle: string;
     MetaDescription: string;
@@ -156,6 +162,7 @@ export interface ProjectCategory {
     CreatedAt: string;
     UpdatedAt: string;
     DeletedAt: string | null;
+    Slug: string;
 }
 
 export interface Project {
@@ -165,6 +172,7 @@ export interface Project {
     ProjectsCategories: {
         CategoryID: number;
         Name: string;
+        Slug: string;
     }[];
     RelatedProducts: {
         ProductID: number;
@@ -192,6 +200,7 @@ export interface Project {
     MetaDescription: string;
     MetaKeyword: string;
     fullPath: string;
+    Slug: string;
     CreatedAt: string;
     UpdatedAt: string;
     DeletedAt: string | null;
@@ -207,10 +216,19 @@ export interface BreadcrumbsState {
 }
 
 export interface User {
-    id: string;
-    email: string;
-    name: string;
-    role: 'user' | 'admin';
+    ID: number;
+    CreatedAt: string;
+    UpdatedAt: string;
+    DeletedAt: string | null;
+    Username: string;
+    Email: string;
+    Role: string;
+    FirstName: string;
+    LastName: string;
+    Phone: string;
+    Activated: boolean;
+    Status: boolean;
+    Company: string | null;
 }
 
 export interface AuthFormData {
@@ -220,12 +238,19 @@ export interface AuthFormData {
 }
 
 export interface Project {
-    id: string;
-    title: string;
-    description: string;
-    imageUrl: string;
-    createdAt: Date;
-    updatedAt: Date;
-    userId: string;
+    ID: number;
+    Title: string;
+    Description: string;
+    Images: {
+        ImageURL: string;
+        AltText: string;
+    }[];
+    CreatedAt: string;
+    UpdatedAt: string;
+    UserID: string;
     Slug: string;
+    ProjectCategories: {
+        CategoryID: number;
+        Name: string;
+    }[];
 }

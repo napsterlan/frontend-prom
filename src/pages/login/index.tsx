@@ -4,6 +4,8 @@ import Link from 'next/link';
 import type { AuthFormData } from '@/types/types';
 import { auth } from '@/utils/auth';
 
+import { login } from '@/api/apiClient';
+
 export default function LoginPage() {
   const router = useRouter();
   const [formData, setFormData] = useState<AuthFormData>({
@@ -16,11 +18,17 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
 
-    if (formData.email === 'admin@admin.com' && formData.password === 'admin123') {
-      auth.login('fake_token_12345');
-      router.push('/projects');
-    } else {
-      setError('Неверный логин или пароль');
+    try {
+      const data = await login(formData.email, formData.password);
+
+      if (data.success) {
+        auth.login(data.data.token);
+        router.push('/admin/projects');
+      } else {
+        setError('Неверный логин или пароль');
+      }
+    } catch (error) {
+      setError('Произошла ошибка при входе');
     }
   };
 
