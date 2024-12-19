@@ -69,11 +69,8 @@ export interface Product {
         ImageURL: string;
         AltText: string;
     }[] | null;
-    ProductAttributes: {
-        AttributeID: number;
-        Value: string;
-    }[] | null;
-    ProductFiles: {
+    ProductAttributes: ProductAttribute[] | null;
+    Files: {
         FileURL: string;
         FileName: string;
     }[] | null;
