@@ -74,6 +74,7 @@ export interface Product {
     DealerPrice2?: number;
     DealerPrice3?: number;
     Images: {
+        ID: number;
         ImageURL: string;
         AltText: string;
     }[] | null;
@@ -232,7 +233,7 @@ export interface Project {
     ID: number;
     Title: string;
     Description: string;
-    ProjectImages: {
+    Images: {
         ImageURL: string;
         AltText: string;
     }[];
@@ -240,4 +241,8 @@ export interface Project {
     UpdatedAt: string;
     UserID: string;
     Slug: string;
+    ProjectCategories: {
+        CategoryID: number;
+        Name: string;
+    }[];
 }

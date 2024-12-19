@@ -174,7 +174,6 @@ const lightboxConfig = {
 };
 
 export default function ProductPage({ initialProductData }: ProductPageProps) {
-  const router = useRouter();
   const [productData, setProductData] = useState<Product | null>(initialProductData);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -8,13 +8,15 @@ const apiClient = axios.create({
 });
 
 // Добавляем интерсептор для добавления токена в заголовки
-apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+if (typeof window !== 'undefined') {
+  apiClient.interceptors.request.use((config) => {
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  });
+}
 
 // Категории
 export const getCategories = async () => {
@@ -68,7 +70,7 @@ export const deleteNewsById = async (id: number) => {
 
 // Категории проектов
 export const getAllProjectCategories = async () => {
-  const response = await apiClient.get('/project-categories');
+  const response = await apiClient.get('/projects-categories');
   return response.data;
 };
 
@@ -182,3 +184,25 @@ export const deleteUserById = async (id: number) => {
   const response = await apiClient.delete(`/users/${id}`);
   return response.data;
 };
+
+// Загрузка файлов
+export const uploadFiles = async (files: File[], path: string) => {
+  const formData = new FormData();
+  
+  // Добавляем файлы
+  files.forEach((file) => {
+    formData.append('files', file);
+  });
+  
+  // Добавляем путь
+  formData.append('path', path);
+
+  const response = await apiClient.post('/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  
+  return response.data;
+};
+
