@@ -7,13 +7,12 @@ import { Breadcrumbs } from '@/components/Breadcrumbs';
 export async function getServerSideProps(context: { params: { categorySlug: string; projectSlug: string } }) {
   const categorySlug = context.params.categorySlug;
   const projectSlug = context.params.projectSlug;
-  console.log(projectSlug);
+  
   
   try {
     const response = await getProjectBySlug(projectSlug);
-    console.log(projectSlug);
-    console.log(response);
     
+    console.log(response.data);
     return {
       props: {
         project: response.data,
@@ -50,7 +49,7 @@ export default function ProjectDetailPage({ project }: { project: Project }) {
     <div>
       <Breadcrumbs />
       <div className="w-full">
-        <img src={project?.ProjectImages[0].ImageURL} alt={project?.ProjectImages[0].AltText} className="w-full h-auto" />
+        <img src={project?.Images[0].ImageURL} alt={project?.Images[0].AltText} className="w-full h-auto" />
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
