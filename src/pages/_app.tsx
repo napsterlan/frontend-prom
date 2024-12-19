@@ -4,6 +4,7 @@ import queryClient from '../app/queryClient';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../app/globals.css';
+import '../app/font.css';
 
 const protectedPaths = ['/projects/edit', '/projects/add'];
 
@@ -12,10 +13,11 @@ function MyApp({ Component, pageProps, router }: AppProps) {
     router.pathname.startsWith(path)
   );
 
+
   const content = (
     <QueryClientProvider client={queryClient}>
       <Header />
-        <main className="max-w-[1200px] mx-auto px-4">
+        <main className="">
          <Component {...pageProps} />
         </main>
       <Footer />
