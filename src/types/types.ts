@@ -79,7 +79,7 @@ export interface Product {
         AltText: string;
     }[] | null;
     ProductAttributes: ProductAttribute[] | null;
-    ProductFiles: {
+    Files: {
         FileURL: string;
         FileName: string;
     }[] | null;
