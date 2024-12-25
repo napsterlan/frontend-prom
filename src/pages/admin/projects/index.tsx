@@ -2,6 +2,7 @@ import { deleteProjectById, getAllProjects } from '@/api/apiClient';
 import { Project } from '@/types/types';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 
 export const getServerSideProps = async () => {
   let projects = [];
@@ -22,14 +23,16 @@ export const getServerSideProps = async () => {
   };
 };
 
-export default function ProjectsPage({ projects, error }: { projects: Project[], error: string | null }) {
+export default function ProjectsPage({ projects: initialProjects, error }: { projects: Project[], error: string | null }) {
+  const [projects, setProjects] = useState(initialProjects);
   const router = useRouter();
+
   const handleDelete = async (projectId: number) => {
     if (confirm('Вы уверены, что хотите удалить этот проект?')) {
       try {
         await deleteProjectById(projectId);
         // Обновляем список проектов после удаления
-        projects = projects.filter(p => Number(p.ID) !== projectId);
+        setProjects(projects.filter(p => Number(p.ID) !== projectId));
       } catch (error) {
         console.error('Ошибка при удалении проекта:', error);
       }
@@ -58,6 +61,7 @@ export default function ProjectsPage({ projects, error }: { projects: Project[],
           <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
             <th className="py-3 px-6 text-left">Фото</th>
             <th className="py-3 px-6 text-left">Название</th>
+            <th className="py-3 px-6 text-left">Дата публикации</th>
             <th className="py-3 px-6 text-right">Действия</th>
           </tr>
         </thead>
@@ -72,23 +76,22 @@ export default function ProjectsPage({ projects, error }: { projects: Project[],
                 />
               </td>
               <td className="py-3 px-6">{project.Title}</td>
+              <td className="py-3 px-6">{new Date(project.PublishDate || '').toLocaleString('ru-RU', { dateStyle: 'full', timeStyle: 'short' })}</td>
               <td className="py-3 px-6 text-right">
- 
-                  <>
-                    <Link
-                      href={`/admin/projects/edit/${project.ID}`}
-                      className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2"
-                    >
-                      Редактировать
-                    </Link>
-                    <button 
-                      onClick={() => handleDelete(project.ID)} 
-                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                    >
-                      Удалить
-                    </button>
-                  </>
-              
+                <>
+                  <Link
+                    href={`/admin/projects/edit/${project.Slug}`}
+                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2"
+                  >
+                    Редактировать
+                  </Link>
+                  <button 
+                    onClick={() => handleDelete(project.ID)} 
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                  >
+                    Удалить
+                  </button>
+                </>
               </td>
             </tr>
           ))}

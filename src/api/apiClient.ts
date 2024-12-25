@@ -79,11 +79,6 @@ export const getProjectCategoryBySlug = async (slug: string) => {
   return response.data;
 };
 
-export const getProjectCategoryById = async (id: number) => {
-  const response = await apiClient.get(`/projects-categories/${id}`);
-  return response.data;
-};
-
 export const createProjectCategory = async (categoryData: any) => {
   const response = await apiClient.post('/projects-categories', categoryData);
   return response.data;
@@ -107,11 +102,6 @@ export const getAllProjects = async () => {
 
 export const getProjectBySlug = async (slug: string) => {
   const response = await apiClient.get(`/projects/${slug}`);
-  return response.data;
-};
-
-export const getProjectById = async (id: number) => {
-  const response = await apiClient.get(`/projects/${id}`);
   return response.data;
 };
 
@@ -191,6 +181,26 @@ export const deleteUserById = async (id: number) => {
 };
 
 // Загрузка файлов
+export const uploadImages = async (files: File[], path: string) => {
+  const formData = new FormData();
+  
+  // Добавляем файлы
+  files.forEach((file) => {
+    formData.append('files', file);
+  });
+  
+  // Добавляем путь
+  formData.append('path', path);
+
+  const response = await apiClient.post('/images', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  
+  return response.data;
+};
+// Загрузка файлов
 export const uploadFiles = async (files: File[], path: string) => {
   const formData = new FormData();
   
@@ -202,7 +212,7 @@ export const uploadFiles = async (files: File[], path: string) => {
   // Добавляем путь
   formData.append('path', path);
 
-  const response = await apiClient.post('/upload', formData, {
+  const response = await apiClient.post('/files', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

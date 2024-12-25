@@ -15,9 +15,17 @@ export const getServerSideProps = async () => {
   return { props: { categories, error } };
 };
 
-const handleDelete = (id: number) => {
-  deleteProjectCategoryById(id);
-  console.log(`Удаление категории с ID: ${id}`);
+const handleDelete = async (id: number) => {
+  if (window.confirm('Вы уверены, что хотите удалить эту категорию?')) {
+    try {
+      await deleteProjectCategoryById(id);
+      console.log(`Удаление категории с ID: ${id}`);
+      window.location.reload(); // Обновление страницы после успешного удаления
+    } catch (error) {
+      console.error('Ошибка при удалении категории:', error);
+      alert('Произошла ошибка при удалении категории');
+    }
+  }
 };
 
 const ProjectCategoriesList = ({ categories }: { categories: ProjectCategory[] }) => {
@@ -61,7 +69,7 @@ const ProjectCategoriesList = ({ categories }: { categories: ProjectCategory[] }
      
                       <>
                         <Link
-                          href={`/admin/projectCategories/edit/${category.ID}`}
+                          href={`/admin/projectCategories/edit/${category.Slug}`}
                           className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2"
                         >
                           Редактировать
