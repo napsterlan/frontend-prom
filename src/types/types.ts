@@ -223,6 +223,7 @@ export interface Project {
     UpdatedAt: string;
     DeletedAt: string | null;
     PublishDate: string | null;
+    CategoriesID: number[];
 }
 
 export interface Breadcrumb {

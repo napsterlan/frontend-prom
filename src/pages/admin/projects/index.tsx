@@ -70,8 +70,8 @@ export default function ProjectsPage({ projects: initialProjects, error }: { pro
             <tr key={project.ID} className="border-b border-gray-200 hover:bg-gray-100">
               <td className="py-3 px-6">
                 <img 
-                  src={project.Images.length > 0 ? project.Images[0].ImageURL : '/placeholder.png'} 
-                  alt={project.Images.length > 0 ? project.Images[0].AltText : 'Заглушка'} 
+                  src={project.Images.length > 0 ? project.Images.reduce((prev, curr) => (prev.Order < curr.Order ? prev : curr)).ImageURL : '/placeholder.png'} 
+                  alt={project.Images.length > 0 ? project.Images.reduce((prev, curr) => (prev.Order < curr.Order ? prev : curr)).AltText : 'Заглушка'} 
                   className="w-16 h-16 object-cover" 
                 />
               </td>

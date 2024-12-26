@@ -12,6 +12,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { transliterate } from '@/utils/transliterate';
 
 // Функция для получения данных на сервере
 export const getServerSideProps = async (context: { params: { slug: string } }) => {
@@ -24,8 +25,9 @@ export const getServerSideProps = async (context: { params: { slug: string } }) 
     categories = categoriesResponse.data;
 
     const response = await getProjectBySlug(slug);
-    project = response.data; // Получаем данные проекта
+    project = response.data; // Получаем данные проекта из базы данных
     console.log(project);
+
   } catch (error) {
     console.error('Ошибка загрузки проекта:', error);
   }
@@ -112,7 +114,7 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
     metaTitle: string;
     metaDescription: string;
     metaKeyword: string;
-    ProjectCategories: number[];
+    CategoriesID: number[];
     Slug: string;
     relatedProducts: any[];
     existingImages: Array<{
@@ -131,13 +133,18 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
     metaTitle: project.MetaTitle || '',
     metaDescription: project.MetaDescription || '',
     metaKeyword: project.MetaKeyword || '',
-    ProjectCategories: project.ProjectsCategories?.map((cat: any) => cat.ID) || [],
+    CategoriesID: project.ProjectsCategories?.map((cat: any) => cat.ID) || [],
     Slug: project.Slug || '',
     relatedProducts: project.RelatedProducts || [],
-    existingImages: (project.Images || []).map((img, index) => ({
-      ...img,
-      Order: img.Order || index
-    })).sort((a, b) => a.Order - b.Order),
+    existingImages: (project.Images || [])
+      .map((img, index) => ({
+        ...img,
+        Order: typeof img.Order === 'number' ? img.Order : index,
+        ID: img.ID || undefined,
+        ImageURL: img.ImageURL || '',
+        AltText: img.AltText || ''
+      }))
+      .sort((a, b) => (a.Order ?? 0) - (b.Order ?? 0)),
     newImages: [],
     deletedImages: [],
     PublishDate: null,
@@ -225,7 +232,7 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
       if (formData.newImages.length > 0) {
         const uploadResponse = await uploadImages(
           formData.newImages,
-          `/projects/${formData.title}`
+          `/projects/${transliterate(formData.title)}`
         );
         
         uploadedImages = formData.existingImages
@@ -236,10 +243,10 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
             Order: img.Order
           }));
       }
-
+    
       const projectData = {
         Title: formData.title,
-        ProjectCategories: formData.ProjectCategories,
+        CategoriesID: formData.CategoriesID,
         Description: editorContent,
         MetaTitle: formData.metaTitle,
         MetaDescription: formData.metaDescription,
@@ -266,7 +273,7 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
       }
     } catch (error) {
       console.error('Ошибка обновления проекта:', error);
-      alert('Произошла ошибка при обновлении проекта');
+      alert('Произошла ошибка при обновлени�� проекта');
     }
   };
 
@@ -366,12 +373,12 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
                         <input
                           type="checkbox"
                           id={`category-${category.ID}`}
-                          checked={formData.ProjectCategories.includes(category.ID)}
+                          checked={formData.CategoriesID.includes(category.ID)}
                           onChange={() => {
-                            const newCategories = formData.ProjectCategories.includes(category.ID)
-                              ? formData.ProjectCategories.filter((id) => id !== category.ID)
-                              : [...formData.ProjectCategories, category.ID];
-                            setFormData({ ...formData, ProjectCategories: newCategories });
+                            const newCategories = formData.CategoriesID.includes(category.ID)
+                              ? formData.CategoriesID.filter((id) => id !== category.ID)
+                              : [...formData.CategoriesID, category.ID];
+                            setFormData({ ...formData, CategoriesID: newCategories });
                           }}
                           className="mr-2"
                         />
@@ -409,15 +416,6 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
                       className="w-full p-2 border rounded"
                       value={formData.metaKeyword}
                       onChange={(e) => setFormData({ ...formData, metaKeyword: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <label className="block mb-2">SEO URL</label>
-                    <input
-                      type="text"
-                      className="w-full p-2 border rounded"
-                      value={formData.Slug}
-                      onChange={(e) => setFormData({ ...formData, Slug: e.target.value })}
                     />
                   </div>
                 </div>
