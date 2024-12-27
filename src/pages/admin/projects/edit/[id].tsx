@@ -1,56 +1,95 @@
 import { useState } from 'react';
+import { updateProjectById, uploadFiles } from '@/api/apiClient';
+import { getAllProjectCategories, getProjectById } from '@/api/apiClient';
 import { useRouter } from 'next/router';
-import { getProjectById, updateProjectById } from '../../../../api/apiClient';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import minioClient from '@/utils/minioClient';
+import { ProjectCategory } from '@/types/types';
+import { Project } from '@/types/types';
 
-const EditProject = ({ project }: { project: any }) => {
+// Функция для получения данных на сервере
+export const getServerSideProps = async (context: { params: { id: number } }) => {
+  const { id } = context.params;
+  let project = {};
+  let categories = [];
+  
+  try {
+    const categoriesResponse = await getAllProjectCategories();
+    categories = categoriesResponse.data;
+
+    const response = await getProjectById(Number(id));
+    project = response.data; // Получаем данные проекта
+    console.log(project);
+  } catch (error) {
+    console.error('Ошибка загрузки проекта:', error);
+  }
+
+  return {
+    props: {
+      project, // Передаем данные проекта в компонент
+      categories, // Передаем данные категорий в компонент
+    },
+  };
+};
+
+const EditProject = ({ project, categories }: { project: Project, categories: ProjectCategory[] }) => {
   const router = useRouter();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string;
+    description: string;
+    metaTitle: string;
+    metaDescription: string;
+    metaKeyword: string;
+    ProjectCategories: any[];
+    Slug: string;
+    relatedProducts: any[];
+    existingImages: any[];
+    newImages: File[];
+    deletedImageIds: number[];
+  }>({
     title: project.Title || '',
     description: project.Description || '',
     metaTitle: project.MetaTitle || '',
     metaDescription: project.MetaDescription || '',
     metaKeyword: project.MetaKeyword || '',
+    ProjectCategories: project.ProjectCategories || [],
     Slug: project.Slug || '',
-    relatedProducts: project.RelatedProducts || '',
-    projectImages: (project.ProjectImages || []).map((img: any) => ({
-      ImageURL: img.ImageURL,
-      AltText: img.AltText,
-    })) || [],
+    relatedProducts: project.RelatedProducts || [],
+    existingImages: project.Images || [],
+    newImages: [],
+    deletedImageIds: [],
   });
+
+  const handleImageDelete = (index: number, isExisting: boolean) => {
+    if (isExisting) {
+      const imageToDelete = formData.existingImages[index];
+      setFormData({
+        ...formData,
+        existingImages: formData.existingImages.filter((_, i) => i !== index),
+        deletedImageIds: [...formData.deletedImageIds, imageToDelete.ID]
+      });
+    } else {
+      setFormData({
+        ...formData,
+        newImages: formData.newImages.filter((_, i) => i !== index)
+      });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Отправляемые данные:', formData);
     try {
-      const uploadedImages = await Promise.all(
-        (formData.projectImages || []).map(async (file: any) => {
-          const imageBuffer = await file.arrayBuffer();
-
-          // Функция для отправки изображения в MinIO
-          const uploadImageToMinIO = async (file: File): Promise<string> => {
-            const objectName = `projects/${formData.title}/${file.name}`;
-            
-            await minioClient.putObject(
-              'promled-website-test',
-              objectName,
-              Buffer.from(imageBuffer)
-            );
-
-            // Получаем временный URL, который истекает через 7 дней
-            const url = await minioClient.presignedGetObject(
-              'promled-website-test',
-              objectName,
-              7 * 24 * 60 * 60
-            );
-
-            return url;
-          };
-
-          return { ImageURL: await uploadImageToMinIO(file), AltText: file.name };
-        })
-      );
+      // Загружаем только новые файлы
+      let uploadedImages = [];
+      if (formData.newImages.length > 0) {
+        const uploadResponse = await uploadFiles(
+          formData.newImages,
+          `/projects/${formData.title}`
+        );
+        uploadedImages = uploadResponse.filePaths.map((imageUrl: string) => ({
+          ImageURL: imageUrl,
+          AltText: '',
+        }));
+      }
 
       const projectData = {
         Title: formData.title,
@@ -61,7 +100,15 @@ const EditProject = ({ project }: { project: any }) => {
         MetaKeyword: formData.metaKeyword,
         Slug: formData.Slug || formData.title.replace(/\s+/g, '-').toLowerCase() || '',
         RelatedProducts: formData.relatedProducts,
-        ProjectImages: uploadedImages,
+        ProjectImages: [
+          ...formData.existingImages.map(img => ({
+            ID: img.ID,
+            ImageURL: img.ImageURL,
+            AltText: img.AltText
+          })),
+          ...uploadedImages
+        ],
+        deletedImageIds: formData.deletedImageIds
       };
 
       const response = await updateProjectById(Number(router.query.id), projectData);
@@ -108,38 +155,28 @@ const EditProject = ({ project }: { project: any }) => {
                     onClick={() => handleImageDelete(index, true)}
                     className="absolute top-0 right-0 bg-red-500 text-white w-8 h-8"
                   >
-                    {formData.projectImages.map((file: any, index: any) => (
-                      <Draggable key={index} draggableId={`draggable-${index}`} index={index}>
-                        {(provided: any) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className="relative w-48 h-48 m-2"
-                          >
-                            <img
-                              src={URL.createObjectURL(file)}
-                              alt={`Изображение ${index + 1}`}
-                              className="w-full h-full object-cover rounded"
-                            />
-                            <button
-                              onClick={() => {
-                                const updatedImages = formData.projectImages.filter((_: any, i: any) => i !== index);
-                                setFormData({ ...formData, projectImages: updatedImages });
-                              }}
-                              className="absolute top-0 right-0 bg-red-500 text-white w-8 h-8"
-                            >
-                              &times;
-                            </button>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
+                    &times;
+                  </button>
+                </div>
+              ))}
+              
+              {/* Новые изображения */}
+              {formData.newImages.map((file: File, index: number) => (
+                <div key={`new-${index}`} className="relative w-48 h-48 m-2">
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={`Новое изображение ${index + 1}`}
+                    className="w-full h-full object-cover rounded"
+                  />
+                  <button
+                    onClick={() => handleImageDelete(index, false)}
+                    className="absolute top-0 right-0 bg-red-500 text-white w-8 h-8"
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <div className="w-1/2 p-4">
@@ -229,27 +266,6 @@ const EditProject = ({ project }: { project: any }) => {
       </div>
     </div>
   );
-};
-
-// Функция для получения данных на сервере
-export const getServerSideProps = async (context: any) => {
-  const { id } = context.params;
-  let project = {};
-  console.log(id);
-
-  try {
-    const response = await getProjectById(Number(id));
-    project = response.data; // Получаем данные проекта
-    console.log(project);
-  } catch (error) {
-    console.error('Ошибка загрузки проекта:', error);
-  }
-
-  return {
-    props: {
-      project, // Передаем данные проекта в компонент
-    },
-  };
 };
 
 export default EditProject;

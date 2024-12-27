@@ -82,6 +82,7 @@ export interface Product {
     Files: {
         FileURL: string;
         FileName: string;
+        FileType: string;
     }[] | null;
     RelatedProjects: {
         ProjectID: number;

@@ -53,12 +53,12 @@ export const getNewsBySlug = async (slug: string) => {
   return response.data;
 };
 
-export const createNews = async (newsData: any) => {
+export const createNews = async (newsData: object) => {
   const response = await apiClient.post('/news', newsData);
   return response.data;
 };
 
-export const updateNewsById = async (id: number, newsData: any) => {
+export const updateNewsById = async (id: number, newsData: object) => {
   const response = await apiClient.put(`/news/${id}`, newsData);
   return response.data;
 };
@@ -84,12 +84,12 @@ export const getProjectCategoryById = async (id: number) => {
   return response.data;
 };
 
-export const createProjectCategory = async (categoryData: any) => {
+export const createProjectCategory = async (categoryData: object) => {
   const response = await apiClient.post('/projects-categories', categoryData);
   return response.data;
 };
 
-export const updateProjectCategoryById = async (id: number, categoryData: any) => {
+export const updateProjectCategoryById = async (id: number, categoryData: object) => {
   const response = await apiClient.put(`/projects-categories/${id}`, categoryData);
   return response.data;
 };
@@ -115,12 +115,12 @@ export const getProjectById = async (id: number) => {
   return response.data;
 };
 
-export const createProject = async (projectData: any) => {
+export const createProject = async (projectData: object) => {
   const response = await apiClient.post('/projects', projectData);
   return response.data;
 };
 
-export const updateProjectById = async (id: number, projectData: any) => {
+export const updateProjectById = async (id: number, projectData: object) => {
   const response = await apiClient.put(`/projects/${id}`, projectData);
   return response.data;
 };
@@ -141,12 +141,12 @@ export const getInfoPageBySlug = async (slug: string) => {
   return response.data;
 };
 
-export const createInfoPage = async (pageData: any) => {
+export const createInfoPage = async (pageData: object) => {
   const response = await apiClient.post('/info-pages', pageData);
   return response.data;
 };
 
-export const updateInfoPageById = async (id: number, pageData: any) => {
+export const updateInfoPageById = async (id: number, pageData: object) => {
   const response = await apiClient.put(`/info-pages/${id}`, pageData);
   return response.data;
 };
@@ -175,12 +175,12 @@ export const getUserById = async (id: number) => {
   return response.data;
 };
 
-export const createUser = async (userData: any) => {
+export const createUser = async (userData: object) => {
   const response = await apiClient.post('/users', userData);
   return response.data;
 };
 
-export const updateUserById = async (id: number, userData: any) => {
+export const updateUserById = async (id: number, userData: object) => {
   const response = await apiClient.put(`/users/${id}`, userData);
   return response.data;
 };
