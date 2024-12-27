@@ -37,7 +37,7 @@ export const Breadcrumbs = () => {
   };
 
   return (
-    <nav className="flex gap-2 pt-[2px] px-[15%] justify-end bg-[#e9e9e9]">
+    <nav className="flex gap-2 pt-[2px] px-[15%] justify-end bg-[#e9e9e9]/25">
       <div>
         <div className="flex gap-2 ml-[10px]">
           <Link href="/" className="hover:text-gray-600">
