@@ -194,6 +194,7 @@ export interface Project {
         fullPath: string;
     }[];
     ProjectImages: {
+        ID: number;
         ImageURL: string;
         AltText: string;
     }[];
@@ -205,6 +206,32 @@ export interface Project {
     CreatedAt: string;
     UpdatedAt: string;
     DeletedAt: string | null;
+}
+
+export interface ProjectFormData {
+    title: string;
+    description: string;
+    metaTitle: string;
+    metaDescription: string;
+    metaKeyword: string;
+    ProjectCategories: { CategoryID: number; Name: string; }[];
+    Slug: string;
+    relatedProducts: { 
+        ProductID: number; 
+        Name: string; 
+        ProductImages: { 
+            ImageURL: string; 
+            AltText: string; 
+        }[]; 
+        fullPath: string; 
+    }[];
+    existingImages: {
+        ID: number;
+        ImageURL: string;
+        AltText: string;
+    }[];
+    newImages: File[];
+    deletedImageIds: number[];
 }
 
 export interface Breadcrumb {

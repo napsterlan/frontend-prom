@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { updateProjectById, uploadFiles } from '@/api/apiClient';
 import { getAllProjectCategories, getProjectById } from '@/api/apiClient';
 import { useRouter } from 'next/router';
-import { ProjectCategory } from '@/types/types';
-import { Project } from '@/types/types';
+import { ProjectCategory, Project, ProjectFormData } from '@/types/types';
+import Image from 'next/image';
 
 // Функция для получения данных на сервере
 export const getServerSideProps = async (context: { params: { id: number } }) => {
@@ -32,19 +32,7 @@ export const getServerSideProps = async (context: { params: { id: number } }) =>
 
 const EditProject = ({ project, categories }: { project: Project, categories: ProjectCategory[] }) => {
   const router = useRouter();
-  const [formData, setFormData] = useState<{
-    title: string;
-    description: string;
-    metaTitle: string;
-    metaDescription: string;
-    metaKeyword: string;
-    ProjectCategories: any[];
-    Slug: string;
-    relatedProducts: any[];
-    existingImages: any[];
-    newImages: File[];
-    deletedImageIds: number[];
-  }>({
+  const [formData, setFormData] = useState<ProjectFormData>({
     title: project.Title || '',
     description: project.Description || '',
     metaTitle: project.MetaTitle || '',
@@ -53,7 +41,9 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
     ProjectCategories: project.ProjectCategories || [],
     Slug: project.Slug || '',
     relatedProducts: project.RelatedProducts || [],
-    existingImages: project.Images || [],
+    // Сохраняем существующие изображения проекта из пропса project.Images
+    // Если изображений нет (project.Images === undefined/null), используем пустой массив []
+    existingImages: project.ProjectImages || [],
     newImages: [],
     deletedImageIds: [],
   });
@@ -144,11 +134,13 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
             </label>
             <div className="flex flex-wrap mt-2">
               {/* Существующие изображения */}
-              {formData.existingImages.map((file: any, index: number) => (
+              {formData.existingImages.map((file, index: number) => (
                 <div key={`existing-${index}`} className="relative w-48 h-48 m-2">
-                  <img
+                  <Image
                     src={file.ImageURL}
                     alt={file.AltText || `Изображение ${index + 1}`}
+                    width={192}
+                    height={192}
                     className="w-full h-full object-cover rounded"
                   />
                   <button
@@ -163,9 +155,11 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
               {/* Новые изображения */}
               {formData.newImages.map((file: File, index: number) => (
                 <div key={`new-${index}`} className="relative w-48 h-48 m-2">
-                  <img
+                  <Image
                     src={URL.createObjectURL(file)}
                     alt={`Новое изображение ${index + 1}`}
+                    width={192}
+                    height={192}
                     className="w-full h-full object-cover rounded"
                   />
                   <button

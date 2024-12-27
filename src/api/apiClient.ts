@@ -81,6 +81,7 @@ export const getProjectCategoryBySlug = async (slug: string) => {
 
 export const getProjectCategoryById = async (id: number) => {
   const response = await apiClient.get(`/projects-categories/${id}`);
+//   console.log(`/projects-categories/${id}`);
   return response.data;
 };
 

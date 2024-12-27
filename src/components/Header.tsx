@@ -4,15 +4,16 @@ import { auth } from '@/utils/auth';
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons'
+import Image from 'next/image';
 
 export default function Header() {
     const router = useRouter();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isSticky, setIsSticky] = useState(false);
     const [showCatalog, setShowCatalog] = useState(false);
-    const [isProductLightboxOpen, setIsProductLightboxOpen] = useState(false);
-    const [isDrawingLightboxOpen, setIsDrawingLightboxOpen] = useState(false);
-    const [isDistributionLightboxOpen, setIsDistributionLightboxOpen] = useState(false);
+    const [isProductLightboxOpen] = useState(false);
+    const [isDrawingLightboxOpen] = useState(false);
+    const [isDistributionLightboxOpen] = useState(false);
 
     useEffect(() => {
         setIsAuthenticated(auth.isAuthenticated());
@@ -26,7 +27,7 @@ export default function Header() {
             if (!navigationElement) return;
 
             const navigationRect = navigationElement.getBoundingClientRect();
-            const scrollPosition = window.scrollY;
+            // const scrollPosition = window.scrollY;
 
             // Если блок fakebox существует, проверяем его позицию
             if (fakeboxElement) {
@@ -160,7 +161,7 @@ export default function Header() {
             >
                 <div className="bg-[rgba(255,255,255)] h-[80px] flex justify-center">
                     <div className="justify-end flex items-center pr-8">
-                        <img src="/promled.svg" alt="Логотип" className="transition-all duration-300 h-[40px]" />
+                        <Image src="/promled.svg" alt="Логотип" width={120} height={40} className="transition-all duration-300 h-[40px]" />
                     </div>
                     <div className="justify-start flex items-center">
                         <ul className="flex justify-start space-x-4 text-black items-center font-commissioner">
@@ -210,12 +211,20 @@ export default function Header() {
                             </li>
 
                             {isAuthenticated ? (
-                                <li>
-                                    <Link href="/account" className=" relative flex items-center">
-                                        <div className=' z-10 w-10 h-10 flex items-center justify-center border-3 rounded-full border-PLGreen bg-white'>
+                                <li className="relative group">
+                                    <Link href="/account" className="relative flex items-center">
+                                        <div className='z-10 w-10 h-10 flex items-center justify-center border-3 rounded-full border-PLGreen bg-white'>
                                             <FontAwesomeIcon className='text-base z-10' icon={faUser} width={14} height={16} />
                                         </div>
                                     </Link>
+                                    <div className="absolute right-0 hidden group-hover:block mt-2">
+                                        <button
+                                            onClick={handleLogout}
+                                            className="bg-white border border-gray-200 rounded-md py-2 px-4 text-sm text-gray-700 hover:bg-gray-50 shadow-md"
+                                        >
+                                            Выйти
+                                        </button>
+                                    </div>
                                 </li>
                             ) : (
                                 <li className='relative'>

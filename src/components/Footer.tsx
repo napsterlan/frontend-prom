@@ -42,7 +42,7 @@ export default function Footer() {
           </form>
         </div>
         <div className="text-center">
-          <p>&copy; {new Date().getFullYear()} ООО "Пром-Свет". Все права защищены.</p>
+          <p>&copy; {new Date().getFullYear()} ООО &quot;Пром-Свет&quot;. Все права защищены.</p>
         </div>
       </div>
     </footer>

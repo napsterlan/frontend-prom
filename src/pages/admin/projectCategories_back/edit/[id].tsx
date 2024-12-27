@@ -13,7 +13,7 @@ const EditProjectCategory = ({ category }: { category: ProjectCategory }) => {
   const router = useRouter();
   const { id } = router.query;
   const [name, setName] = useState('');
-
+  console.log( category);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     await updateProjectCategoryById(Number(id), { Name: name });

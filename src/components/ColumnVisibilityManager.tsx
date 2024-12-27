@@ -20,14 +20,14 @@ interface ColumnVisibilityManagerProps {
   visibleColumns: ColumnVisibility;
   onColumnToggle: (column: keyof ColumnVisibility) => void;
   onReset: () => void;
-  Category: string;
+//   Category: string;
 }
 
 export const ColumnVisibilityManager = ({ 
   visibleColumns, 
   onColumnToggle,
   onReset,
-  Category 
+//   Category 
 }: ColumnVisibilityManagerProps) => {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
