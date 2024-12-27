@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Breadcrumb, Product, ProductAttribute } from '@/types/types';
 import Image from 'next/image';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
@@ -11,33 +10,39 @@ import "yet-another-react-lightbox/plugins/thumbnails.css";
 import { auth } from '@/utils/auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { getProductBySlug } from '@/api/apiClient';
 
 interface ProductPageProps {
     initialProductData: Product | null;
 }
 // Экспортируем асинхронную функцию getServerSideProps, которая будет вызываться на сервере перед рендерингом страницы
 export async function getServerSideProps({ params }: { params: { productSlug: string } }) {
-    // Проверяем, существует ли параметр productSlug в объекте params
-    if (!params?.productSlug) {
-        // Если productSlug отсутствует, выводим сообщение в консоль
-        console.log('productSlug отсутствует');
-        // Возвращаем объект с полем notFound, чтобы указать, что страница не найдена
-        return {
-            notFound: true,
-        };
+  // Проверяем, существует ли параметр productSlug в объекте params
+  if (!params?.productSlug) {
+    // Если productSlug отсутствует, выводим сообщение в консоль
+    console.log('productSlug отсутствует');
+    // Возвращаем объект с полем notFound, чтобы указать, что страница не найдена
+    return {
+      notFound: true,
+    };
+  }
+
+  try {
+    const response = await getProductBySlug(params.productSlug);
+    if (!response || !response.data) {
+      console.log('Данные продукта отсутствуют');
+      return {
+        notFound: true,
+      };
     }
 
-    try {
-        const response = await axios.get(`http://192.168.31.40:4000/api/product/${params.productSlug}`);
-        const productData = response.data;
-        if (!productData || !productData.data) {
-            console.log('Данные продукта отсутствуют');
-            return {
-                notFound: true,
-            };
-        } else {
-            console.log(productData.data);
-        }
+    return {
+      props: {
+        initialProductData: { 
+          ...response.data, 
+        },
+      },
+    };
 
 
         return {

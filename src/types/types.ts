@@ -14,9 +14,11 @@ export interface Category {
     CreatedAt: string;
     UpdatedAt: string;
     DeletedAt: string | null;
-    CategoryImages: {
-        image_url: string;
-        alt_text: string;
+    Images: {
+        ID: number;
+        ImageURL: string;
+        AltText: string;
+        Order: number;
     }[] | null;
     ChildrenCategories: Category[] | null;
     ProductView: ProductView[] | null;
@@ -63,7 +65,7 @@ export interface Response {
 }
 
 export interface Product {
-    ProductID: number;
+    ID: number;
     Name: string;
     Article: string;
     SKU: string;
@@ -77,42 +79,50 @@ export interface Product {
         ID: number;
         ImageURL: string;
         AltText: string;
+        Order: number;
     }[] | null;
     ProductAttributes: ProductAttribute[] | null;
+    Files: {
     Files: {
         FileURL: string;
         FileName: string;
         FileType: string;
     }[] | null;
     RelatedProjects: {
-        ProjectID: number;
+        ID: number;
         Title: string;
-        ProjectImages: {
+        Images: {
+            ID: number;
             ImageURL: string;
-            altText: string;
+            AltText: string;
+            Order: number;
         }[];
         fullPath: string;
     }[] | null;
     RelatedNews: {
-        NewsID: number;
+        ID: number;
         Title: string;
-        NewsImages: {
+        Images: {
+            ID: number;
             ImageURL: string;
-            altText: string;
+            AltText: string;
+            Order: number;
         }[];
         fullPath: string;
     }[] | null;
     RelatedProducts: {
-        ProductID: number;
+        ID: number;
         Name: string;
-        ProductImages: {
+        Images: {
+            ID: number;
             ImageURL: string;
-            altText: string;
+            AltText: string;
+            Order: number;
         }[];
         fullPath: string;
     }[] | null;
     Tags: {
-        TagID: number;
+        ID: number;
         Name: string;
     }[] | null;
     MetaTitle: string;
@@ -138,7 +148,7 @@ export interface ProjectCategory {
     Name: string;
     Description: string;
     ProjectCategoryChildren: {
-        ProjectCategoryID: number;
+        ID: number;
         Title: string;
         fullPath: string;
     }[];
@@ -146,13 +156,16 @@ export interface ProjectCategory {
         ID: number;
         ImageURL: string;
         AltText: string;
+        Order: number;
     }[];
     Projects: {
-        ProjectID: number;
+        ID: number;
         Title: string;
-        ProjectImages: {
+        Images: {
+            ID: number;
             ImageURL: string;
             AltText: string;
+            Order: number;
         }[];
         Slug: string;
     }[];
@@ -167,36 +180,43 @@ export interface ProjectCategory {
 }
 
 export interface Project {
-    ProjectID: number;
+    ID: number;
     Title: string;
     Description: string;
     ProjectsCategories: {
-        CategoryID: number;
+        ID: number;
         Name: string;
         Slug: string;
     }[];
     RelatedProducts: {
-        ProductID: number;
+        ID: number;
         Name: string;
-        ProductImages: {
+        Images: {
+            ID: number;
             ImageURL: string;
             AltText: string;
+            Order: number;
         }[];
         fullPath: string;
     }[];
     RelatedNews: {
-        NewsID: number;
+        ID: number;
         Title: string;
-        NewsImages: {
+        Images: {
+            ID: number;
             ImageURL: string;
             AltText: string;
+            Order: number;
         }[];
         fullPath: string;
     }[];
     ProjectImages: {
         ID: number;
+    Images: {
+        ID: number;
         ImageURL: string;
         AltText: string;
+        Order: number;
     }[];
     MetaTitle: string;
     MetaDescription: string;
@@ -263,22 +283,4 @@ export interface AuthFormData {
     email: string;
     password: string;
     name?: string; // опционально для регистрации
-}
-
-export interface Project {
-    ID: number;
-    Title: string;
-    Description: string;
-    Images: {
-        ImageURL: string;
-        AltText: string;
-    }[];
-    CreatedAt: string;
-    UpdatedAt: string;
-    UserID: string;
-    Slug: string;
-    ProjectCategories: {
-        CategoryID: number;
-        Name: string;
-    }[];
 }
