@@ -1,32 +1,40 @@
-import { useState, useCallback, useEffect } from 'react';
-import { createProject, uploadImages, getAllProjectCategories } from '@/api/apiClient';
+import { useState } from 'react';
+import { getProjectBySlug, updateProjectById, uploadImages } from '@/api/apiClient';
+import { getAllProjectCategories } from '@/api/apiClient';
 import { useRouter } from 'next/router';
 import { ProjectCategory } from '@/types/types';
+import { Project } from '@/types/types';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import TextAlign from '@tiptap/extension-text-align';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { transliterate } from '@/utils/transliterate';
-import { Draggable } from 'react-beautiful-dnd';
-import { Droppable } from 'react-beautiful-dnd';
-import { DragDropContext } from 'react-beautiful-dnd';
 
-// Функция для получения категорий проектов
-export const getServerSideProps = async () => {
+// Функция для получения данных на сервере
+export const getServerSideProps = async (context: { params: { slug: string } }) => {
+  const { slug } = context.params;
+  let project = {};
   let categories = [];
   
   try {
     const categoriesResponse = await getAllProjectCategories();
     categories = categoriesResponse.data;
+
+    const response = await getProjectBySlug(slug);
+    project = response.data; // Получаем данные проекта из базы данных
+    console.log(project);
+
   } catch (error) {
-    console.error('Ошибка загрузки категорий:', error);
+    console.error('Ошибка загрузки проекта:', error);
   }
 
   return {
     props: {
+      project, // Передаем данные проекта в компонент
       categories, // Передаем данные категорий в компонент
     },
   };
@@ -97,9 +105,9 @@ const MenuBar = ({ editor }: { editor: any }) => {
   );
 };
 
-const AddProject = ({ categories }: { categories: ProjectCategory[] }) => {
+const EditProject = ({ project, categories }: { project: Project, categories: ProjectCategory[] }) => {
   const router = useRouter();
-  const [editorContent, setEditorContent] = useState('');
+  const [editorContent, setEditorContent] = useState(project.Description || '');
   const [formData, setFormData] = useState<{
     title: string;
     description: string;
@@ -108,21 +116,39 @@ const AddProject = ({ categories }: { categories: ProjectCategory[] }) => {
     metaKeyword: string;
     CategoriesID: number[];
     Slug: string;
+    relatedProducts: any[];
+    existingImages: Array<{
+      ID?: number;
+      ImageURL: string;
+      AltText: string;
+      Order: number;
+      isNew?: boolean;
+    }>;
     newImages: File[];
+    deletedImages: number[];
     PublishDate: string | null;
   }>({
-    title: '',
-    description: '',
-    metaTitle: '',
-    metaDescription: '',
-    metaKeyword: '',
-    CategoriesID: [],
-    Slug: '',
+    title: project.Title || '',
+    description: project.Description || '',
+    metaTitle: project.MetaTitle || '',
+    metaDescription: project.MetaDescription || '',
+    metaKeyword: project.MetaKeyword || '',
+    CategoriesID: project.ProjectsCategories?.map((cat: any) => cat.ID) || [],
+    Slug: project.Slug || '',
+    relatedProducts: project.RelatedProducts || [],
+    existingImages: (project.Images || [])
+      .map((img, index) => ({
+        ...img,
+        Order: typeof img.Order === 'number' ? img.Order : index,
+        ID: img.ID || undefined,
+        ImageURL: img.ImageURL || '',
+        AltText: img.AltText || ''
+      }))
+      .sort((a, b) => (a.Order ?? 0) - (b.Order ?? 0)),
     newImages: [],
+    deletedImages: [],
     PublishDate: null,
   });
-
-  const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
 
   const editor = useEditor({
     extensions: [
@@ -133,23 +159,31 @@ const AddProject = ({ categories }: { categories: ProjectCategory[] }) => {
         types: ['heading', 'paragraph'],
       }),
     ],
-    content: '',
+    content: project.Description || '',
     onUpdate: ({ editor }) => {
       setEditorContent(editor.getHTML());
     },
     immediatelyRender: false
   });
 
-  const handleImageDelete = useCallback((index: number) => {
-    setFormData(prevState => ({
-      ...prevState,
-      newImages: prevState.newImages.filter((_, i) => i !== index)
-    }));
-    
-    URL.revokeObjectURL(imagePreviewUrls[index]);
-    setImagePreviewUrls(prev => prev.filter((_, i) => i !== index));
-  }, [imagePreviewUrls]);
-  
+  const handleImageDelete = (index: number, isExisting: boolean) => {
+    if (isExisting) {
+      const imageToDelete = formData.existingImages[index];
+      if (imageToDelete.ID) {
+        setFormData({
+          ...formData,
+          existingImages: formData.existingImages.filter((_, i) => i !== index),
+          deletedImages: [...formData.deletedImages, imageToDelete.ID]
+        });
+      }
+    } else {
+      setFormData({
+        ...formData,
+        newImages: formData.newImages.filter((_, i) => i !== index)
+      });
+    }
+  };
+
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
 
@@ -157,34 +191,39 @@ const AddProject = ({ categories }: { categories: ProjectCategory[] }) => {
       const result = Array.from(list);
       const [removed] = result.splice(startIndex, 1);
       result.splice(endIndex, 0, removed);
-      return result;
+      return result.map((item, index) => ({
+        ...item,
+        Order: index
+      }));
     };
 
     setFormData(prevState => ({
       ...prevState,
-      newImages: reorder(
-        prevState.newImages,
+      existingImages: reorder(
+        prevState.existingImages,
         result.source.index,
         result.destination.index
       )
     }));
-
-    setImagePreviewUrls(prev => 
-      reorder(prev, result.source.index, result.destination.index)
-    );
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || []);
-    const newPreviewUrls = newFiles.map(file => URL.createObjectURL(file));
-    
+    const newPreviewImages = newFiles.map((file, index) => ({
+      ImageURL: URL.createObjectURL(file),
+      AltText: '',
+      Order: formData.existingImages.length + index,
+      isNew: true
+    }));
+
     setFormData(prev => ({
       ...prev,
+      existingImages: [...prev.existingImages, ...newPreviewImages],
       newImages: [...prev.newImages, ...newFiles]
     }));
-    
-    setImagePreviewUrls(prev => [...prev, ...newPreviewUrls]);
   };
+
+  const [publishDate, setPublishDate] = useState<Date | null>(project.PublishDate ? new Date(project.PublishDate) : null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -196,13 +235,15 @@ const AddProject = ({ categories }: { categories: ProjectCategory[] }) => {
           `/projects/${transliterate(formData.title)}`
         );
         
-        uploadedImages = formData.newImages.map((img, index) => ({
-          ImageURL: uploadResponse.filePaths[index],
-          AltText: '',
-          Order: index
-        }));
+        uploadedImages = formData.existingImages
+          .filter(img => img.isNew)
+          .map((img, index) => ({
+            ImageURL: uploadResponse.filePaths[index],
+            AltText: img.AltText,
+            Order: img.Order
+          }));
       }
-
+    
       const projectData = {
         Title: formData.title,
         CategoriesID: formData.CategoriesID,
@@ -211,35 +252,34 @@ const AddProject = ({ categories }: { categories: ProjectCategory[] }) => {
         MetaDescription: formData.metaDescription,
         MetaKeyword: formData.metaKeyword,
         Slug: formData.Slug || formData.title.replace(/\s+/g, '-').toLowerCase() || '',
-        Images: uploadedImages,
-        PublishDate: formData.PublishDate ? new Date(formData.PublishDate).toISOString() : null,
+        RelatedProducts: formData.relatedProducts,
+        Images: [
+          ...formData.existingImages
+            .filter(img => !img.isNew)
+            .map(img => ({
+              ID: img.ID,
+              Order: img.Order
+            })),
+          ...uploadedImages
+        ],
+        DeletedImages: formData.deletedImages,
+        PublishDate: publishDate ? publishDate.toISOString() : null,
       };
 
-      await createProject(projectData);
-      router.push('/admin/projects');
+      const response = await updateProjectById(project.ID, projectData);
+
+      if (response) {
+        router.push('/admin/projects');
+      }
     } catch (error) {
-      console.error('Ошибка создания проекта:', error);
-      alert('Произошла ошибка при создании проекта');
+      console.error('Ошибка обновления проекта:', error);
+      alert('Произошла ошибка при обновлени�� проекта');
     }
   };
-
-  useEffect(() => {
-    return () => {
-      imagePreviewUrls.forEach(url => URL.revokeObjectURL(url));
-    };
-  }, [imagePreviewUrls]);
 
   return (
     <div className="min-h-screen flex flex-col items-center p-6">
       <div className="max-w-[1200px] w-full">
-          <div className="flex space-x-2 mb-4">
-            <button 
-              onClick={() => window.location.href = '/admin/dashboard'} 
-              className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-            >
-              Назад
-            </button>
-          </div>
         <form onSubmit={handleSubmit}>
           {/* Верхний блок с двумя колонками */}
           <div className="flex gap-6 mb-6">
@@ -257,7 +297,7 @@ const AddProject = ({ categories }: { categories: ProjectCategory[] }) => {
                 <label htmlFor="file-upload" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md cursor-pointer">
                   Добавить изображения
                 </label>
-                {/* ... DragDropContext и Droppable для отображения изображений ... */}
+
                 <DragDropContext onDragEnd={handleDragEnd}>
                   <Droppable droppableId="images" direction="horizontal">
                     {(provided) => (
@@ -266,10 +306,10 @@ const AddProject = ({ categories }: { categories: ProjectCategory[] }) => {
                         ref={provided.innerRef}
                         className="flex flex-wrap gap-4 mt-4"
                       >
-                        {formData.newImages.map((image, index) => (
+                        {formData.existingImages.map((image, index) => (
                           <Draggable 
-                            key={`${image.name}-${index}`}
-                            draggableId={`${image.name}-${index}`}
+                            key={`${image.ID || image.ImageURL}-${index}`}
+                            draggableId={`${image.ID || image.ImageURL}-${index}`}
                             index={index}
                           >
                             {(provided) => (
@@ -281,14 +321,14 @@ const AddProject = ({ categories }: { categories: ProjectCategory[] }) => {
                               >
                                 <div className="w-40 h-40 border rounded-lg overflow-hidden">
                                   <img
-                                    src={imagePreviewUrls[index]}
-                                    alt={image.name}
+                                    src={image.ImageURL}
+                                    alt={image.AltText || 'Project image'}
                                     className="w-full h-full object-cover"
                                   />
                                 </div>
                                 <button
                                   type="button"
-                                  onClick={() => handleImageDelete(index)}
+                                  onClick={() => handleImageDelete(index, true)}
                                   className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                                 >
                                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -310,7 +350,7 @@ const AddProject = ({ categories }: { categories: ProjectCategory[] }) => {
               </div>
             </div>
 
-             {/* Правая колонка - основная информация */}
+            {/* Правая колонка - основная информация */}
             <div className="w-1/2">
               <h2 className="text-2xl font-bold mb-6">2. Основная информация</h2>
               <div className="space-y-4">
@@ -399,8 +439,8 @@ const AddProject = ({ categories }: { categories: ProjectCategory[] }) => {
             <div className="text-gray-600">
               4. Дата публикации:
               <DatePicker
-                selected={formData.PublishDate ? new Date(formData.PublishDate) : null}
-                onChange={(date) => setFormData({ ...formData, PublishDate: date ? date.toISOString() : null })}
+                selected={publishDate}
+                onChange={(date) => setPublishDate(date)}
                 showTimeSelect
                 dateFormat="Pp"
                 timeFormat="HH:mm"
@@ -412,7 +452,7 @@ const AddProject = ({ categories }: { categories: ProjectCategory[] }) => {
               type="submit" 
               className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md"
             >
-              Создать проект
+              Сохранить проект
             </button>
           </div>
         </form>
@@ -421,4 +461,4 @@ const AddProject = ({ categories }: { categories: ProjectCategory[] }) => {
   );
 };
 
-export default AddProject;
+export default EditProject;

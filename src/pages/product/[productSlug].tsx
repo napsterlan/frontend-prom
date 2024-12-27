@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Breadcrumb, Product, ProductAttribute } from '@/types/types';
 import Image from 'next/image';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
@@ -9,6 +8,7 @@ import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import { auth } from '@/utils/auth';
+import { getProductBySlug } from '@/api/apiClient';
 
 interface ProductPageProps {
   initialProductData: Product | null;
@@ -26,9 +26,8 @@ export async function getServerSideProps({ params }: { params: { productSlug: st
   }
 
   try {
-    const response = await axios.get(`http://192.168.31.40:4000/api/product/${params.productSlug}`);
-    const productData = response.data;
-    if (!productData || !productData.data) {
+    const response = await getProductBySlug(params.productSlug);
+    if (!response || !response.data) {
       console.log('Данные продукта отсутствуют');
       return {
         notFound: true,
@@ -38,7 +37,7 @@ export async function getServerSideProps({ params }: { params: { productSlug: st
     return {
       props: {
         initialProductData: { 
-          ...productData.data, 
+          ...response.data, 
         },
       },
     };
@@ -159,7 +158,7 @@ const lightboxConfig = {
     }
   },
   zoom: {
-    maxZoomPixelRatio: 100, // Максимальное соотнош��ние пикселей для увеличения
+    maxZoomPixelRatio: 100, // Максимальное соотношение пикселей для увеличения
     zoomInMultiplier: 2, // Множитель для увеличения при зуме
     doubleTapDelay: 300, // Задержка для двойного нажатия в миллисекундах
     doubleClickDelay: 300, // Задержка для двойного клика в миллисекундах
@@ -346,7 +345,6 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
             {/* <p>Файл светораспределения: <a href={productData?.ProductFiles?.find((file: any) => file.FileName.includes('светораспределение'))?.FileURL || '#'} className="text-blue-500">Скачать</a></p> */}
           </div>
           {/* Остальные связанные файлы */}
-          {console.log(productData)}
           {productData?.Files && productData.Files.length > 0 && (
             <div id="documents" className="mt-4">
               <h2 className="border-b-2 border-[#5cd69c] leading-[32px] mb-[25px] text-[20px] font-semibold">
@@ -393,7 +391,7 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
               <ul>
                 {productData.RelatedProducts.map((relatedProduct: any) => (
                   <li key={relatedProduct.ProductID}>
-                    <a href={`/product/${relatedProduct.SeoURL}`} className="text-blue-500">{relatedProduct.Name}</a>
+                    <a href={`/product/${relatedProduct.Slug}`} className="text-blue-500">{relatedProduct.Name}</a>
                   </li>
                 ))}
               </ul>
