@@ -44,7 +44,7 @@ export default function ProjectsPage({ projects: initialProjects, error }: { pro
       <h1 className="text-2xl font-bold mb-4">Проекты</h1>
       <div className="flex space-x-2 mb-4">
         <button 
-          onClick={() => window.history.back()} 
+          onClick={() => window.location.href = '/admin/dashboard'}
           className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
         >
           Назад

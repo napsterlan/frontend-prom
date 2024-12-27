@@ -232,6 +232,14 @@ const AddProject = ({ categories }: { categories: ProjectCategory[] }) => {
   return (
     <div className="min-h-screen flex flex-col items-center p-6">
       <div className="max-w-[1200px] w-full">
+          <div className="flex space-x-2 mb-4">
+            <button 
+              onClick={() => window.location.href = '/admin/dashboard'} 
+              className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+            >
+              Назад
+            </button>
+          </div>
         <form onSubmit={handleSubmit}>
           {/* Верхний блок с двумя колонками */}
           <div className="flex gap-6 mb-6">

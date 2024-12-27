@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getProjectBySlug, updateProjectById, uploadFiles, uploadImages } from '@/api/apiClient';
+import { getProjectBySlug, updateProjectById, uploadImages } from '@/api/apiClient';
 import { getAllProjectCategories } from '@/api/apiClient';
 import { useRouter } from 'next/router';
 import { ProjectCategory } from '@/types/types';
