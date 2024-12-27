@@ -211,20 +211,20 @@ export default function Header() {
 
                             {isAuthenticated ? (
                                 <li>
-                                    <Link href="/account" className="w-15 h-10 flex items-center justify-center border-2 rounded-full border-PLGreen">
-                                        <i className="fas fa-user text-gray-600"></i>
-                                        <FontAwesomeIcon className='text-base' icon={faUser} />
+                                    <Link href="/account" className=" relative flex items-center">
+                                        <div className=' z-10 w-10 h-10 flex items-center justify-center border-3 rounded-full border-PLGreen bg-white'>
+                                            <FontAwesomeIcon className='text-base z-10' icon={faUser} width={14} height={16} />
+                                        </div>
                                     </Link>
                                 </li>
                             ) : (
                                 <li className='relative'>
-                                    <Link href="/account" className=" relative flex items-center">
+                                    <Link href="/login" className=" relative flex items-center">
                                         <div className=' z-10 w-10 h-10 flex items-center justify-center border-3 rounded-full border-PLGreen bg-white'>
-                                            <FontAwesomeIcon className='text-base z-10' icon={faUser} />
+                                            <FontAwesomeIcon className='text-base z-10' icon={faUser} width={14} height={16} />
                                         </div>
                                         <div className='flex items-center justify-end tracking-[1px] text-[13px] inline-block h-[33px] w-[65px] bg-PLGreen text-white border border-PLGreen rounded-r-[10px] text-right pr-[10px]  font-semibold left-[-8px] relative'>Войти</div>
                                     </Link>
-
                                 </li>
                             )}
                         </ul>
