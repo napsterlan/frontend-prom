@@ -20,7 +20,7 @@ interface ColumnVisibilityManagerProps {
   visibleColumns: ColumnVisibility;
   onColumnToggle: (column: keyof ColumnVisibility) => void;
   onReset: () => void;
-//   Category: string;
+  Category: string;
 }
 
 export const ColumnVisibilityManager = ({ 

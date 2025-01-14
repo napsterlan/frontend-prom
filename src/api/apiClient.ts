@@ -32,7 +32,7 @@ export const getCategoryBySlug = async (slug: string, page_size: number = 10, pa
 };
 
 // Продукты
-export const getProductsInCategory = async (slug: string) => {
+export const getsInCategory = async (slug: string) => {
   const response = await apiClient.get(`/products/${slug}`);
   return response.data;
 };
@@ -79,7 +79,7 @@ export const getProjectCategoryBySlug = async (slug: string) => {
   return response.data;
 };
 
-export const createProjectCategory = async (categoryData: any) => {
+export const createProjectCategory = async (categoryData: object) => {
   const response = await apiClient.post('/projects-categories', categoryData);
   return response.data;
 };
@@ -105,7 +105,7 @@ export const getProjectBySlug = async (slug: string) => {
   return response.data;
 };
 
-export const createProject = async (projectData: any) => {
+export const createProject = async (projectData: object) => {
   const response = await apiClient.post('/projects', projectData);
   return response.data;
 };

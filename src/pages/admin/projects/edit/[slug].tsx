@@ -4,15 +4,16 @@ import { getAllProjectCategories } from '@/api/apiClient';
 import { useRouter } from 'next/router';
 import { ProjectCategory } from '@/types/types';
 import { Project } from '@/types/types';
-import { useEditor, EditorContent } from '@tiptap/react';
+import { Editor, useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import TextAlign from '@tiptap/extension-text-align';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { transliterate } from '@/utils/transliterate';
+import NextImage from 'next/image';
 
 // Функция для получения данных на сервере
 export const getServerSideProps = async (context: { params: { slug: string } }) => {
@@ -40,7 +41,7 @@ export const getServerSideProps = async (context: { params: { slug: string } }) 
   };
 };
 
-const MenuBar = ({ editor }: { editor: any }) => {
+const MenuBar = ({ editor }: { editor: Editor }) => {
   if (!editor) {
     return null;
   }
@@ -116,7 +117,17 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
     metaKeyword: string;
     CategoriesID: number[];
     Slug: string;
-    relatedProducts: any[];
+    relatedProducts: {
+        ID: number;
+        Name: string;
+        Images: {
+            ID: number;
+            ImageURL: string;
+            AltText: string;
+            Order: number;
+        }[];
+        fullPath: string;
+    }[];
     existingImages: Array<{
       ID?: number;
       ImageURL: string;
@@ -133,10 +144,10 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
     metaTitle: project.MetaTitle || '',
     metaDescription: project.MetaDescription || '',
     metaKeyword: project.MetaKeyword || '',
-    CategoriesID: project.ProjectsCategories?.map((cat: any) => cat.ID) || [],
+    CategoriesID: project.ProjectsCategories?.map((cat) => cat.ID) || [],
     Slug: project.Slug || '',
     relatedProducts: project.RelatedProducts || [],
-    existingImages: (project.Images || [])
+    existingImages: (project.ProjectImages?.[0]?.Images || [])
       .map((img, index) => ({
         ...img,
         Order: typeof img.Order === 'number' ? img.Order : index,
@@ -184,10 +195,10 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
     }
   };
 
-  const handleDragEnd = (result: any) => {
+  const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
-    const reorder = (list: any[], startIndex: number, endIndex: number) => {
+    const reorder = <T,>(list: T[], startIndex: number, endIndex: number): T[] => {
       const result = Array.from(list);
       const [removed] = result.splice(startIndex, 1);
       result.splice(endIndex, 0, removed);
@@ -202,7 +213,7 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
       existingImages: reorder(
         prevState.existingImages,
         result.source.index,
-        result.destination.index
+        result.destination?.index || 0
       )
     }));
   };
@@ -273,7 +284,7 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
       }
     } catch (error) {
       console.error('Ошибка обновления проекта:', error);
-      alert('Произошла ошибка при обновлени�� проекта');
+      alert('Произошла ошибка при обновлении проекта');
     }
   };
 
@@ -320,9 +331,11 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
                                 className="relative group"
                               >
                                 <div className="w-40 h-40 border rounded-lg overflow-hidden">
-                                  <img
+                                  <NextImage
                                     src={image.ImageURL}
-                                    alt={image.AltText || 'Project image'}
+                                    alt={image.AltText || 'Project image'} 
+                                    width={160}
+                                    height={160}
                                     className="w-full h-full object-cover"
                                   />
                                 </div>
@@ -427,7 +440,7 @@ const EditProject = ({ project, categories }: { project: Project, categories: Pr
           <div className="w-full mb-6">
             <h2 className="text-2xl font-bold mb-4">3. Описание проекта</h2>
             <div className="border rounded-lg">
-              <MenuBar editor={editor} />
+              {editor && <MenuBar editor={editor} />}
               <div className="p-4">
                 <EditorContent editor={editor} className="prose max-w-none min-h-[400px]" />
               </div>

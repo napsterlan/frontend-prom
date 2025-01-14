@@ -12,8 +12,8 @@ import { getColumnSettings } from '@/utils/columnSettings';
 export default function CategoryPage() {
   const router = useRouter();
   const { categorySlugs } = router.query;
-  const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
-  const [showMenu, setShowMenu] = useState(false);
+//   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
+//   const [showMenu, setShowMenu] = useState(false);
   const [page, setPage] = useState(1);
   const pageSize = 100; // Установите размер страницы
 
@@ -72,7 +72,7 @@ export default function CategoryPage() {
       }
 
       sessionStorage.setItem('breadcrumbs', JSON.stringify(newBreadcrumbs));
-      setBreadcrumbs(newBreadcrumbs);
+    //   setBreadcrumbs(newBreadcrumbs);
     }
   }, [categoryData, categorySlugs]);
 
@@ -102,7 +102,7 @@ export default function CategoryPage() {
         categoryData.data.ChildrenCategories.map((childCategory: Category) => (
           <div key={childCategory.ID} style={{ border: '1px solid #ccc', borderRadius: '8px', textDecoration: 'none', color: 'inherit', paddingTop: '10px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
             <a href={`/catalog/${Array.isArray(categorySlugs) ? categorySlugs.join('/') : ''}/${childCategory.Slug}`} style={{ display: 'block', textAlign: 'center' }}>
-              <Image src={`/${childCategory.CategoryImages?.[0].image_url}`} alt={childCategory.CategoryImages?.[0].alt_text || childCategory.Name} layout="responsive" width={290} height={200} />
+              <Image src={`/${childCategory.Images?.[0].ImageURL}`} alt={childCategory.Images?.[0].AltText || childCategory.Name} layout="responsive" width={290} height={200} />
               <div style={{ backgroundColor: 'lightgray', borderRadius: '8px', padding: '10px', width: '100%', textAlign: 'left', fontSize: '12px', minHeight: '75px' }}>
                 <p>{childCategory.SmallDescription || ' '}</p>
               </div>

@@ -8,15 +8,15 @@ export async function getServerSideProps(context: { params: { categorySlug: stri
  
   let projectsList: Project[] = [];
   let categoriesList: ProjectCategory[] = [];
-  let error = null;
+//   let error = null;
   
   try {
     const projectResponse = await getProjectCategoryBySlug(categorySlug);
     projectsList = projectResponse.data.Projects;
     const categoriesResponse = await getAllProjectCategories();
     categoriesList = categoriesResponse.data;
-  } catch (err) {
-    error = 'Ошибка при загрузке данных проектов';
+  } catch  {
+    // error = 'Ошибка при загрузке данных проектов';
   }  
 
   return {

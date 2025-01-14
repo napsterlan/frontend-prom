@@ -14,14 +14,14 @@ export default function MainCategories() {
           sessionStorage.setItem('breadcrumbs', JSON.stringify([{ label: 'Каталог', href: '/catalog' }])); // Сбрасываем хлебные крошки
           const categoryData = await getCategories();
           setCategoryData(categoryData.data);
-      } catch (err) {
+      } catch {
         setError('Ошибка при загрузке данных');
         } finally {
           setLoading(false);
         }
     };
 
-    fetchData().catch(err => {
+    fetchData().catch(() => {
       // Обработка ошибок
     });
   }, []);
@@ -45,8 +45,8 @@ export default function MainCategories() {
             return (
               <a key={category.CategoryID} href={category.FullPath} style={{ width: '290px', height: '400px', border: '1px solid #ccc', textDecoration: 'none', color: 'inherit' }}>
                 <Image 
-                  src={category.CategoryImages?.[0]?.image_url ? `/${category.CategoryImages[0].image_url}` : '/placeholder.png'}
-                  alt={category.CategoryImages?.[0]?.alt_text || category.Name} 
+                  src={category.Images?.[0]?.ImageURL ? `/${category.Images[0].ImageURL}` : '/placeholder.png'}
+                  alt={category.Images?.[0]?.AltText || category.Name} 
                   layout="responsive" 
                   width={290} 
                   height={290} 

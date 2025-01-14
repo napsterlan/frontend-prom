@@ -3,9 +3,10 @@ import { useEffect } from 'react';
 import { getProjectBySlug } from '@/api/apiClient'; // Импортируем функцию для получения данных проекта
 import { Project } from '@/types/types';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
+import Image from 'next/image';
 
 export async function getServerSideProps(context: { params: { categorySlug: string; projectSlug: string } }) {
-  const categorySlug = context.params.categorySlug;
+//   const categorySlug = context.params.categorySlug;
   const projectSlug = context.params.projectSlug;
   
   
@@ -18,7 +19,7 @@ export async function getServerSideProps(context: { params: { categorySlug: stri
         project: response.data,
       },
     };
-  } catch (error) {
+  } catch {
     return {
       notFound: true,
     };
@@ -49,7 +50,13 @@ export default function ProjectDetailPage({ project }: { project: Project }) {
     <div>
       <Breadcrumbs />
       <div className="w-full">
-        <img src={project?.Images[0].ImageURL} alt={project?.Images[0].AltText} className="w-full h-auto" />
+        <Image 
+          src={project?.ProjectImages?.[0]?.Images?.[0]?.ImageURL || '/placeholder-image.jpg'}
+          alt={project?.ProjectImages?.[0]?.Images?.[0]?.AltText || 'Project image'}
+          width={1200}
+          height={800}
+          className="w-full h-auto"
+        />
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
@@ -58,7 +65,7 @@ export default function ProjectDetailPage({ project }: { project: Project }) {
           <h2 className="text-xl font-semibold">Связанные товары</h2>
           <ul>
             {project?.RelatedProducts?.map(product => (
-              <li key={product.ProductID}>{product.Name}</li>
+              <li key={product.ID}>{product.Name}</li>
             ))}
           </ul>
         </div>

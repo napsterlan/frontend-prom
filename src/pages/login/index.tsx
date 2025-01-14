@@ -27,7 +27,7 @@ export default function LoginPage() {
       } else {
         setError('Неверный логин или пароль');
       }
-    } catch (error) {
+    } catch  {
       setError('Произошла ошибка при входе');
     }
   };

@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { createProjectCategory, uploadImages } from '../../../api/apiClient';
 import { transliterate } from '@/utils/transliterate';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
+import Image from 'next/image';
+import { DraggableImage } from '@/types/types';
 
 const AddProjectCategory = () => {
   const router = useRouter();
@@ -29,13 +31,20 @@ const AddProjectCategory = () => {
     }));
   };
 
-  const handleDragEnd = (result: any) => {
-    if (!result.destination) return;
+  // Обработчик завершения перетаскивания элемента
+  const handleDragEnd = (result: DropResult) => {
+    // Если нет места назначения, выходим из функции
 
-    const reorder = (list: any[], startIndex: number, endIndex: number) => {
+
+    // Вспомогательная функция для переупорядочивания элементов списка
+    const reorder = (list: DraggableImage[], startIndex: number, endIndex: number) => {
+      // Создаем копию массива
       const result = Array.from(list);
+      // Удаляем элемент из начальной позиции
       const [removed] = result.splice(startIndex, 1);
+      // Вставляем элемент в новую позицию
       result.splice(endIndex, 0, removed);
+      // Обновляем порядковые номера для всех элементов
       return result.map((item, index) => ({
         ...item,
         Order: index
@@ -47,7 +56,7 @@ const AddProjectCategory = () => {
       existingImages: reorder(
         prevState.existingImages,
         result.source.index,
-        result.destination.index
+        result.destination!.index
       )
     }));
   };
@@ -142,9 +151,11 @@ const AddProjectCategory = () => {
                                 className="relative group"
                               >
                                 <div className="w-40 h-40 border rounded-lg overflow-hidden">
-                                  <img
+                                  <Image
                                     src={image.ImageURL}
                                     alt={`Изображение ${index + 1}`}
+                                    width={160}
+                                    height={160}
                                     className="w-full h-full object-cover"
                                   />
                                 </div>

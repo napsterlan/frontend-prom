@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { deleteProjectCategoryById, getAllProjectCategories } from '../../../api/apiClient';
 import { ProjectCategory } from '@/types/types';
+import Image from 'next/image';
 
 export const getServerSideProps = async () => {
   let categories = [];
@@ -9,7 +10,7 @@ export const getServerSideProps = async () => {
   try {
     const response = await getAllProjectCategories();
     categories = response.data;
-  } catch (err) {
+  } catch {
     error = 'Ошибка при загрузке данных категорий';
   }
   return { props: { categories, error } };
@@ -58,10 +59,12 @@ const ProjectCategoriesList = ({ categories }: { categories: ProjectCategory[] }
               {categories.map(category => (
                 <tr key={category.ID} className="border-b border-gray-200 hover:bg-gray-100">
                   <td className="py-3 px-6">
-                    <img 
+                    <Image 
                       src={category.Images.length > 0 ? category.Images[0].ImageURL : '/placeholder.png'} 
                       alt={category.Images.length > 0 ? category.Images[0].AltText : 'Нет изображения'} 
-                      className="w-16 h-16 object-cover" 
+                      className="object-cover" 
+                      width={64}
+                      height={64}
                     />
                   </td>
                   <td className="py-3 px-6">{category.Name}</td>

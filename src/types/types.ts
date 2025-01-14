@@ -50,12 +50,12 @@ export interface ProductView {
     UpdatedAt: string;
     DeletedAt?: string | null;
     Images?: string[] | null;
-    ProductAttributes?: any | null;
-    Files?: any | null;
-    RelatedProjects?: any | null;
-    RelatedNews?: any | null;
-    RelatedProducts?: any | null;
-    Tags?: any | null;
+    // ProductAttributes?: any | null;
+    // Files?: any | null;
+    // RelatedProjects?: any | null;
+    // RelatedNews?: any | null;
+    // RelatedProducts?: any | null;
+    // Tags?: any | null;
 }
 
 export interface Response {
@@ -83,32 +83,9 @@ export interface Product {
     }[] | null;
     ProductAttributes: ProductAttribute[] | null;
     Files: {
-    Files: {
         FileURL: string;
         FileName: string;
         FileType: string;
-    }[] | null;
-    RelatedProjects: {
-        ID: number;
-        Title: string;
-        Images: {
-            ID: number;
-            ImageURL: string;
-            AltText: string;
-            Order: number;
-        }[];
-        fullPath: string;
-    }[] | null;
-    RelatedNews: {
-        ID: number;
-        Title: string;
-        Images: {
-            ID: number;
-            ImageURL: string;
-            AltText: string;
-            Order: number;
-        }[];
-        fullPath: string;
     }[] | null;
     RelatedProducts: {
         ID: number;
@@ -121,6 +98,16 @@ export interface Product {
         }[];
         fullPath: string;
     }[] | null;
+    RelatedProjects?: Array<{
+        ProjectID: string | number;
+        Title: string;
+        fullPath: string;
+        CreatedAt: string;
+        Images?: Array<{
+          ImageURL: string;
+          AltText?: string;
+        }>;
+      }>;
     Tags: {
         ID: number;
         Name: string;
@@ -183,6 +170,12 @@ export interface Project {
     ID: number;
     Title: string;
     Description: string;
+    Images: {
+        ID: number;
+        ImageURL: string;
+        AltText: string;
+        Order: number;
+    }[];
     ProjectsCategories: {
         ID: number;
         Name: string;
@@ -210,14 +203,15 @@ export interface Project {
         }[];
         fullPath: string;
     }[];
-    ProjectImages: {
+    ProjectImages: Array<{
         ID: number;
-    Images: {
-        ID: number;
-        ImageURL: string;
-        AltText: string;
-        Order: number;
-    }[];
+        Images: Array<{
+            ID: number;
+            ImageURL: string;
+            AltText: string;
+            Order: number;
+        }>;
+    }>;
     MetaTitle: string;
     MetaDescription: string;
     MetaKeyword: string;
@@ -226,6 +220,7 @@ export interface Project {
     CreatedAt: string;
     UpdatedAt: string;
     DeletedAt: string | null;
+    PublishDate?: string | null;
 }
 
 export interface ProjectFormData {
@@ -283,4 +278,32 @@ export interface AuthFormData {
     email: string;
     password: string;
     name?: string; // опционально для регистрации
+}
+
+export interface DraggableImage {
+    ImageURL: string;
+    AltText: string;
+    Order: number;
+    isNew: boolean;
+}
+
+export interface DraggableProjectCategory {
+    ID: number;
+    Name: string;
+    Images: DraggableImage[];
+}
+
+export interface DraggableProject {
+    ID: number;
+    Title: string;
+    Images: DraggableImage[];
+}
+
+export interface FileGroup {
+    title: string;
+    files: {
+        FileURL: string;
+        FileName: string;
+        FileType: string;
+    }[];
 }

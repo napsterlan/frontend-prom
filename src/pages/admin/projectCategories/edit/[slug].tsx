@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { getProjectCategoryBySlug, updateProjectCategoryById, uploadFiles, uploadImages } from '../../../../api/apiClient';
+import { getProjectCategoryBySlug, updateProjectCategoryById, uploadImages } from '../../../../api/apiClient';
+// import {uploadFiles } from '../../../../api/apiClient';
 import { ProjectCategory } from '@/types/types';
 import { transliterate } from '@/utils/transliterate';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { DraggableImage } from '@/types/types';
+import Image from 'next/image';
 
 export const getServerSideProps = async (context: { params: { slug: string } }) => {
   const { slug } = context.params;
@@ -28,7 +31,7 @@ const EditProjectCategory = ({ category }: { category: ProjectCategory }) => {
       ImageURL: string;
       AltText: string;
       Order: number;
-      isNew?: boolean;
+      isNew: boolean;
     }>;
     newImages: File[];
     deletedImages: number[];
@@ -40,7 +43,8 @@ const EditProjectCategory = ({ category }: { category: ProjectCategory }) => {
         Order: typeof img.Order === 'number' ? img.Order : index,
         ID: img.ID || undefined,
         ImageURL: img.ImageURL || '',
-        AltText: img.AltText || ''
+        AltText: img.AltText || '',
+        isNew: false
       }))
       .sort((a, b) => (a.Order ?? 0) - (b.Order ?? 0)),
     newImages: [],
@@ -60,10 +64,10 @@ const EditProjectCategory = ({ category }: { category: ProjectCategory }) => {
     }
   };
 
-  const handleDragEnd = (result: any) => {
+  const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
-    const reorder = (list: any[], startIndex: number, endIndex: number) => {
+    const reorder = (list: DraggableImage[], startIndex: number, endIndex: number) => {
       const result = Array.from(list);
       const [removed] = result.splice(startIndex, 1);
       result.splice(endIndex, 0, removed);
@@ -78,7 +82,7 @@ const EditProjectCategory = ({ category }: { category: ProjectCategory }) => {
       existingImages: reorder(
         prevState.existingImages,
         result.source.index,
-        result.destination.index
+        result.destination!.index
       )
     }));
   };
@@ -193,10 +197,12 @@ const EditProjectCategory = ({ category }: { category: ProjectCategory }) => {
                                 className="relative group"
                               >
                                 <div className="w-40 h-40 border rounded-lg overflow-hidden">
-                                  <img
+                                  <Image
                                     src={image.ImageURL}
                                     alt={image.AltText || 'Category image'}
-                                    className="w-full h-full object-cover"
+                                    className="object-cover"
+                                    width={160}
+                                    height={160}
                                   />
                                 </div>
                                 <button

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Breadcrumb, Product, ProductAttribute } from '@/types/types';
+import { Product, ProductAttribute, FileGroup } from '@/types/types';
 import Image from 'next/image';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import Lightbox from 'yet-another-react-lightbox';
@@ -45,13 +45,6 @@ export async function getServerSideProps({ params }: { params: { productSlug: st
     };
 
 
-        return {
-            props: {
-                initialProductData: {
-                    ...productData.data,
-                },
-            },
-        };
 
     } catch (error) {
         console.error('Ошибка в getServerSideProps:', error);
@@ -61,15 +54,6 @@ export async function getServerSideProps({ params }: { params: { productSlug: st
     }
 }
 
-// Добавьте этот интерфейс перед компонентом ProductPage
-interface FileGroup {
-    title: string;
-    files: Array<{
-        FileName: string;
-        FileURL: string;
-        FileType: string;
-    }>;
-}
 
 const fileTypeMap: Record<string, string> = {
     'TD': 'Технические данные',
@@ -79,7 +63,11 @@ const fileTypeMap: Record<string, string> = {
 };
 
 // В компоненте ProductPage добавьте функцию для группировки файлов
-const groupFiles = (files: any[]): FileGroup[] => {
+const groupFiles = (files: {
+    FileURL: string;
+    FileName: string;
+    FileType: string;
+}[]): FileGroup[] => {
     const groups: { [key: string]: FileGroup } = {
         'Техническая информация': {
             title: 'Техническая информация',
@@ -198,12 +186,12 @@ const scrollToElement = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => 
 };
 
 export default function ProductPage({ initialProductData }: ProductPageProps) {
-    const [productData, setProductData] = useState<Product | null>(initialProductData);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
+    const [productData] = useState<Product | null>(initialProductData);
+    const [loading] = useState(false);
+    const [error] = useState<string | null>(null);
+    // const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+    // const [isLightboxOpen, setIsLightboxOpen] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [showMoreProducts, setShowMoreProducts] = useState(false);
     const [showMoreProjects, setShowMoreProjects] = useState(false);
@@ -220,10 +208,10 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
     if (!productData) return <div>Продукт не найден</div>;
 
     // Подготавливаем данные для Lightbox
-    const lightboxImages = productData.Images?.map(image => ({
-        src: image.ImageURL,
-        alt: productData.Name,
-    })) || [];
+    // const lightboxImages = productData.Images?.map(image => ({
+    //     src: image.ImageURL,
+    //     alt: productData.Name,
+    // })) || [];
 
     // Подготавливаем разные наборы изображений
     const productImages = productData.Images?.map(image => ({
@@ -231,13 +219,13 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
         alt: productData.Name,
     })) || [];
 
-    const drawingImage = productData.Files?.find(file => file.FileType === 'GB') ? [{
-        src: productData.Files.find(file => file.FileType === 'GB')?.FileURL,
+    const drawingImage = productData.Files?.find(file => file.FileType === 'GB')?.FileURL ? [{
+        src: productData.Files.find(file => file.FileType === 'GB')!.FileURL,
         alt: "Габаритный чертеж"
     }] : [];
 
-    const distributionImage = productData.Files?.find(file => file.FileType === 'KC') ? [{
-        src: productData.Files.find(file => file.FileType === 'KC')?.FileURL,
+    const distributionImage = productData.Files?.find(file => file.FileType === 'KC')?.FileURL ? [{
+        src: productData.Files.find(file => file.FileType === 'KC')!.FileURL,
         alt: "Светораспределение"
     }] : [];
 
@@ -339,17 +327,17 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
                             )}
                         </div>
                     </div>
-                    {/* Габаритный чертеж  файл светораспределения */}
-                    {(productData?.Files?.find(file => file.FileType === 'GB') || productData?.Files?.find(file => file.FileType === 'KC')) && (
+                    
+                    {productData?.Files && productData.Files.some(file => file.FileType === 'GB' || file.FileType === 'KC') && (
                         <div id="drawings" className="mt-4 flex flex-row p-[35px]">
                             <div className='w-1/2'>
-                                <div className='border-b-2 border-[#5cd69c] leading-[32px] mb-[25px] text-[20px] font-semibold mb-[5px] w-fit'>
+                                <div className='border-b-2 border-[#5cd69c] leading-[32px] mb-[25px] text-[20px] font-semibold w-fit'>
                                     Габаритный чертеж
                                 </div>
                                 {productData?.Files?.find(file => file.FileType === 'GB') ? (
                                     <div onClick={() => setIsDrawingLightboxOpen(true)}>
                                         <Image
-                                            src={productData.Files.find(file => file.FileType === 'GB')?.FileURL}
+                                            src={productData.Files.find(file => file.FileType === 'GB')?.FileURL ?? '/placeholder.png'}
                                             alt="Габаритный чертеж"
                                             className="w-full h-auto p-[15px] cursor-pointer"
                                             width={500}
@@ -361,13 +349,13 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
                                 )}
                             </div>
                             <div className='w-1/2'>
-                                <div className='border-b-2 border-[#5cd69c] leading-[32px] mb-[25px] text-[20px] font-semibold mb-[5px] w-fit'>
+                                <div className='border-b-2 border-[#5cd69c] leading-[32px] mb-[25px] text-[20px] font-semibold w-fit'>
                                     Cветораспределения
                                 </div>
                                 {productData?.Files?.find(file => file.FileType === 'KC') ? (
                                     <div onClick={() => setIsDistributionLightboxOpen(true)}>
                                         <Image
-                                            src={productData.Files.find(file => file.FileType === 'KC')?.FileURL}
+                                            src={productData.Files.find(file => file.FileType === 'KC')?.FileURL ?? '/placeholder.png'}
                                             alt="Cветораcпределения"
                                             className="w-full h-auto p-[15px] cursor-pointer"
                                             width={500}
@@ -381,7 +369,6 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
                         </div>
                     )}
                     {/* Остальные связанные файлы */}
-                    {console.log(productData)}
                     {productData?.Files && productData.Files.length > 0 && (
                         <div id="documents" className="mt-4">
                             <h2 className="border-b-2 border-[#5cd69c] leading-[32px] mb-[25px] text-[20px] font-semibold">
@@ -427,10 +414,10 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
                                 Связанные продукты
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-                                {productData.RelatedProducts.slice(0, showMoreProducts ? undefined : 5).map((relatedProduct: any) => (
+                                {productData.RelatedProducts?.slice(0, showMoreProducts ? undefined : 5).map((relatedProduct) => (
                                     <a
-                                        href={`/product/${relatedProduct.SeoURL}`}
-                                        key={relatedProduct.ProductID}
+                                        href={`/product/${relatedProduct.fullPath}`}
+                                        key={relatedProduct.ID}
                                         className="relative overflow-hidden rounded-[15px] flex flex-col shadow-lg"
                                     >
                                         {relatedProduct.Images?.[0] && (
@@ -474,7 +461,7 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
                                 Связанные проекты
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                {productData.RelatedProjects.slice(0, showMoreProjects ? undefined : 3).map((project: any) => (
+                                {productData.RelatedProjects?.slice(0, showMoreProjects ? undefined : 3).map((project) => (
                                     <a href={`/project/${project.fullPath}`} key={project.ProjectID} className="relative overflow-hidden rounded-[15px] flex flex-col shadow-lg">
                                         {project.Images?.[0] && (
                                             <div className="relative">
@@ -522,7 +509,7 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
                     <div className='mt-[20px] sticky top-[100px]' id="beacons">
                         <h2 className="text-[20px] text-[#2c364c] font-semibold mb-2 border-b-[2px] border-PLGreen">Разделы сайта</h2>
                         <div className="flex flex-col space-y-2">
-                            {productData?.ProductAttributes?.length > 0 && (
+                            {productData?.ProductAttributes && productData.ProductAttributes.length > 0 && (
                                 <div className="bg-[#f3f3f3] rounded-[5px] p-2">
                                     <a
                                         href="#characteristics"

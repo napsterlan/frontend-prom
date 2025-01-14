@@ -6,12 +6,12 @@ import Footer from '../components/Footer';
 import '../app/globals.css';
 import '../app/font.css';
 
-const protectedPaths = ['/projects/edit', '/projects/add'];
+// const protectedPaths = ['/projects/edit', '/projects/add'];
 
-function MyApp({ Component, pageProps, router }: AppProps) {
-  const isProtectedRoute = protectedPaths.some(path => 
-    router.pathname.startsWith(path)
-  );
+function MyApp({ Component, pageProps }: AppProps) {
+//   const isProtectedRoute = protectedPaths.some(path => 
+//     router.pathname.startsWith(path)
+//   );
 
 
   const content = (

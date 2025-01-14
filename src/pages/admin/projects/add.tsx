@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { createProject, uploadImages, getAllProjectCategories } from '@/api/apiClient';
 import { useRouter } from 'next/router';
 import { ProjectCategory } from '@/types/types';
-import { useEditor, EditorContent } from '@tiptap/react';
+import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
@@ -13,7 +13,8 @@ import { transliterate } from '@/utils/transliterate';
 import { Draggable } from 'react-beautiful-dnd';
 import { Droppable } from 'react-beautiful-dnd';
 import { DragDropContext } from 'react-beautiful-dnd';
-
+import { DropResult } from 'react-beautiful-dnd';
+import NextImage from 'next/image';
 // Функция для получения категорий проектов
 export const getServerSideProps = async () => {
   let categories = [];
@@ -32,7 +33,7 @@ export const getServerSideProps = async () => {
   };
 };
 
-const MenuBar = ({ editor }: { editor: any }) => {
+const MenuBar = ({ editor }: { editor: Editor | null }) => {
   if (!editor) {
     return null;
   }
@@ -150,10 +151,10 @@ const AddProject = ({ categories }: { categories: ProjectCategory[] }) => {
     setImagePreviewUrls(prev => prev.filter((_, i) => i !== index));
   }, [imagePreviewUrls]);
   
-  const handleDragEnd = (result: any) => {
+  const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
-    const reorder = (list: any[], startIndex: number, endIndex: number) => {
+    const reorder = <T,>(list: T[], startIndex: number, endIndex: number): T[] => {
       const result = Array.from(list);
       const [removed] = result.splice(startIndex, 1);
       result.splice(endIndex, 0, removed);
@@ -165,12 +166,12 @@ const AddProject = ({ categories }: { categories: ProjectCategory[] }) => {
       newImages: reorder(
         prevState.newImages,
         result.source.index,
-        result.destination.index
+        result.destination!.index
       )
     }));
 
     setImagePreviewUrls(prev => 
-      reorder(prev, result.source.index, result.destination.index)
+      reorder(prev, result.source.index, result.destination!.index)
     );
   };
 
@@ -280,10 +281,12 @@ const AddProject = ({ categories }: { categories: ProjectCategory[] }) => {
                                 className="relative group"
                               >
                                 <div className="w-40 h-40 border rounded-lg overflow-hidden">
-                                  <img
+                                  <NextImage
                                     src={imagePreviewUrls[index]}
                                     alt={image.name}
                                     className="w-full h-full object-cover"
+                                    width={160}
+                                    height={160}
                                   />
                                 </div>
                                 <button
