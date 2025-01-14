@@ -23,6 +23,8 @@ const BimConvertor: React.FC = () => {
   const [originalZipFile, setOriginalZipFile] = useState<File | null>(null);
   const [seriesName, setSeriesName] = useState<string>('');
   const [manufacter, setManufacter] = useState<string>('');
+  const [progress, setProgress] = useState<number>(0);
+  const [isGenerating, setIsGenerating] = useState<boolean>(false);
 
   const handleBimUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -59,6 +61,18 @@ const BimConvertor: React.FC = () => {
               ['Наименование Promled', 'Наименование партнера', 'Файл фотометрии Promled', 'Имя файла фотометрии партнера'],
               ...rows.map((row: any) => [row.name, '', row.photometry, ''])
             ]);
+
+            ws['A1'].s = { font: { bold: true } };
+            ws['B1'].s = { font: { bold: true } };
+            ws['C1'].s = { font: { bold: true } };
+            ws['D1'].s = { font: { bold: true } };
+
+            ws['!cols'] = [
+              { wch: 50 },
+              { wch: 50 },
+              { wch: 45 },
+              { wch: 45 }
+            ];
 
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Products');
@@ -145,9 +159,13 @@ const BimConvertor: React.FC = () => {
       return;
     }
 
+    setIsGenerating(true);
+    setProgress(0);
+
     try {
       const newZip = new JSZip();
       const oldZip = await JSZip.loadAsync(originalZipFile);
+      setProgress(10);
 
       // Находим txt файл
       const txtFile = Object.values(oldZip.files).find(file => 
@@ -223,6 +241,7 @@ const BimConvertor: React.FC = () => {
       // Сохраняем обновленный txt в новый архив
       const updatedContent = iconv.encode(content, 'windows-1251');
       newZip.file(`${seriesName}.txt`, updatedContent);
+      setProgress(30);
 
       // Обрабатываем IES файлы
       const iesFiles = Object.values(oldZip.files).filter(file => 
@@ -243,11 +262,9 @@ const BimConvertor: React.FC = () => {
       // Добавляем только переименованные IES файлы
       for (const iesFile of iesFiles) {
         const oldName = iesFile.name.split('/').pop();
+        console.log('oldName: ', oldName);
         if (!oldName) continue;
-        console.log('oldName: ', oldName.replace('.ies', ''));
-        console.log('nameMapping: ', nameMapping);
         const newIESdata = getNewIESdata(oldName.replace('.ies', ''));
-        console.log('newIESdata: ', newIESdata);
 
         if (newIESdata) {
           // Получаем содержимое файла как текст
@@ -264,12 +281,13 @@ const BimConvertor: React.FC = () => {
             );
             
             // Сохраняем обновленный файл
-            const newPath = iesFile.name.replace(oldName, `${newIESdata[1]}.ies`);
+            const newPath = iesFile.name.replace(oldName, `${newIESdata[0]}.ies`);
             newZip.file(newPath, updatedContent);
             
           }
         }
       }
+      setProgress(70);
 
       // Копируем нужные файлы (кроме IES и PDF)
       for (const [path, file] of Object.entries(oldZip.files)) {
@@ -300,6 +318,7 @@ const BimConvertor: React.FC = () => {
           }
         }
       }
+      setProgress(90);
 
       // Генерируем новый архив
       const updatedZip = await newZip.generateAsync({
@@ -307,6 +326,7 @@ const BimConvertor: React.FC = () => {
         compression: 'DEFLATE',
         compressionOptions: { level: 9 }
       });
+      setProgress(100);
 
       // Скачиваем архив
       const url = window.URL.createObjectURL(updatedZip);
@@ -321,15 +341,17 @@ const BimConvertor: React.FC = () => {
     } catch (error) {
       console.error('Ошибка при генерации архива:', error);
       alert('Ошибка при генерации архива');
+    } finally {
+      setIsGenerating(false);
+      setProgress(0);
     }
   };
 
-  return (
+ return (
     <div className="p-10 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Конвертор BIM моделей</h1>
       
       <div className="space-y-8">
-        {/* Шаг 1 */}
         <div className="border rounded-lg p-4 bg-white shadow-sm">
           <div className="flex items-center mb-4">
             <div className="w-8 h-8 rounded-full flex items-center justify-center border-2 
@@ -337,13 +359,14 @@ const BimConvertor: React.FC = () => {
               1
             </div>
             <div>
-              <div className="font-medium">Загрузите архив с BIM моделями</div>
-              <div className="text-sm text-gray-500">Архивы доступны для скачивания на сайте promled.com на странице продукта</div>
+              <div className="text-xl font-medium mb-4">Загрузите архив с BIM моделями PromLED</div>
+              <div className="text-s text-gray-500">1.1 Скачайте архив с BIM моделями на странице продукта promled.com</div>
+              <div className="text-s text-gray-500">1.2 Выберите архив с BIM моделями</div>
             </div>
           </div>
           
           <div className="ml-11">
-            <div className="max-w-2xl text-gray-600 mb-4">
+            <div className="text-sm text-gray-600 mb-4">
               Например: BIM-promled-profi_neo-#-#-#-#-#-#-#-#-#-#-#.zip
             </div>
             <label className="block">
@@ -362,7 +385,6 @@ const BimConvertor: React.FC = () => {
           </div>
         </div>
 
-        {/* Шаг 2 */}
         <div className={`border rounded-lg p-4 bg-white shadow-sm ${uploadedFile ? 'opacity-100' : 'opacity-50'}`}>
           <div className="flex items-center mb-4">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 
@@ -370,8 +392,13 @@ const BimConvertor: React.FC = () => {
               2
             </div>
             <div>
-              <div className="font-medium">Скачать реестр</div>
-              <div className="text-sm text-gray-500">Скачайте реестр продукции Промлед из загруженного архива в xlsx формате</div>
+              <div className="text-xl pt-4 font-medium mb-4">Скачать таблицу светильников PromLED</div>
+              <div className="text-s text-gray-500">2.1 Скачайте таблицу светильников PromLED из загруженного архива в xlsx формате</div>
+              <div className="text-s text-gray-500">2.2 Заполните колонку B "Наименование партнера" вашими наименованиями светильников</div>
+              <div className="text-s text-gray-500">2.3 Заполните колонку D "Имя файла фотометрии партнера" желаемыми названими новых файлов фотометрии </div>
+              <div className="text-s text-gray-500">2.4 После заполнения файла, загрузите его в шаг 3</div>
+              <div className="text-sm text-gray-500 pt-2">См. пример заполненного файла. <a href="/sample-products.xlsx" target="_blank" rel="noopener noreferrer" className="font-bold text-blue-600 underline">Скачать пример</a> </div>
+              <div className="text-s text-red-500 pt-2 font-bold">Внимание! Не изменяйте первую строку файла (заголовки)</div>
             </div>
           </div>
           
@@ -385,12 +412,11 @@ const BimConvertor: React.FC = () => {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
-              Скачать шаблон
+              Скачать таблицу светильников из архива BIM модели
             </button>
           </div>
         </div>
 
-        {/* Шаг 3 */}
         <div className={`border rounded-lg p-4 bg-white shadow-sm ${processedData ? 'opacity-100' : 'opacity-50'}`}>
           <div className="flex items-center mb-4">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 
@@ -398,13 +424,13 @@ const BimConvertor: React.FC = () => {
               3
             </div>
             <div>
-              <div className="font-medium">Загрузка таблицы сопоставления названий</div>
+              <div className="text-xl font-medium mb-4">Загрузка таблицы сопоставления названий</div>
             </div>
           </div>
           
           <div className="ml-11">
-            <div className="max-w-2xl text-gray-600 mb-4">
-              Поле заполнения таблицы соответствий названий Промлед и ваших наименований, загрузите файл обратно.
+            <div className="text-s text-gray-600 mb-4">
+              После заполнения таблицы соответствий названий PromLED и ваших наименований, загрузите файл обратно.
             </div>
             <label className="block">
               <input
@@ -424,7 +450,6 @@ const BimConvertor: React.FC = () => {
           </div>
         </div>
 
-        {/* Шаг 4 */}
         <div className={`border rounded-lg p-4 bg-white shadow-sm ${uploadedFile && processedData ? 'opacity-100' : 'opacity-50'}`}>
           <div className="flex items-center mb-4">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 
@@ -432,39 +457,53 @@ const BimConvertor: React.FC = () => {
               4
             </div>
             <div>
-              <div className="font-medium">Генерация архива</div>
-              <div className="text-sm text-gray-500">Сохраните финальный архив</div>
+              <div className="text-xl pt-4 font-medium mb-4">Генерация архива с BIM моделями с новыми названиями</div>        
             </div>
           </div>
           
           <div className="ml-11">
             <div className="max-w-2xl text-gray-600 mb-4">
-                <label htmlFor="seriesName" className="block mb-1">Название серии:</label>
+                <label htmlFor="seriesName" className="text-s block mb-1">4.1 Введите свое название серии:</label>
                 <input 
                   id="seriesName" 
                   type="text" 
                   value={seriesName}
                   onChange={(e) => setSeriesName(e.target.value)}
-                  placeholder="Введите ваше название серии" 
+                  placeholder="Например: GoLED Profi NEO" 
                   className="w-full p-2 border border-gray-300 rounded-md" 
                 />
-                <label htmlFor="manufacter" className="block mb-1 mt-4">Название производителя:</label>
+                <label htmlFor="manufacter" className="text-s block mb-1 mt-4">4.2 Введите свое название производителя:</label>
                 <input 
                   id="manufacter" 
                   type="text" 
                   value={manufacter}
                   onChange={(e) => setManufacter(e.target.value)}
-                  placeholder="Введите ваше название производителя" 
+                  placeholder="Например: GoLED" 
                   className="w-full p-2 border border-gray-300 rounded-md" 
                 />
             </div>
+            <div className="text-s text-gray-500 pb-4">4.3 Нажмите кнопку "Сгенерировать архив". Автоматически сгенерируется архив с BIM моделями с новыми наименованиями, новыми файлами фотометрии, новым названием производителя и серии</div>
+            {isGenerating && (
+              <div className="mb-4">
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div 
+                    className="bg-blue-500 h-2.5 rounded-full transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
+                <div className="text-sm text-gray-600 mt-1 text-center">
+                  {progress}% завершено
+                </div>
+              </div>
+            )}
+
             <button 
               onClick={generateArchive}
-              disabled={!(uploadedFile && processedData)}
+              disabled={!(uploadedFile && processedData) || isGenerating}
               className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600
-                ${!(uploadedFile && processedData) && 'opacity-50 cursor-not-allowed'}`}
+                ${(!(uploadedFile && processedData) || isGenerating) && 'opacity-50 cursor-not-allowed'}`}
             >
-              Сгенерировать архив
+              {isGenerating ? 'Генерация архива...' : 'Сгенерировать архив'}
             </button>
           </div>
         </div>
