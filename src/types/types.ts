@@ -307,3 +307,4 @@ export interface FileGroup {
         FileType: string;
     }[];
 }
+
