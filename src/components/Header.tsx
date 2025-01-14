@@ -161,7 +161,7 @@ export default function Header() {
             >
                 <div className="bg-[rgba(255,255,255)] h-[80px] flex justify-center">
                     <div className="justify-end flex items-center pr-8">
-                        <Image src="/promled.svg" alt="Логотип" width={120} height={40} className="transition-all duration-300 h-[40px]" />
+                        <Image src="/promled.svg" alt="Логотип" width={220} height={80} className="transition-all duration-300 " />
                     </div>
                     <div className="justify-start flex items-center">
                         <ul className="flex justify-start space-x-4 text-black items-center font-commissioner">

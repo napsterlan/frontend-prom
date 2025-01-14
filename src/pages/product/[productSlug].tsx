@@ -255,6 +255,9 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
                                                     className="w-full h-auto"
                                                     width={500}
                                                     height={500}
+                                                    priority={true}
+                                                    placeholder="blur"
+                                                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRg..."
                                                 />
                                             </div>
                                         ) : (
@@ -522,7 +525,7 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
                                 </div>
                             )}
 
-                            {/* Проверяем наличие чертежей или светораспределения */}
+                            {/*маяк для Габаритный чертеж и светораспределение */}
                             {productData?.Files?.some(file => file.FileType === 'KC' || file.FileType === 'GB') && (
                                 <div className="bg-[#f3f3f3] rounded-[5px] p-2">
                                     <a
@@ -535,7 +538,7 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
                                     </a>
                                 </div>
                             )}
-
+                            {/*маяк для документов */}
                             {productData?.Files && productData.Files.length > 0 && (
                                 <div className="bg-[#f3f3f3] rounded-[5px] p-2">
                                     <a
@@ -549,7 +552,7 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
                                 </div>
                             )}
 
-                            {/* Добавляем маяк для связанных продуктов */}
+                            {/*маяк для связанных продуктов */}
                             {productData?.RelatedProducts && productData.RelatedProducts.length > 0 && (
                                 <div className="bg-[#f3f3f3] rounded-[5px] p-2">
                                     <a
