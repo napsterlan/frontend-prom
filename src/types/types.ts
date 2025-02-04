@@ -81,7 +81,15 @@ export interface Product {
         AltText: string;
         Order: number;
     }[] | null;
-    ProductAttributes: ProductAttribute[] | null;
+    AttributeGroups: [{
+        Name: string;
+        Order: number;
+        Attributes: [{
+            Name: string;
+            Value: string;
+            Order: number;
+        }]
+    }] 
     Files: {
         FileURL: string;
         FileName: string;
@@ -123,12 +131,7 @@ export interface Product {
     DeletedAt: string | null;
 }
 
-export interface ProductAttribute {
-    AttributeID: number;
-    AttributeName: string;
-    AttributeGroupName: string;
-    Value: string;
-}
+
 
 export interface ProjectCategory {
     ID: number;
