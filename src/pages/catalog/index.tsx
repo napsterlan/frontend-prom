@@ -4,6 +4,8 @@ import { Category } from '@/types/types';
 import { useEffect, useState } from 'react';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 
+
+
 export default function MainCategories() {
   const [categoryData, setCategoryData] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);

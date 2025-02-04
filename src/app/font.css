@@ -33,6 +33,22 @@
 
 @font-face {
     font-family: 'Manrope';
+    src: url('/fonts/Manrope/Manrope-thin.woff2') format('woff2'),
+         url('/fonts/Manrope/Manrope-thin.woff') format('woff');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Manrope';
+    src: url('/fonts/Manrope/Manrope-light.woff2') format('woff2'),
+         url('/fonts/Manrope/Manrope-light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Manrope';
     src: url('/fonts/Manrope/Manrope-regular.woff2') format('woff2'),
          url('/fonts/Manrope/Manrope-regular.woff') format('woff');
     font-weight: 400;

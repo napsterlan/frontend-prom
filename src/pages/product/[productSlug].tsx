@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Product, ProductAttribute, FileGroup } from '@/types/types';
+import { Product,  FileGroup } from '@/types/types';
 import Image from 'next/image';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import Lightbox from 'yet-another-react-lightbox';
@@ -258,6 +258,7 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
                                                     priority={true}
                                                     placeholder="blur"
                                                     blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRg..."
+                                                    quality={100}
                                                 />
                                             </div>
                                         ) : (
@@ -306,31 +307,25 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
                         <div>Продукт не найден</div>
                     )}
                     {/* Технические характеристики */}
+                    {productData?.AttributeGroups?.length && productData.AttributeGroups.length > 0 &&   (
                     <div id="characteristics" className="mt-4">
                         <h2 className="text-[20px] text-[#2c364c] font-semibold border-b-[2px] border-PLGreen pb-[10px]">Характеристики</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-[25px]">
-                            {productData?.ProductAttributes?.length && productData.ProductAttributes.length > 0 ? (
-                                Object.entries(productData.ProductAttributes.reduce((acc, attr) => {
-                                    const group = acc[attr.AttributeGroupName] || [];
-                                    group.push(attr);
-                                    acc[attr.AttributeGroupName] = group;
-                                    return acc;
-                                }, {} as Record<string, ProductAttribute[]>)).map(([groupName, attrs]) => (
-                                    <div key={groupName} className="col-span-1">
-                                        <h3 className="font-semibold text-[18px] font-medium text-[#333333] mb-[10px] border-b-[1px] border-PLGreen w-fit">{groupName}</h3>
-                                        {attrs.map((attr: ProductAttribute) => (
-                                            <div key={attr.AttributeID} className={`${attrs.indexOf(attr) % 2 !== 1 ? 'bg-[#efefef]' : ''} mx-[15px] py-[5px] pl-[10px] pr-[25px]  border-t-[1px] border-[#e0e0e0] text-[15px] flex justify-between`}>
-                                                <strong className='font-[500]'>{attr.AttributeName}:</strong> <div className='pr-[15px]'>{attr.Value}</div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                ))
-                            ) : (
-                                <div>Нет технических характеристик</div>
-                            )}
-                        </div>
+
+                            {productData.AttributeGroups.sort((a, b) => a.Order - b.Order).map((group) => (
+                                <div key={group.Name} className="col-span-1">
+                                    <h3 className="font-semibold text-[18px] font-medium text-[#333333] mb-[10px] border-b-[1px] border-PLGreen w-fit">{group.Name}</h3>
+                                    {group.Attributes.sort((a, b) => a.Order - b.Order).map((attr, index) => (
+                                        <div key={attr.Name} className={`${index % 2 === 0 ? 'bg-[#efefef]' : ''} mx-[15px] py-[5px] pl-[10px] pr-[25px] border-t-[1px] border-[#e0e0e0] text-[15px] flex justify-between`}>
+                                            <strong className='font-[500]'>{attr.Name}:</strong> <div className='pr-[15px]'>{attr.Value}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ))}
+                        </div>  
                     </div>
-                    
+                )}
+
                     {productData?.Files && productData.Files.some(file => file.FileType === 'GB' || file.FileType === 'KC') && (
                         <div id="drawings" className="mt-4 flex flex-row p-[35px]">
                             <div className='w-1/2'>
@@ -512,7 +507,7 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
                     <div className='mt-[20px] sticky top-[100px]' id="beacons">
                         <h2 className="text-[20px] text-[#2c364c] font-semibold mb-2 border-b-[2px] border-PLGreen">Разделы сайта</h2>
                         <div className="flex flex-col space-y-2">
-                            {productData?.ProductAttributes && productData.ProductAttributes.length > 0 && (
+                            {productData?.AttributeGroups && productData.AttributeGroups.length > 0 && (
                                 <div className="bg-[#f3f3f3] rounded-[5px] p-2">
                                     <a
                                         href="#characteristics"
