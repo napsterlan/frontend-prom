@@ -43,8 +43,8 @@ export const getProductBySlug = async (slug: string) => {
 };
 
 // Новости
-export const getAllNews = async () => {
-  const response = await apiClient.get('/news');
+export const getAllNews = async (page: number = 1) => {
+  const response = await apiClient.get(`/news?page=${page}`);
   return response.data;
 };
 

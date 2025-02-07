@@ -226,6 +226,28 @@ export interface Project {
     PublishDate?: string | null;
 }
 
+export interface News {
+    ID: number;
+    Title: string;
+    Name: string;
+    Description: string;
+    Images: {
+        ID: number;
+        ImageURL: string;
+        AltText: string;
+        Order: number;
+    }[];
+    MetaTitle: string;
+    MetaDescription: string;
+    MetaKeyword: string;
+    FullPath: string;
+    Slug: string;
+    CreatedAt: string;
+    UpdatedAt: string;
+    DeletedAt: string | null;
+    PublishDate?: string | null;
+}
+
 export interface ProjectFormData {
     title: string;
     description: string;
