@@ -1,14 +1,18 @@
-import '../app/globals.css';
-import Layout from './layout';
+import React from 'react'
+import useEmblaCarousel from 'embla-carousel-react'
 
-export default function HomePage() {
-  return (
-    <html>
-      <body>
-        <Layout>
-          <h1 className="text-4xl font-bold">Главная страница</h1>
-        </Layout>
-      </body>
-    </html>
-  );
-}
+const WelcomeComponent = () => {
+    return (
+      <div className="welcome-section">
+        <h2>Привет!</h2>
+        <p>Это мой новый компонент</p>
+      </div>
+    )
+  }
+export default function Home() {
+    return (
+<>
+    <WelcomeComponent />
+</>
+    )
+  }

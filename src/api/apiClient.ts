@@ -1,6 +1,6 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
-import { getSession, signOut } from "next-auth/react"
+// import Cookies from 'js-cookie';
+// import { getSession, signOut } from "next-auth/react"
 
 const getBaseConfig = () => ({
   baseURL: process.env.API_URL || 'http://192.168.31.40:4000/api',
@@ -13,26 +13,26 @@ const getBaseConfig = () => ({
 
 const apiClient = axios.create(getBaseConfig());
 
-apiClient.interceptors.request.use(async (config) => {
-    const session = await getSession()
+// apiClient.interceptors.request.use(async (config) => {
+    // const session = await getSession()
     
-    if (session?.token) {
-        config.headers.Authorization = `Bearer ${session.token}`
-    }
+//     if (session?.token) {
+//         config.headers.Authorization = `Bearer ${session.token}`
+//     }
     
-    return config
-  })
+//     return config
+//   })
 
-  apiClient.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-      if (error.response?.status === 401 && 
-        !error.config.url?.includes('/users/profile')) {
-        await signOut({ redirect: true, callbackUrl: "/login" })
-      }
-      return Promise.reject(error)
-    }
-  )
+//   apiClient.interceptors.response.use(
+//     (response) => response,
+//     async (error) => {
+//       if (error.response?.status === 401 && 
+//         !error.config.url?.includes('/users/profile')) {
+//         await signOut({ redirect: true, callbackUrl: "/login" })
+//       }
+//       return Promise.reject(error)
+//     }
+//   )
 
 // apiClient.interceptors.response.use(
 //     (response) => response,
