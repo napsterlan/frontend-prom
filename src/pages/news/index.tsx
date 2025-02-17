@@ -56,8 +56,8 @@ export default function NewsPage({ news, currentPage, totalPages }: NewsPageProp
 
       <div className="container mx-auto px-4">
 
-          <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold">Новости</h1>
+          <div className="flex justify-center items-center mb-6">
+              <h1 className="text-[32px] font-bold">Новости</h1>
           </div>
           <div className='flex flex-col items-center'>
 
@@ -70,7 +70,7 @@ export default function NewsPage({ news, currentPage, totalPages }: NewsPageProp
                                       <Image
                                           src={_news.Images[0].ImageURL}
                                           alt={_news.Images[0].AltText}
-                                          className="w-full h-48 object-cover rounded-xl mb-4"
+                                          className="w-full h-48 object-cover rounded-xl mb-4 border-b-1"
                                           width={350}
                                           height={194}
                                           priority={false}

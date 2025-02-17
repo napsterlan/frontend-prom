@@ -1,0 +1,32 @@
+/* Import Bootstrap styles but scope them to this component */
+.bootstrapContent :global {
+    /* Bootstrap core styles */
+    @import 'bootstrap/dist/css/bootstrap.min.css';
+}
+
+.bootstrapContent {
+    /* Component-specific Bootstrap overrides */
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 0;
+    font-family: var(--bs-body-font-family);
+    font-size: var(--bs-body-font-size);
+    font-weight: var(--bs-body-font-weight);
+    line-height: var(--bs-body-line-height);
+}
+
+/* Scope specific Bootstrap classes */
+.bootstrapContent :global(.table) {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: inherit;
+}
+
+.bootstrapContent :global(.alert) {
+    position: relative;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
+
+/* Add more Bootstrap class overrides as needed */

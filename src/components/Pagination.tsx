@@ -61,7 +61,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
                     onClick={() => onPageChange(page)}
                     className={`px-4 py-2  border border-r-0 ${
                         currentPage === page
-                            ? 'bg-PLGreen text-white border-PLGreen'
+                            ? 'bg-PLDarkBlue text-white border-PLDarkBlue'
                             : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                     }`}
                 >
