@@ -1,3 +1,10 @@
+export interface Images {
+    ID: number;
+    ImageURL: string;
+    AltText: string;
+    Order: number;
+}
+
 export interface Category {
     ID: number;
     CategoryID: number;
@@ -14,12 +21,7 @@ export interface Category {
     CreatedAt: string;
     UpdatedAt: string;
     DeletedAt: string | null;
-    Images: {
-        ID: number;
-        ImageURL: string;
-        AltText: string;
-        Order: number;
-    }[] | null;
+    Images: Images[] | null;
     ChildrenCategories: Category[] | null;
     ProductView: ProductView[] | null;
 }
@@ -75,12 +77,7 @@ export interface Product {
     DealerPrice1?: number;
     DealerPrice2?: number;
     DealerPrice3?: number;
-    Images: {
-        ID: number;
-        ImageURL: string;
-        AltText: string;
-        Order: number;
-    }[] | null;
+    Images: Images[] | null;
     AttributeGroups: [{
         Name: string;
         Order: number;
@@ -98,12 +95,7 @@ export interface Product {
     RelatedProducts: {
         ID: number;
         Name: string;
-        Images: {
-            ID: number;
-            ImageURL: string;
-            AltText: string;
-            Order: number;
-        }[];
+        Images: Images[] | null;
         fullPath: string;
     }[] | null;
     RelatedProjects?: Array<{
@@ -142,21 +134,11 @@ export interface ProjectCategory {
         Title: string;
         fullPath: string;
     }[];
-    Images: {
-        ID: number;
-        ImageURL: string;
-        AltText: string;
-        Order: number;
-    }[];
+    Images: Images[] | null;
     Projects: {
         ID: number;
         Title: string;
-        Images: {
-            ID: number;
-            ImageURL: string;
-            AltText: string;
-            Order: number;
-        }[];
+        Images: Images[] | null;
         Slug: string;
     }[];
     MetaTitle: string;
@@ -172,13 +154,10 @@ export interface ProjectCategory {
 export interface Project {
     ID: number;
     Title: string;
+    Name: string;
     Description: string;
-    Images: {
-        ID: number;
-        ImageURL: string;
-        AltText: string;
-        Order: number;
-    }[];
+    Images: Images[] | null;
+    User: User | null;
     ProjectsCategories: {
         ID: number;
         Name: string;
@@ -187,23 +166,13 @@ export interface Project {
     RelatedProducts: {
         ID: number;
         Name: string;
-        Images: {
-            ID: number;
-            ImageURL: string;
-            AltText: string;
-            Order: number;
-        }[];
+        Images: Images[] | null;
         fullPath: string;
     }[];
     RelatedNews: {
         ID: number;
         Title: string;
-        Images: {
-            ID: number;
-            ImageURL: string;
-            AltText: string;
-            Order: number;
-        }[];
+        Images: Images[] | null;
         fullPath: string;
     }[];
     ProjectImages: Array<{
@@ -219,6 +188,23 @@ export interface Project {
     MetaDescription: string;
     MetaKeyword: string;
     fullPath: string;
+    Slug: string;
+    CreatedAt: string;
+    UpdatedAt: string;
+    DeletedAt: string | null;
+    PublishDate?: string | null;
+}
+
+export interface News {
+    ID: number;
+    Title: string;
+    Name: string;
+    Description: string;
+    Images: Images[] | null;
+    MetaTitle: string;
+    MetaDescription: string;
+    MetaKeyword: string;
+    FullPath: string;
     Slug: string;
     CreatedAt: string;
     UpdatedAt: string;
@@ -275,6 +261,8 @@ export interface User {
     Activated: boolean;
     Status: boolean;
     Company: string | null;
+    ImageURL: string | null;
+    QRCodeURL: string | null;
 }
 
 export interface AuthFormData {

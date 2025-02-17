@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/*@import 'bootstrap/dist/css/bootstrap.min.css';*/
 
 :root {
   --background: #ffffff;
@@ -25,4 +26,236 @@ body {
   background: var(--background);
   /* font-family: Arial, Helvetica, sans-serif; */
   font-family: var(--font-family);
+  line-height: 22px;
+}
+
+.embla {
+  max-width: 1100px;
+  /*height: 625px;*/
+  margin: auto;
+  --slide-height: 19rem;
+  --slide-spacing: 1rem;
+  --slide-size: 100%;
+}
+.embla__viewport {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+.embla__container {
+  height: 100%;
+  display: flex;
+  touch-action: pan-y pinch-zoom;
+  margin-left: calc(var(--slide-spacing) * -1);
+}
+.embla__slide {
+  transform: translate3d(0, 0, 0);
+  flex: 0 0 var(--slide-size);
+  min-width: 0;
+  padding-left: var(--slide-spacing);
+}
+.embla__slide__number {
+  box-shadow: inset 0 0 0 0.2rem var(--detail-medium-contrast);
+  border-radius: 1.8rem;
+  font-size: 4rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--slide-height);
+  user-select: none;
+}
+.embla__controls {
+  background-color: transparent;
+  color: white;
+  width: 100%;
+  /*display: grid;*/
+  grid-template-columns: auto 1fr;
+  justify-content: space-between;
+  z-index: 3;
+  /*gap: 1.2rem;*/
+  /*margin-top: 1.8rem;*/
+}
+.embla__buttons {
+  display: flex;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.6rem;
+  align-items: center;
+  justify-content: space-between;
+}
+.embla__button {
+  /*border: 1px solid;*/
+  width: 40px;
+  height: 40px;
+
+  background-color: color-mix(in oklab, rgb(31 41 55 / var(--tw-bg-opacity, 1)) 60%, transparent);
+  -webkit-tap-highlight-color: rgba(var(--text-high-contrast-rgb-value), 0.5);
+  -webkit-appearance: none;
+  appearance: none;
+  /*background-color: transparent;*/
+  touch-action: manipulation;
+  display: inline-flex;
+  text-decoration: none;
+  cursor: pointer;
+  /*border: 0;*/
+  padding: 0;
+  margin: 0;
+  box-shadow: inset 0 0 0 0.2rem var(--detail-medium-contrast);
+  /*width: 3.6rem;*/
+  /*height: 3.6rem;*/
+  z-index: 1;
+  border-radius: 50%;
+  color: var(--text-body);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.embla__button:disabled {
+  color: var(--detail-high-contrast);
+}
+.embla__button__svg {
+  width: 45%;
+  height: 45%;
+}
+
+.embla__dots {
+  display: flex;
+  flex-wrap: wrap;
+  /*justify-content: flex-end;*/
+  align-items: center;
+  margin-right: calc((2.6rem - 1.4rem) / 2 * -1);
+}
+.embla__dot {
+  -webkit-tap-highlight-color: rgba(var(--text-high-contrast-rgb-value), 0.5);
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: transparent;
+  touch-action: manipulation;
+  display: inline-flex;
+  text-decoration: none;
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  width: 2.6rem;
+  height: 2.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.embla__dot:after {
+  box-shadow: inset 0 0 0 0.2rem color-mix(in oklab, rgb(31 41 55 / var(--tw-bg-opacity, 1)) 60%, transparent);
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  content: '';
+}
+.embla__dot--selected:after {
+  box-shadow: inset 0 0 0 0.2rem #5CD69C;
+}
+.embla__slide__img {
+  user-select: none;
+}
+
+/*.embla__container {*/
+/*  backface-visibility: hidden;*/
+/*  display: flex;*/
+/*  touch-action: pan-y;*/
+/*}*/
+
+/*.embla__slide {*/
+/*  flex: 0 0 auto;*/
+/*  min-width: 0;*/
+/*  position: relative;*/
+/*}*/
+
+/* For fullscreen mode to show adjacent slides */
+/*.is-reveal .embla__slide {*/
+/*  opacity: 0.2;*/
+/*  transition: opacity 0.2s ease;*/
+/*}*/
+
+/*.is-reveal .embla__slide.is-selected {*/
+/*  opacity: 1;*/
+/*}*/
+
+.embla__slide {
+  /*transition: opacity 300ms ease-in-out;*/
+  /*opacity: 0.2;*/
+}
+
+.embla__slide.is-selected {
+  /*opacity: 1;*/
+}
+
+.embla__slide img {
+  transform-origin: center;
+  transition: transform 300ms ease-in-out;
+}
+
+/* Optional: Add panning functionality when zoomed */
+.embla__slide.zoomed {
+  cursor: move;
+  overflow: hidden;
+}
+
+.categories-menu {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  border-left: 2px solid #eee;
+}
+
+.categories-menu li {
+  margin: 8px 0;
+}
+
+.category-link {
+  display: block;
+  padding: 6px 16px;
+  color: #666;
+  text-decoration: none;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  border-left: 2px solid transparent;
+  margin-left: -2px;
+}
+
+.category-link:hover {
+  color: #000;
+  border-left: 2px solid #5CD69C;
+}
+
+.category-link.active {
+  color: #000;
+  font-weight: 500;
+  border-left: 2px solid #5CD69C;
+}
+
+.all-projects-link {
+  display: block;
+  /*padding: 6px 16px;*/
+  color: #000;
+  font-size: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.all-projects-link:hover {
+  color: #000;
+}
+
+.pointer-events-none {
+  pointer-events: none;
+}
+
+.opacity-50 {
+  opacity: 0.5;
 }
