@@ -4,7 +4,7 @@ import {News, Product, Project} from "@/types/types";
 import {HtmlContent} from "@/components/HtmlContent";
 import Image from "next/image";
 import {Images} from "@/types/types";
-import Carousel from "@/components/Carousel";
+import Carousel from "@/components/Carousel/Carousel";
 import {EmblaOptionsType} from "embla-carousel";
 import {Breadcrumbs} from "@/components/Breadcrumbs";
 import {BootstrapWrapper} from "@/components/BootstrapWrapper";

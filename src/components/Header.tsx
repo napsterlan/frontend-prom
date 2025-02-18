@@ -5,19 +5,27 @@ import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image';
+import { useAuthStatus } from '@/hooks/useAuthStatus';
+import { signOut } from 'next-auth/react';
+import { AuthProvider } from '@/providers/AuthProvider';
 
-export default function Header() {
+function HeaderContent() {
+    const { isAuthenticated, user, isLoading } = useAuthStatus()
+
     const router = useRouter();
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    // const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isSticky, setIsSticky] = useState(false);
     const [showCatalog, setShowCatalog] = useState(false);
     const [isProductLightboxOpen] = useState(false);
     const [isDrawingLightboxOpen] = useState(false);
     const [isDistributionLightboxOpen] = useState(false);
 
+
+    
     useEffect(() => {
-        setIsAuthenticated(auth.isAuthenticated());
-    }, []);
+        console.log("AUTH")
+        console.log(isAuthenticated);
+    }, [isAuthenticated]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -66,11 +74,9 @@ export default function Header() {
         };
     }, [isSticky, isProductLightboxOpen, isDrawingLightboxOpen, isDistributionLightboxOpen]);
 
-    const handleLogout = () => {
-        auth.logout();
-        setIsAuthenticated(false);
-        router.push('/login');
-    };
+    const handleLogout = async () => {
+        await signOut({ redirect: true, callbackUrl: '/' })
+      }
     const button = "px-[5px]  py-[3px] font-normal border-2 border-transparent text-[14px] rounded-[10px] hover:border-PLGreen font-commissioner";
     const catalogButton = "bg-[#f0f0f0] px-[10px]  py-[2px] [&>*]:border-0 s border-2 border-[#f0f0f0] hover:border-PLGreen rounded-[10px] flex";
 
@@ -212,7 +218,7 @@ export default function Header() {
 
                             {isAuthenticated ? (
                                 <li className="relative group">
-                                    <Link href="/account" className="relative flex items-center">
+                                    <Link href="/src/pages/profile" className="relative flex items-center">
                                         <div className='z-10 w-10 h-10 flex items-center justify-center border-3 rounded-full border-PLGreen bg-white'>
                                             <FontAwesomeIcon className='text-base z-10' icon={faUser} width={14} height={16} />
                                         </div>
@@ -253,4 +259,12 @@ export default function Header() {
 
         </header>
     );
+}
+
+export default function Header() {
+    return (
+      <AuthProvider>
+        <HeaderContent />
+      </AuthProvider>
+    )
 }

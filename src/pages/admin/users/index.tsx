@@ -25,9 +25,10 @@ const UserList: React.FC<UserListProps> = ({ users }) => {
       try {
         const response = await deleteUserById(userId);
 
-        if (response.ok) {
+        if (response.success) {
           // Обновляем список пользователей после удаления
           // Здесь нужно будет обновить состояние, если вы используете его
+          window.location.reload();
         } else {
           console.error('Ошибка при удалении пользователя');
         }

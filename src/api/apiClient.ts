@@ -15,9 +15,11 @@ const apiClient = axios.create(getBaseConfig());
 
 apiClient.interceptors.request.use(async (config) => {
     const session = await getSession()
+
+  console.log(session);
     
-    if (session?.token) {
-        config.headers.Authorization = `Bearer ${session.token}`
+    if (session?.jwt) {
+        config.headers.Authorization = `Bearer ${session.jwt}`
     }
     
     return config
