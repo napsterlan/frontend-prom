@@ -1,12 +1,16 @@
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { auth } from '@/utils/auth';
-import { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+'use client'
+
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { auth } from '@/utils/auth'
+import { useState, useEffect } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
-import Image from 'next/image';
+import Image from 'next/image'
+import CatalogMenu from './CatalogMenu'
 
 export default function Header() {
+
     const router = useRouter();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isSticky, setIsSticky] = useState(false);
@@ -91,7 +95,7 @@ export default function Header() {
             setShowCatalog(false);
         }
     };
-
+    
     return (
         <header className="relative w-full" style={{ height: '160px' }}>
             <div id='info-header' className="bg-[#1A1F2A] h-[80px] flex rounded-b-3xl ">
@@ -240,17 +244,13 @@ export default function Header() {
                     </div>
                 </div>
                 {isSticky?<div className='shadow-md w-full h-[0px] relative h-[6px] bottom-[6px]'/>:''}
-                {showCatalog && (
-                <div className=" w-full h-[525px] relative z-50 bottom-[35px] flex justify-center">
-                    <div id="catalog-menu" className=' flex items-end h-full w-max'  onMouseEnter={handleMenuMouseEvents(true)} onMouseLeave={handleMenuMouseEvents(false)}>
-                        <div id="catalog-menu"  className=" shadow-lg w-[800px] h-[500px] bg-white border-t-3 border-PLGreen rounded-[5px]">
-                            
-                        </div>
-                    </div>
-                </div>
-                )}
             </div>
 
+            <CatalogMenu 
+                isVisible={showCatalog}
+                onMouseEnter={handleMenuMouseEvents(true)}
+                onMouseLeave={handleMenuMouseEvents(false)}
+            />
         </header>
-    );
+    )
 }

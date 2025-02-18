@@ -80,7 +80,7 @@ export default function ProjectsPage({ projects: initialProjects }: { projects: 
                   }}
                 />
               </td>
-              <td className="py-3 px-6">{project.Title}</td>
+              <td className="py-3 px-6">{project.Name}</td>
               <td className="py-3 px-6 text-right">
                 <Link
                   href={`/admin/projects/edit/${project.Slug}`}

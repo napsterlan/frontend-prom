@@ -1,39 +1,36 @@
-import { useState } from 'react';
-import InvisibleCaptcha from './YandexCaptcha'
+'use client'
+
+import { useState } from 'react'
+import InvisibleCaptcha from '../YandexCaptcha'
+
 export default function Footer() {
-  const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [message, setMessage] = useState('');
-  const [IsCaptchaVisible, setIsCaptchaVisible] = useState<boolean>(false);
-  const [captchaDisclaimer, setCaptchaDisclaimer] = useState<boolean>(false);
+    const [email, setEmail] = useState('')
+    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+    const [IsCaptchaVisible, setIsCaptchaVisible] = useState<boolean>(false)
+    const [captchaDisclaimer, setCaptchaDisclaimer] = useState<boolean>(false)
 
     const handleSubscribe = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsCaptchaVisible(true); // Show captcha on form submit
-    };
+        e.preventDefault()
+        setIsCaptchaVisible(true)
+    }
 
     const handleCaptchaHidden = () => {
-        setIsCaptchaVisible(false);
-    };
+        setIsCaptchaVisible(false)
+    }
 
     const handleCaptchaSuccess = (success: boolean, message: string) => {
-        setStatus(success ? 'success' : 'error');
-        setMessage(message);
+        setStatus(success ? 'success' : 'error')
         if(success) {
             console.log(message)
-
             console.log(email)
+            setEmail('')
         }
-        if (success) {
-            setEmail('');
-            setMessage('');
-        }
-        setIsCaptchaVisible(false);
-        setStatus('idle');
-    };
+        setIsCaptchaVisible(false)
+        setStatus('idle')
+    }
 
-  return (
-    <footer className="text-white mt-8 text-[10px] font-manrope" style={{  bottom: 0, width:"100%" }}>
+    return (
+        <footer className="text-white mt-8 text-[10px] font-manrope" style={{  bottom: 0, width:"100%" }}>
         <div className=' bg-footerbg bg-cover bg-[center_top] bg-no-repeat rounded-t-[30px] bg-100 '>
             <div className="h-[13.5vh] flex items-center justify-center w-full">
                 <form
@@ -279,5 +276,5 @@ export default function Footer() {
         </div>
 
     </footer>
-  );
+    )
 } 

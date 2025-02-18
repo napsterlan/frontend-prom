@@ -1,18 +1,7 @@
-import React from 'react'
-import useEmblaCarousel from 'embla-carousel-react'
-
-const WelcomeComponent = () => {
+export default function HomePage() {
     return (
-      <div className="welcome-section">
-        <h2>Привет!</h2>
-        <p>Это мой новый компонент</p>
+      <div className="container mx-auto px-4">
+        <h1 className="text-4xl font-bold">Главная страница</h1>
       </div>
-    )
-  }
-export default function Home() {
-    return (
-<>
-    <WelcomeComponent />
-</>
     )
   }

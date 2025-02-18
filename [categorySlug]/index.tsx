@@ -1,6 +1,6 @@
 import { getAllProjectCategories, getProjectCategoryBySlug } from '@/api/apiClient';
 import { Project, ProjectCategory } from '@/types/types';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
 import Link from 'next/link';
 
 export async function getServerSideProps(context: { params: { categorySlug: string } }) {

@@ -1,13 +1,13 @@
 import { useRouter } from 'next/router';
 import {getNewsBySlug, getProductBySlug} from "@/api/apiClient";
 import {News, Product} from "@/types/types";
-import {HtmlContent} from "@/components/HtmlContent";
+import {HtmlContent} from "@/app/_components/HtmlComponent/HtmlContent";
 import Image from "next/image";
 import {Images} from "@/types/types";
-import Carousel from "@/components/Carousel";
+import Carousel from "@/app/_components/Carousel/Carousel";
 import {EmblaOptionsType} from "embla-carousel";
-import {Breadcrumbs} from "@/components/Breadcrumbs";
-import {BootstrapWrapper} from "@/components/BootstrapWrapper";
+import {Breadcrumbs} from "@/app/_components/Breadcrumbs";
+import {BootstrapWrapper} from "@/app/_components/HtmlComponent/BootstrapWrapper";
 
 interface NewsPageProps {
   newsData: News;

@@ -1,6 +1,32 @@
+'use client'
+
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import AuthDebug from '@/app/_components/AuthDebug'
 import Link from 'next/link';
 
 export default function AdminDashboard() {
+    const { data: session, status } = useSession()
+
+
+  const router = useRouter()
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      console.log(session)
+      console.log(status)
+      // router.push('/auth/error?error=AccessDenied')
+    }
+  }, [status, router])
+
+  if (status === 'loading') {
+    return <div>Loading...</div>
+  }
+
+  if (!session?.user) {
+    return null
+  }
   return (
     <div className="container mx-auto px-4">
       <h1 className="text-2xl font-bold mb-6">Дашборд администратора</h1>

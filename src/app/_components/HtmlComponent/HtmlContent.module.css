@@ -1,7 +1,7 @@
 /* Import Bootstrap styles but scope them to this component */
 .bootstrapContent :global {
     /* Bootstrap core styles */
-    @import 'bootstrap/dist/css/bootstrap.min.css';
+    @import '../../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 }
 
 .bootstrapContent {
