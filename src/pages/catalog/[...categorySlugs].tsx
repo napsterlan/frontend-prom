@@ -4,9 +4,9 @@ import { useQuery } from 'react-query'; // Импортируем useQuery из 
 import { getCategoryBySlug } from '@/api/apiClient';
 import { Category, ProductView } from '@/types/types';
 import Image from 'next/image';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
 import { Breadcrumb } from '@/types/types';
-import { ColumnVisibilityManager, ColumnVisibility } from '@/components/ColumnVisibilityManager';
+import { ColumnVisibilityManager, ColumnVisibility } from '@/app/_components/ColumnVisibilityManager';
 import { getColumnSettings } from '@/utils/columnSettings';
 
 export default function CategoryPage() {

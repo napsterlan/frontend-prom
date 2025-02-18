@@ -2,7 +2,7 @@ import { getCategories } from '../../api/apiClient';
 import Image from 'next/image';
 import { Category } from '@/types/types';
 import { useEffect, useState } from 'react';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
 
 
 

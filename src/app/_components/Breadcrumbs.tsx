@@ -40,7 +40,7 @@ export const Breadcrumbs = () => {
     <nav className="flex gap-2 pt-[2px] px-[15%] justify-end ">
       <div className="text-[14px]">
         <div className="flex gap-2 ml-[10px]">
-          <Link href="/" className="hover:text-gray-600 text-gray-500">
+          <Link href="/public" className="hover:text-gray-600 text-gray-500">
             Главная
           </Link>
           {breadcrumbs.map((crumb, index) => (

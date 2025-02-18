@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { Providers } from './providers'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
+import Header from './_components/Header'
+import Footer from './_components/Footer'
 import '../app/globals.css'
 import '../app/font.css'
 
@@ -16,11 +16,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="ru">
       <body>
         <Providers>
           <Header />
-          <main>{children}</main>
+          <main className="min-h-screen">{children}</main>
           <Footer />
         </Providers>
       </body>

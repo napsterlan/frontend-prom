@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Product,  FileGroup } from '@/types/types';
 import Image from 'next/image';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
 import Lightbox from 'yet-another-react-lightbox';
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";

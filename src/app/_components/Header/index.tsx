@@ -1,31 +1,27 @@
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { auth } from '@/utils/auth';
-import { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons'
-import Image from 'next/image';
-import { useAuthStatus } from '@/hooks/useAuthStatus';
-import { signOut } from 'next-auth/react';
-import { AuthProvider } from '@/providers/AuthProvider';
+'use client'
 
-function HeaderContent() {
-    const { isAuthenticated, user, isLoading } = useAuthStatus()
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { auth } from '@/utils/auth'
+import { useState, useEffect } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUser } from '@fortawesome/free-solid-svg-icons'
+import Image from 'next/image'
+import CatalogMenu from './CatalogMenu'
+
+export default function Header() {
 
     const router = useRouter();
-    // const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isSticky, setIsSticky] = useState(false);
     const [showCatalog, setShowCatalog] = useState(false);
     const [isProductLightboxOpen] = useState(false);
     const [isDrawingLightboxOpen] = useState(false);
     const [isDistributionLightboxOpen] = useState(false);
 
-
-    
     useEffect(() => {
-        console.log("AUTH")
-        console.log(isAuthenticated);
-    }, [isAuthenticated]);
+        setIsAuthenticated(auth.isAuthenticated());
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -74,9 +70,11 @@ function HeaderContent() {
         };
     }, [isSticky, isProductLightboxOpen, isDrawingLightboxOpen, isDistributionLightboxOpen]);
 
-    const handleLogout = async () => {
-        await signOut({ redirect: true, callbackUrl: '/' })
-      }
+    const handleLogout = () => {
+        auth.logout();
+        setIsAuthenticated(false);
+        router.push('/login');
+    };
     const button = "px-[5px]  py-[3px] font-normal border-2 border-transparent text-[14px] rounded-[10px] hover:border-PLGreen font-commissioner";
     const catalogButton = "bg-[#f0f0f0] px-[10px]  py-[2px] [&>*]:border-0 s border-2 border-[#f0f0f0] hover:border-PLGreen rounded-[10px] flex";
 
@@ -97,7 +95,7 @@ function HeaderContent() {
             setShowCatalog(false);
         }
     };
-
+    
     return (
         <header className="relative w-full" style={{ height: '160px' }}>
             <div id='info-header' className="bg-[#1A1F2A] h-[80px] flex rounded-b-3xl ">
@@ -218,7 +216,7 @@ function HeaderContent() {
 
                             {isAuthenticated ? (
                                 <li className="relative group">
-                                    <Link href="/src/pages/profile" className="relative flex items-center">
+                                    <Link href="/account" className="relative flex items-center">
                                         <div className='z-10 w-10 h-10 flex items-center justify-center border-3 rounded-full border-PLGreen bg-white'>
                                             <FontAwesomeIcon className='text-base z-10' icon={faUser} width={14} height={16} />
                                         </div>
@@ -246,25 +244,13 @@ function HeaderContent() {
                     </div>
                 </div>
                 {isSticky?<div className='shadow-md w-full h-[0px] relative h-[6px] bottom-[6px]'/>:''}
-                {showCatalog && (
-                <div className=" w-full h-[525px] relative z-50 bottom-[35px] flex justify-center">
-                    <div id="catalog-menu" className=' flex items-end h-full w-max'  onMouseEnter={handleMenuMouseEvents(true)} onMouseLeave={handleMenuMouseEvents(false)}>
-                        <div id="catalog-menu"  className=" shadow-lg w-[800px] h-[500px] bg-white border-t-3 border-PLGreen rounded-[5px]">
-                            
-                        </div>
-                    </div>
-                </div>
-                )}
             </div>
 
+            <CatalogMenu 
+                isVisible={showCatalog}
+                onMouseEnter={handleMenuMouseEvents(true)}
+                onMouseLeave={handleMenuMouseEvents(false)}
+            />
         </header>
-    );
-}
-
-export default function Header() {
-    return (
-      <AuthProvider>
-        <HeaderContent />
-      </AuthProvider>
     )
 }

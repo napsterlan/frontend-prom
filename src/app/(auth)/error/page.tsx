@@ -37,7 +37,7 @@ export default function AuthError() {
             Back to Login
           </Link>
           <Link
-            href="/"
+            href="/public"
             className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
           >
             Home

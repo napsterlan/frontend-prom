@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import AuthDebug from '@/components/AuthDebug'
+import AuthDebug from '@/app/_components/AuthDebug'
 import Link from 'next/link';
 
 export default function AdminDashboard() {

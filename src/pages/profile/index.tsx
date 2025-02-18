@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react"
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute"
+import { ProtectedRoute } from "@/app/_components/auth/ProtectedRoute"
 import Link from "next/link"
 import { FiUser, FiLock, FiSettings, FiShield } from "react-icons/fi"
 import {getAllProjectCategories, getAllProjects, getCurrentUser, searchFor} from "@/api/apiClient";

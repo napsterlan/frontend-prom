@@ -1,4 +1,4 @@
-import { ColumnVisibility } from '@/components/ColumnVisibilityManager';
+import { ColumnVisibility } from '@/app/_components/ColumnVisibilityManager';
 
 // Настройки по умолчанию для разных категорий
 export const categoryDefaultColumns: Record<string, ColumnVisibility> = {

@@ -1,12 +1,12 @@
 import {getAllNews, getAllProjectCategories, getAllProjects, searchFor} from '@/api/apiClient';
 import {Category, News, Project, ProjectCategory} from '@/types/types';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
 import Link from 'next/link';
 import Image from 'next/image';
-import {Pagination} from "@/components/Pagination";
+import {Pagination} from "@/app/_components/Pagination";
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
-import {HtmlContent} from "@/components/HtmlContent";
+import {HtmlContent} from "@/app/_components/HtmlComponent/HtmlContent";
 
 interface SearchResult {
     id: number;

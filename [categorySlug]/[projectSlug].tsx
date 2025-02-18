@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { getProjectBySlug } from '@/api/apiClient'; // Импортируем функцию для получения данных проекта
 import { Project } from '@/types/types';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
 import Image from 'next/image';
 
 export async function getServerSideProps(context: { params: { categorySlug: string; projectSlug: string } }) {
