@@ -8,7 +8,7 @@ const queryClient = new QueryClient()
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <SessionProvider>
+    <SessionProvider refetchInterval={0} refetchOnWindowFocus={false}>
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
           {children}

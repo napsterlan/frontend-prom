@@ -1,3 +1,4 @@
+
 import {News, Project, ProjectCategory} from "@/types/types";
 import {getAllProjectCategories, getAllNews} from "@/api/apiClient";
 import {Breadcrumbs} from "@/app/_components/Breadcrumbs";

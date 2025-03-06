@@ -2,12 +2,13 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { auth } from '@/utils/auth'
+// import { auth } from '@/utils/auth'
 import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
 import CatalogMenu from './CatalogMenu'
+import { signOut, useSession } from 'next-auth/react'
 
 export default function Header() {
 
@@ -18,10 +19,12 @@ export default function Header() {
     const [isProductLightboxOpen] = useState(false);
     const [isDrawingLightboxOpen] = useState(false);
     const [isDistributionLightboxOpen] = useState(false);
+    const { data: session, status } = useSession() // Add NextAuth session hook
 
-    useEffect(() => {
-        setIsAuthenticated(auth.isAuthenticated());
-    }, []);
+    // useEffect(() => {
+    //     console.log(session)
+    //     setIsAuthenticated(session?.user?.email ? true : false);
+    // }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -70,11 +73,10 @@ export default function Header() {
         };
     }, [isSticky, isProductLightboxOpen, isDrawingLightboxOpen, isDistributionLightboxOpen]);
 
-    const handleLogout = () => {
-        auth.logout();
-        setIsAuthenticated(false);
-        router.push('/login');
-    };
+    const handleLogout = async () => {
+        await signOut({ redirect: false }) // Use NextAuth's signOut
+        router.push('/login')
+    }
     const button = "px-[5px]  py-[3px] font-normal border-2 border-transparent text-[14px] rounded-[10px] hover:border-PLGreen font-commissioner";
     const catalogButton = "bg-[#f0f0f0] px-[10px]  py-[2px] [&>*]:border-0 s border-2 border-[#f0f0f0] hover:border-PLGreen rounded-[10px] flex";
 
@@ -164,9 +166,9 @@ export default function Header() {
                 className={`${isSticky ? 'fixed top-0 left-0 right-0 z-50' : ''}`}
             >
                 <div className="bg-[rgba(255,255,255)] h-[80px] flex justify-center">
-                    <div className="justify-end flex items-center pr-8">
+                    <Link href="/" className="justify-end flex items-center pr-8">
                         <Image src="/promled.svg" alt="Логотип" width={220} height={80} className="transition-all duration-300 " />
-                    </div>
+                    </Link>
                     <div className="justify-start flex items-center">
                         <ul className="flex justify-start space-x-4 text-black items-center font-commissioner">
                             <li 
@@ -214,9 +216,9 @@ export default function Header() {
                                 <Link href="/partners" className={button}>Партнерам</Link>
                             </li>
 
-                            {isAuthenticated ? (
+                            {status === 'authenticated' ? (
                                 <li className="relative group">
-                                    <Link href="/account" className="relative flex items-center">
+                                    <Link href="/profile" className="relative flex items-center">
                                         <div className='z-10 w-10 h-10 flex items-center justify-center border-3 rounded-full border-PLGreen bg-white'>
                                             <FontAwesomeIcon className='text-base z-10' icon={faUser} width={14} height={16} />
                                         </div>

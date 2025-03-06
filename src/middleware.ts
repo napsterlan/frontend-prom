@@ -4,10 +4,14 @@ import { NextRequestWithAuth } from 'next-auth/middleware'
 
 export default async function middleware(req: NextRequestWithAuth) {
   const token = await getToken({ req })
+  // console.log("TOKEN:", req)
+
+
   const isAuth = !!token
   const isAuthPage = req.nextUrl.pathname.startsWith('/login') || 
                     req.nextUrl.pathname.startsWith('/register')
-
+  console.log(isAuthPage)
+  console.log("IS TOKEN:", isAuth)
   if (isAuthPage) {
     if (isAuth) {
       return NextResponse.redirect(new URL('/', req.url))
@@ -26,6 +30,7 @@ export default async function middleware(req: NextRequestWithAuth) {
       new URL(`/login?callbackUrl=${encodedCallbackUrl}`, req.url)
     )
   }
+
   return null
 }
 

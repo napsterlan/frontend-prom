@@ -2,6 +2,12 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { getSession, signOut } from "next-auth/react"
 
+// let currentSession: any = null;
+
+// export const setCurrentSession = (session: any) => {
+//     currentSession = session;
+//   };
+
 const getBaseConfig = () => ({
   baseURL: process.env.API_URL || 'http://192.168.31.40:4000/api',
   headers: {
@@ -13,28 +19,57 @@ const getBaseConfig = () => ({
 
 const apiClient = axios.create(getBaseConfig());
 
-apiClient.interceptors.request.use(async (config) => {
-    const session = await getSession()
 
-  console.log(session);
-    
-    if (session?.jwt) {
+apiClient.interceptors.request.use(
+    async (config) => {
+      const session = await getSession()
+      if (session?.jwt) {
         config.headers.Authorization = `Bearer ${session.jwt}`
+      }
+      return config
+    },
+    (error) => {
+      return Promise.reject(error)
     }
+  )
+
+// apiClient.interceptors.request.use(async (config) => {
+//     if (currentSession?.jwt) {
+//         config.headers.Authorization = `Bearer ${currentSession.jwt}`;
+//     }
     
-    return config
-  })
+//     return config;
+//   })
+
+//   export const clearSessionCache = () => {
+//     cachedSession = null;
+// };
 
   apiClient.interceptors.response.use(
     (response) => response,
     async (error) => {
+        console.log(error);
       if (error.response?.status === 401 && 
-        !error.config.url?.includes('/users/profile')) {
-        await signOut({ redirect: true, callbackUrl: "/login" })
+        (!error.config.url?.includes('/users/profile') &&
+        !error.config.url?.includes('/auth/') || error.response?.data.error === "invalid token")) {
+      // Clear the session and redirect to login
+      await signOut({ 
+        redirect: true, 
+        callbackUrl: "/login?error=SessionExpired" 
+      })
       }
       return Promise.reject(error)
     }
   )
+
+
+  export const addAuthHeader = (token: string) => {
+    apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  };
+  
+  export const removeAuthHeader = () => {
+    delete apiClient.defaults.headers.common['Authorization'];
+  };
 
 // apiClient.interceptors.response.use(
 //     (response) => response,
@@ -233,16 +268,25 @@ export const deleteUserById = async (id: number) => {
   return response.data;
 };
 
-export const getCurrentUser = async () => {
-  try {
-    const response = await apiClient.get('/users/profile');
-    return response.data;
-  } catch (error) {
-    if (error.response?.status === 401 || error.response?.status === 403) {
-        return null;
+export const getCurrentUser = async (sessionToken?: string) => {
+    try {
+        console.log("getCurrentUser called with token:", sessionToken); 
+        
+        const response = await apiClient.get('/users/profile', {
+            headers: sessionToken ? {
+                Authorization: `Bearer ${sessionToken}`
+            } : {}
+        });
+        
+        // console.log("API response:", response);
+        return response.data;
+    } catch (error) {
+        console.log("getCurrentUser error:", error);
+        if (error.response?.status === 401 || error.response?.status === 403) {
+            return null;
+        }
+        throw error;
     }
-    throw error;
-  }
 };
 
 // Загрузка файлов

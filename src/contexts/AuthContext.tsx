@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import * as api from  '@/api/apiClient';
-
+import {User} from "next-auth";
+import { useSession } from 'next-auth/react';
 interface AuthContextType {
     isAuthenticated: boolean;
     user: any | null;
@@ -14,21 +15,44 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
-
+    const { data: session, status } = useSession();
     // Check authentication status on mount
     useEffect(() => {
+        const checkAuth = async () => {
+            if (status === 'authenticated' && session) {
+                try {
+                    const response = await api.getCurrentUser();
+                    if (response?.data) {
+                        setUser(response.data);
+                        setIsAuthenticated(true);
+                    }
+                } catch (error) {
+                    console.error('Auth check error:', error);
+                    setUser(null);
+                    setIsAuthenticated(false);
+                }
+            } else {
+                setUser(null);
+                setIsAuthenticated(false);
+            }
+            setLoading(false);
+        };
+
         checkAuth();
-      }, []);
+    }, [session, status]);
     
       const checkAuth = async () => {
         try {
           const response = await api.getCurrentUser();
-          if (response?.data?.user) {
-            setUser(response.data.user);
+          if (response?.success) {
+            setUser(response.data as User);
             setIsAuthenticated(true);
+              console.log("CHECK AUTH: ", response)
+
+
           } else {
             setUser(null);
             setIsAuthenticated(false);
@@ -53,7 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 setUser(response.data.user);
                 setIsAuthenticated(true);
 
-                router.push('/dashboard'); // or wherever you want to redirect after login
+                router.push('/profile'); // or wherever you want to redirect after login
             }
         } catch (error) {
             throw error;

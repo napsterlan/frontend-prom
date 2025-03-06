@@ -18,7 +18,7 @@ export default function LoginPage() {
       const result = await signIn("credentials", {
         email,
         password,
-        redirect: false,
+        redirect: true,
         callbackUrl: "/profile"
       })
 
@@ -27,8 +27,8 @@ export default function LoginPage() {
       if (result?.error) {
         setError(result.error)
       } else if (result?.ok) {
-        await router.push("/profile")
-        window.location.reload();
+         router.push("/profile")
+        // window.location.reload();
       }
     } catch (error) {
       console.error('Login error:', error)

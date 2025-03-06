@@ -20,7 +20,7 @@ export default function RootLayout({
       <body>
         <Providers>
           <Header />
-          <main className="min-h-screen">{children}</main>
+            <main className="min-h-screen">{children}</main>
           <Footer />
         </Providers>
       </body>

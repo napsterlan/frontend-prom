@@ -8,10 +8,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (status === "unauthenticated") {
-            router.push({
-                pathname: '/login',
-                query: { callbackUrl: router.asPath }
-            })
+            router.push('/login')
         }
     }, [status, router])
 
