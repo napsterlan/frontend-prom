@@ -1,21 +1,94 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
+import { getSession, signOut } from "next-auth/react"
 
-const apiClient = axios.create({
+// let currentSession: any = null;
+
+// export const setCurrentSession = (session: any) => {
+//     currentSession = session;
+//   };
+
+const getBaseConfig = () => ({
   baseURL: process.env.API_URL || 'http://192.168.31.40:4000/api',
   headers: {
     'Content-Type': 'application/json',
+    'Access-Control-Allow-Credentials': 'true',
   },
+  withCredentials: true,
 });
 
-// Добавляем интерсептор для добавления токена в заголовки
-if (typeof window !== 'undefined') {
-  apiClient.interceptors.request.use((config) => {
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+const apiClient = axios.create(getBaseConfig());
+
+
+apiClient.interceptors.request.use(
+    async (config) => {
+      const session = await getSession()
+      if (session?.jwt) {
+        config.headers.Authorization = `Bearer ${session.jwt}`
+      }
+      return config
+    },
+    (error) => {
+      return Promise.reject(error)
     }
-    return config;
-  });
+  )
+
+// apiClient.interceptors.request.use(async (config) => {
+//     if (currentSession?.jwt) {
+//         config.headers.Authorization = `Bearer ${currentSession.jwt}`;
+//     }
+    
+//     return config;
+//   })
+
+//   export const clearSessionCache = () => {
+//     cachedSession = null;
+// };
+
+  apiClient.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        console.log(error);
+      if (error.response?.status === 401 && 
+        (!error.config.url?.includes('/users/profile') &&
+        !error.config.url?.includes('/auth/') || error.response?.data.error === "invalid token")) {
+      // Clear the session and redirect to login
+      await signOut({ 
+        redirect: true, 
+        callbackUrl: "/login?error=SessionExpired" 
+      })
+      }
+      return Promise.reject(error)
+    }
+  )
+
+
+  export const addAuthHeader = (token: string) => {
+    apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  };
+  
+  export const removeAuthHeader = () => {
+    delete apiClient.defaults.headers.common['Authorization'];
+  };
+
+// apiClient.interceptors.response.use(
+//     (response) => response,
+//     async (error) => {
+//       // Only redirect on 401 errors from non-login/register endpoints
+//       if (error.response?.status === 401 && 
+//           !['/login', '/register'].includes(error.config.url)) {
+//         // Clear stored auth data
+//         Cookies.remove('csrf_token');
+//         // Let the component handle the redirect
+//         throw new Error('Not authenticated');
+//       }
+//       return Promise.reject(error);
+//     }
+//   );
+
+export const searchFor = async (query: string, searchType: string, page: number = 1, category: string) => {
+  const response = await apiClient.get(`/search?query=${encodeURIComponent(query)}&page=${page}&search_type=${searchType}`);
+  return response.data;
 }
 
 // Категории
@@ -43,8 +116,8 @@ export const getProductBySlug = async (slug: string) => {
 };
 
 // Новости
-export const getAllNews = async () => {
-  const response = await apiClient.get('/news');
+export const getAllNews = async (page: number = 1) => {
+  const response = await apiClient.get(`/news?page=${page}&page_size=12`);
   return response.data;
 };
 
@@ -71,6 +144,7 @@ export const deleteNewsById = async (id: number) => {
 // Категории проектов
 export const getAllProjectCategories = async () => {
   const response = await apiClient.get('/projects-categories');
+  console.log(response.status);
   return response.data;
 };
 
@@ -95,8 +169,8 @@ export const deleteProjectCategoryById = async (id: number) => {
 };
 
 // Проекты
-export const getAllProjects = async () => {
-  const response = await apiClient.get('/projects');
+export const getAllProjects = async (page: number = 1, category: string) => {
+  const response = await apiClient.get(`/projects?page=${page}&page_size=12&category=${category}`);
   return response.data;
 };
 
@@ -147,10 +221,24 @@ export const deleteInfoPageById = async (id: number) => {
 };
 
 export const login = async (email: string, password: string) => {
-  const response = await apiClient.post('/login', {
-    email,
-    password
-  });
+    try {
+      const response = await apiClient.post('/auth/callback/credentials', { email, password });
+      
+      // Log the response for debugging
+      console.log('Login API response:', response);
+      
+      return {
+        data: response.data,
+        success: true
+      };
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
+  };
+
+export const logout = async () => {
+  const response = await apiClient.post('/logout');
   return response.data;
 };
 
@@ -178,6 +266,27 @@ export const updateUserById = async (id: number, userData: object) => {
 export const deleteUserById = async (id: number) => {
   const response = await apiClient.delete(`/users/${id}`);
   return response.data;
+};
+
+export const getCurrentUser = async (sessionToken?: string) => {
+    try {
+        console.log("getCurrentUser called with token:", sessionToken); 
+        
+        const response = await apiClient.get('/users/profile', {
+            headers: sessionToken ? {
+                Authorization: `Bearer ${sessionToken}`
+            } : {}
+        });
+        
+        // console.log("API response:", response);
+        return response.data;
+    } catch (error) {
+        console.log("getCurrentUser error:", error);
+        if (error.response?.status === 401 || error.response?.status === 403) {
+            return null;
+        }
+        throw error;
+    }
 };
 
 // Загрузка файлов
@@ -221,3 +330,4 @@ export const uploadFiles = async (files: File[], path: string) => {
   return response.data;
 };
 
+export default apiClient;
