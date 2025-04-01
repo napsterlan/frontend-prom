@@ -1,3 +1,5 @@
+"use client"
+
 import {Images} from "@/types/types";
 import Link from "next/link";
 import Image from "next/image";
@@ -185,7 +187,7 @@ const Carousel: React.FC<PropType> = (props) => {
                 <div className="embla__container">
                     {slides.map(index => (
                         <div className="embla__slide" key={index} onClick={handleSlideClick}>
-                            <Image src={images[index].ImageURL}
+                            <Image src={images[index].ImageURL?images[index].ImageURL:'/placeholder.png'}
                                    fill={true}
                                    alt={images[index].AltText}
                             className='!relative'/>
@@ -268,7 +270,7 @@ const Carousel: React.FC<PropType> = (props) => {
                                     ${isSelected ? 'opacity-100' : 'opacity-20'}`}
                                     key={index}>
                                     <Image
-                                        src={images[index].ImageURL}
+                                        src={images[index].ImageURL?images[index].ImageURL:'/placeholder.png'}
                                         fill={true}
                                         className={`object-contain transition-transform duration-300 ease-out !h-auto !m-auto
                                          ${isZoomed ? 'scale-150' : 'scale-100'}`}

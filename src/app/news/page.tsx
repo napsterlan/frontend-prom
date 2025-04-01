@@ -1,40 +1,10 @@
 
-import {News, Project, ProjectCategory} from "@/types/types";
-import {getAllProjectCategories, getAllNews} from "@/api/apiClient";
-import {Breadcrumbs} from "@/app/_components/Breadcrumbs";
+import {News} from "@/types/types";
+import {getAllNews} from "@/api/apiClient";
 import Link from "next/link";
 import Image from "next/image";
-import { Pagination } from "@/app/_components/Pagination";
-import {useState} from "react";
-import {useRouter} from "next/router";
-
-interface NewsPageProps {
-    news: News[];
-    currentPage: number;
-    totalPages: number;
-}
-
-export async function getServerSideProps({query}: {query: {page: number}}) {
-    const page = Number(query.page) || 1;
-    try {
-        const response = await getAllNews(page);
-        return {
-            props: {
-                news: response.data,
-                currentPage: page,
-                totalPages: response.metadata.last_page, // Assuming your API returns total pages
-            },
-        };
-    } catch (error) {
-        return {
-            props: {
-                news: [],
-                currentPage: 1,
-                totalPages: 1,
-            },
-        };
-    }
-}
+import { PaginatedNewsPage } from "./_components/PaginatedNewsPage";
+import { useBreadCrumbs } from "../_components/breadcrumbs/breadcrumbs-context";
 
 function formatNewsDate(publishDate: string ) {
     const date = new Date(publishDate);
@@ -43,19 +13,25 @@ function formatNewsDate(publishDate: string ) {
     return day + "." + month + "." + date.getFullYear()
 }
 
-export default function NewsPage({ news, currentPage, totalPages }: NewsPageProps) {
-    const router = useRouter();
 
-    const handlePageChange = (page: number) => {
-        router.push({
-            pathname: '/news',
-            query: { page },
-        }, undefined, { scroll: true });
-    };
+export default async function NewsPage({
+    searchParams,
+}: {
+    searchParams: {page?: string}
+}) {
+    const page = Number(searchParams.page) || 1;
+    let news: News[] = [];
+    let totalPages = 1;
+    try {
+        const response = await getAllNews(page);
+        news = response.data;
+        totalPages = response.metadata.last_page;
+    } catch (error) {
+        console.error("Error fetching news:", error);
+    }
   return (<>
-      <Breadcrumbs/>
 
-      <div className="container mx-auto px-4">
+      <div className="">
 
           <div className="flex justify-center items-center mb-6">
               <h1 className="text-[32px] font-bold">Новости</h1>
@@ -69,16 +45,12 @@ export default function NewsPage({ news, currentPage, totalPages }: NewsPageProp
                           className="w-full max-w-[350px] bg-white border rounded-xl border-gray-200 shadow-sm ">
                           {_news.Images?.[0] && (
                                       <Image
-                                          src={_news.Images[0].ImageURL}
+                                          src={_news.Images[0].ImageURL?_news.Images[0].ImageURL:"./placeholder.png"}
                                           alt={_news.Images[0].AltText}
                                           className="w-full h-48 object-cover rounded-xl mb-4 border-b-1"
                                           width={350}
                                           height={194}
                                           priority={false}
-                                          onError={(e) => {
-                                              // @ts-expect-error fail back image on error
-                                              e.target.src = "./placeholder.png"; // Your fallback image path
-                                          }}
                                       />
                                   )}
                           <div className='flex flex-col h-[110px] font-Manrope px-[10px] justify-between text-left pb-[10px]'>
@@ -93,13 +65,14 @@ export default function NewsPage({ news, currentPage, totalPages }: NewsPageProp
               </div>
           </div>
           {totalPages > 1 && (
-              <Pagination
-                  currentPage={currentPage}
+              <PaginatedNewsPage
+                  currentPage={page}
                   totalPages={totalPages}
-                  onPageChange={handlePageChange}
               />
           )}
       </div>
       </>
 
 );}
+
+

@@ -36,7 +36,6 @@ export default async function middleware(req: NextRequestWithAuth) {
 
 export const config = {
   matcher: [
-    '/projects/:path*',
     '/admin/:path*',
     '/profile/:path*',
     '/login',

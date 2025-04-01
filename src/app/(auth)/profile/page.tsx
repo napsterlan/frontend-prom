@@ -89,7 +89,7 @@ export default async function AccountPage() {
                                 </Link>
                                 {session?.user?.role === "admin" ? (
                                     <Link
-                                        href="/admin/dashboard"
+                                        href="/admin"
                                         className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 text-gray-700"
                                     >
                                         <FiShield className="w-5 h-5"/>

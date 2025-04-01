@@ -1,3 +1,5 @@
+"use client"
+
 import DOMPurify from 'isomorphic-dompurify';
 import styles from './HtmlContent.module.css'; // We'll create this next
 
@@ -173,14 +175,14 @@ export const HtmlContent: React.FC<HtmlContentProps> = ({ html, className = '' }
     const transformedHtml = decodedHtml.replace(
         /(src=["'])(\/image)(\/catalog\/.*?)(["'])/g,
         (match, p1, imagePrefix, p2, p3) => {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://192.168.31.40:9015/promled-website-test/';
+            const apiUrl = process.env.NEXT_PUBLIC_MINIO_URL || 'http://192.168.31.40:9015/promled-website-test/';
             // Remove '/image' and just use the catalog path
             return `${p1}${apiUrl}${p2}${p3}`;
         }
     ).replace(
         /(src=["'])(image)(\/catalog\/.*?)(["'])/g,
         (match, p1, imagePrefix, p2, p3) => {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://192.168.31.40:9015/promled-website-test/';
+            const apiUrl = process.env.NEXT_PUBLIC_MINIO_URL || 'http://192.168.31.40:9015/promled-website-test/';
             // Remove '/image' and just use the catalog path
             return `${p1}${apiUrl}${p2}${p3}`;
         }

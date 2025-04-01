@@ -4,6 +4,7 @@ import Header from './_components/Header'
 import Footer from './_components/Footer'
 import '../app/globals.css'
 import '../app/font.css'
+import { BreadCrumbs } from './_components/breadcrumbs/breadcrumbs'
 
 export const metadata: Metadata = {
   title: 'Your App',
@@ -20,8 +21,17 @@ export default function RootLayout({
       <body>
         <Providers>
           <Header />
-            <main className="min-h-screen">{children}</main>
+          <div className='flex flex-col items-center min-h-screen'>
+
+            <main className="flex-1 container">
+          <BreadCrumbs withHome={true}>
+
+                {children}
+          </BreadCrumbs>
+                </main>
+          </div>
           <Footer />
+
         </Providers>
       </body>
     </html>
