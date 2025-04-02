@@ -13,21 +13,20 @@ import {
   DndContext,
   closestCenter,
   KeyboardSensor,
-  PointerSensor,
   useSensor,
   useSensors,
   DragEndEvent,
+  MouseSensor,
 } from '@dnd-kit/core';
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
-  useSortable,
   rectSortingStrategy,
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { LexicalEditor } from '@/app/_components/LexicalEditor/LexicalEditor';
 import { debounce } from 'lodash';
+import { SortableImage } from './SortableImage';
 
 registerLocale('ru', ru);
 setDefaultLocale('ru');
@@ -102,9 +101,6 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
         deletedImages: [],
         PublishDate: project.PublishDate ? new Date(project.PublishDate) : null,
       });
-      
-    console.log(formData);
-
     
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newFiles = Array.from(e.target.files || []);
@@ -153,23 +149,40 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
     };
 
     const handleImageDelete = (index: number, isExisting: boolean) => {
-        if (isExisting) {
-          const imageToDelete = formData.existingImages[index];
-          if (imageToDelete.ID) {
-            setFormData({
-              ...formData,
-              existingImages: formData.existingImages.filter((_, i) => i !== index),
-              deletedImages: [...formData.deletedImages, imageToDelete.ID]
-            });
-          }
-        } else {
-          setFormData({
-            ...formData,
-            newImages: formData.newImages.filter((_, i) => i !== index)
-          });
-        }
-      };
-    
+        console.log('удаление картинки', index, isExisting);
+        const imageToDelete = formData.existingImages[index];
+        
+        setFormData(prev => {
+            // Удаляем изображение из existingImages
+            const newExistingImages = prev.existingImages.filter((_, i) => i !== index);
+            
+            // Если это существующее изображение с ID, добавляем его в deletedImages
+            if (imageToDelete.ID) {
+                return {
+                    ...prev,
+                    existingImages: newExistingImages,
+                    deletedImages: [...prev.deletedImages, imageToDelete.ID]
+                };
+            }
+            
+            // Если это новое изображение, удаляем соответствующий файл из newImages
+            if (imageToDelete.isNew) {
+                const newImageIndex = prev.existingImages
+                    .slice(0, index)
+                    .filter(img => img.isNew)
+                    .length;
+                
+                return {
+                    ...prev,
+                    existingImages: newExistingImages,
+                    newImages: prev.newImages.filter((_, i) => i !== newImageIndex)
+                };
+            }
+            
+            return { ...prev, existingImages: newExistingImages };
+        });
+    };
+
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
 
@@ -185,17 +198,23 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
                 `${img.ID || img.ImageURL}-${i}` === over.id
             );
 
+            // Получаем новый порядок изображений
+            const reorderedImages = arrayMove(prev.existingImages, oldIndex, newIndex);
+
+            // Обновляем порядок
+            const updatedImages = reorderedImages.map((img, i) => ({
+                ...img,
+                Order: i
+            }));
+
             return {
                 ...prev,
-                existingImages: arrayMove(prev.existingImages, oldIndex, newIndex).map((img, i) => ({
-                    ...img,
-                    Order: i
-                }))
+                existingImages: updatedImages
             };
         });
     };
 
-    // Create a debounced version of the state update
+    // Create a debounced version of the state update 
     const debouncedSetFormData = useCallback(
         debounce((content: string) => {
             setFormData(prev => ({
@@ -211,65 +230,18 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
         debouncedSetFormData(content);
     }, [debouncedSetFormData]);
 
-    // Компонент для отдельного изображения
-    interface SortableImageProps {
-      image: {
-        ID?: number;
-        ImageURL: string;
-        AltText: string;
-        Order: number;
-        isNew?: boolean;
-      };
-      index: number;
-      onDelete: () => void;
-    }
-
-    function SortableImage({ image, index, onDelete }: SortableImageProps) {
-      const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-      } = useSortable({ id: `${image.ID || image.ImageURL}-${index}` });
-
-      const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
-      };
-
-      return (
-        <div
-          ref={setNodeRef}
-          style={style}
-          {...attributes}
-          {...listeners}
-          className="relative group aspect-square"
-        >
-          <div className="absolute inset-2 border rounded-lg overflow-hidden">
-            <Image
-              src={image.ImageURL}
-              alt={image.AltText || 'Project image'}
-              width={200}
-              height={200}
-              className="w-full h-full object-cover"
-            />
-            <button
-              type="button"
-              onClick={onDelete}
-              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </button>
-            <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-sm">
-              {index + 1}
-            </div>
-          </div>
-        </div>
-      );
-    }
+    const sensors = useSensors(
+      useSensor(MouseSensor, {
+        activationConstraint: {
+          distance: 4,
+          tolerance: 3,
+          delay: 0
+        },
+      }),
+      useSensor(KeyboardSensor, {
+        coordinateGetter: sortableKeyboardCoordinates,
+      })
+    );
 
     return (
         <form onSubmit={handleSubmit}>
@@ -306,12 +278,7 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
               </div>
 
               <DndContext
-                sensors={useSensors(
-                  useSensor(PointerSensor),
-                  useSensor(KeyboardSensor, {
-                    coordinateGetter: sortableKeyboardCoordinates
-                  })
-                )}
+                sensors={sensors}
                 collisionDetection={closestCenter}
                 onDragEnd={handleDragEnd}
               >
