@@ -3,6 +3,7 @@ export interface Images {
     ImageURL: string;
     AltText: string;
     Order: number;
+    ShortURL?: string;
 }
 
 export interface Category {
@@ -151,18 +152,22 @@ export interface ProjectCategory {
     Slug: string;
 }
 
-export interface Project {
+export interface Project { // поменять на IProject
     ID: number;
     Title: string;
     Name: string;
     Description: string;
-    Images: Images[] | null;
-    User: User | null;
+    MetaTitle: string;
+    MetaDescription: string;
+    MetaKeyword: string;
     ProjectsCategories: {
         ID: number;
         Name: string;
         Slug: string;
     }[];
+    Slug: string;
+    Images: Images[] | null;
+    User: User | null;
     RelatedProducts: {
         ID: number;
         Name: string;
@@ -184,11 +189,8 @@ export interface Project {
             Order: number;
         }>;
     }>;
-    MetaTitle: string;
-    MetaDescription: string;
-    MetaKeyword: string;
     fullPath: string;
-    Slug: string;
+    
     CreatedAt: string;
     UpdatedAt: string;
     DeletedAt: string | null;

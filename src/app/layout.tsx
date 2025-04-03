@@ -5,6 +5,7 @@ import Footer from './_components/Footer'
 import '../app/globals.css'
 import '../app/font.css'
 import { BreadCrumbs } from './_components/breadcrumbs/breadcrumbs'
+import { ToastProvider } from '@/components/ui/ToastContext'
 
 export const metadata: Metadata = {
   title: 'Your App',
@@ -19,20 +20,20 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body>
-        <Providers>
-          <Header />
-          <div className='flex flex-col items-center min-h-screen'>
+        <ToastProvider>
+          <Providers>
+            <Header />
+            <div className='flex flex-col items-center min-h-screen'>
 
-            <main className="flex-1 container">
-          <BreadCrumbs withHome={true}>
-
-                {children}
-          </BreadCrumbs>
-                </main>
-          </div>
-          <Footer />
-
-        </Providers>
+              <main className="flex-1 container">
+                <BreadCrumbs withHome={true}>
+                  {children}
+                </BreadCrumbs>
+              </main>
+            </div>
+            <Footer />
+          </Providers>
+        </ToastProvider>
       </body>
     </html>
   )

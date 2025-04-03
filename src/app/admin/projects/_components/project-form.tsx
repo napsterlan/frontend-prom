@@ -4,7 +4,6 @@ import { Project, ProjectCategory } from '@/types/types';
 import { updateProjectById } from '@/api/apiClient';
 import { useRouter } from 'next/navigation';
 import { useState, useCallback } from 'react';
-import Image from 'next/image';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { registerLocale, setDefaultLocale } from "react-datepicker";
@@ -27,6 +26,8 @@ import {
 import { LexicalEditor } from '@/app/_components/LexicalEditor/LexicalEditor';
 import { debounce } from 'lodash';
 import { SortableImage } from './SortableImage';
+import { uploadImages } from '@/api/apiClient';
+import { useToast } from '@/components/ui/ToastContext';
 
 registerLocale('ru', ru);
 setDefaultLocale('ru');
@@ -40,8 +41,9 @@ interface ProjectFormProps {
 }
 
 export function ProjectForm({ project, categories, isEditing }: ProjectFormProps) {
+    const { showToast } = useToast();
     const router = useRouter();
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false); // добавить прелоадер
     const [editorContent, setEditorContent] = useState(project.Description || '');
     const [formData, setFormData] = useState<{
         ID: number;
@@ -53,6 +55,11 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
         metaKeyword: string;
         CategoriesID: number[];
         Slug: string;
+        Images: {
+            ID?: number;
+            ImageURL: string;
+            Order: number;
+        }[];
         relatedProducts: {
             ID: number;
             Name: string;
@@ -70,8 +77,9 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
           AltText: string;
           Order: number;
           isNew?: boolean;
+          file?: File;
+          ShortURL?: string;
         }>;
-        newImages: File[];
         deletedImages: number[];
         PublishDate: Date | null;
       }>({
@@ -84,6 +92,7 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
         metaKeyword: project.MetaKeyword || '',
         CategoriesID: project.ProjectsCategories?.map((cat) => cat.ID) || [],
         Slug: project.Slug || '',
+        Images: [],
         relatedProducts: project.RelatedProducts?.map(product => ({
           ...product,
           Images: product.Images || []
@@ -94,10 +103,9 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
             Order: typeof img.Order === 'number' ? img.Order : index,
             ID: img.ID || undefined,
             ImageURL: img.ImageURL || '',
-            AltText: img.AltText || ''
+            ShortURL: img.ShortURL || '',
           }))
           .sort((a, b) => (a.Order ?? 0) - (b.Order ?? 0)),
-        newImages: [],
         deletedImages: [],
         PublishDate: project.PublishDate ? new Date(project.PublishDate) : null,
       });
@@ -114,38 +122,67 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
             ImageURL: URL.createObjectURL(file),
             AltText: '',
             Order: formData.existingImages.length + index,
-            isNew: true
+            isNew: true,
+            file: file
         }));
 
         setFormData(prev => ({
             ...prev,
             existingImages: [...prev.existingImages, ...newPreviewImages],
-            newImages: [...prev.newImages, ...newFiles]
         }));
     };
 
+    const handleUploadImages = async () => {
+        const processedImages = await Promise.all(
+            formData.existingImages.map(async (image) => {
+                if (!image.isNew) {
+                    return {
+                        ID: image.ID,
+                        ImageURL: image.ShortURL || image.ImageURL,
+                        Order: image.Order
+                    };
+                }
+    
+                const paths = await uploadImages([image.file!], `catalog/projects/${project.ID}`);
+                return {
+                    ID: image.ID,
+                    ImageURL: paths.filePaths[0], // Используем путь из ответа сервера
+                    Order: image.Order
+                };
+            })
+        );
+    
+        setFormData(prev => ({
+            ...prev,
+            Images: processedImages,
+            existingImages: prev.existingImages.map((img, index) => ({
+                ...img,
+                Order: index // Обновляем Order в existingImages
+            }))
+        }));
+        
+        return processedImages; // Возвращаем обработанные изображения
+    };
+    
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-
+        
         try {
-            await updateProjectById(formData.ID, formData);
+            const processedImages = await handleUploadImages();
+            await updateProjectById(formData.ID, {
+                ...formData,
+                Images: processedImages
+            });
+            showToast('Проект успешно сохранен', 'success');
             router.push('/admin/projects');
             router.refresh();
         } catch (error) {
             console.error('Error updating project:', error);
-            alert('Ошибка при сохранении проекта');
+            showToast('Ошибка при сохранении проекта', 'error');
         } finally {
             setLoading(false);
         }
-    };
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value,
-        }));
     };
 
     const handleImageDelete = (index: number, isExisting: boolean) => {
@@ -153,29 +190,13 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
         const imageToDelete = formData.existingImages[index];
         
         setFormData(prev => {
-            // Удаляем изображение из existingImages
             const newExistingImages = prev.existingImages.filter((_, i) => i !== index);
             
-            // Если это существующее изображение с ID, добавляем его в deletedImages
             if (imageToDelete.ID) {
                 return {
                     ...prev,
                     existingImages: newExistingImages,
                     deletedImages: [...prev.deletedImages, imageToDelete.ID]
-                };
-            }
-            
-            // Если это новое изображение, удаляем соответствующий файл из newImages
-            if (imageToDelete.isNew) {
-                const newImageIndex = prev.existingImages
-                    .slice(0, index)
-                    .filter(img => img.isNew)
-                    .length;
-                
-                return {
-                    ...prev,
-                    existingImages: newExistingImages,
-                    newImages: prev.newImages.filter((_, i) => i !== newImageIndex)
                 };
             }
             

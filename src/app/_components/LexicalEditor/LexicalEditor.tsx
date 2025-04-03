@@ -98,7 +98,7 @@ export function LexicalEditor({ initialContent = '', onChange, className = '' }:
           <LinkPlugin />
           <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
           <OnChangePlugin onChange={onChange} />
-          {initialContent && <InitialContentPlugin content={initialContent} />}
+          <InitialContentPlugin content={initialContent} />
         </div>
       </div>
     </LexicalComposer>
@@ -161,16 +161,3 @@ function InitialContentPlugin({ content }: { content: string }) {
 
   return null;
 }
-
-function importHTML(html: string) {
-    const [editor] = useLexicalComposerContext();
-    return editor.update(() => {
-      const parser = new DOMParser();
-      const dom = parser.parseFromString(html, 'text/html');
-      const nodes = $generateNodesFromDOM(editor, dom);
-      
-      const root = $getRoot();
-      root.clear();
-      nodes.forEach(node => root.append(node));
-    });
-  }

@@ -41,7 +41,7 @@ export function SortableImage({ image, index, onDelete }: SortableImageProps) {
     >
       <div 
         {...listeners}
-        className={`absolute inset-2 border rounded-lg overflow-hidden bg-white ${
+        className={`absolute inset-2 rounded-lg overflow-hidden bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)] transition-shadow duration-300 ${
           isDragging ? 'shadow-xl cursor-grabbing' : 'cursor-grab'
         }`}
       >
