@@ -5,7 +5,7 @@ import { deleteProjectById } from '@/api/apiClient';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-
+import { useToast } from '@/components/ui/ToastContext';
 interface ProjectsTableProps {
     initialProjects: Project[];
     currentPage: number;
@@ -15,14 +15,16 @@ interface ProjectsTableProps {
 
 export function ProjectsTable({ initialProjects, currentPage, totalPages, totalRecords }: ProjectsTableProps) {
     const router = useRouter();
-
+    const { showToast } = useToast();
     const handleDelete = async (projectId: number) => {
         if (confirm('Вы уверены, что хотите удалить этот проект?')) {
             try {
                 await deleteProjectById(projectId);
                 router.refresh(); // Refresh the page after deletion
+                showToast('Проект успешно удален', 'success');
             } catch (error) {
                 console.error('Ошибка при удалении проекта:', error);
+                showToast('Ошибка при удалении проекта', 'error');
             }
         }
     };

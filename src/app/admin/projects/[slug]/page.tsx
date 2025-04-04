@@ -16,23 +16,22 @@ interface Props {
 }
 
 export default async function EditProjectPage({ params }: Props) {
-    const { slug } = params;
-    
     try {
-        const project = await getProjectBySlug(slug);
-        const categories = await getAllProjectCategories();
+        const project = await getProjectBySlug(params.slug);
+        const categories = await getCategories();
+
         if (!project) {
             notFound();
         }
-        
+
         return (
             <BreadcrumbsWrapper pageName={project.data.Name}>
             <div className="container mx-auto px-4 py-8">
-                <h1 className="text-2xl font-bold mb-6">Редактирование проекта: {project.Name}</h1>
+                <h1 className="text-2xl font-bold mb-6">Редактирование проекта: {project.data.Name}</h1>
                 <ProjectForm 
-                    project={project.data}
-                    isEditing={true}
+                    project={project.data} 
                     categories={categories.data}
+                    isEditing={true}
                 />
             </div>
             </BreadcrumbsWrapper>

@@ -289,6 +289,11 @@ export const getCurrentUser = async (sessionToken?: string) => {
     }
 };
 
+export const getManagersList = async () => {
+    const response = await apiClient.get('users/managers');
+    return response.data;
+};
+
 // Загрузка файлов
 export const uploadImages = async (files: File[], path: string) => {
   const formData = new FormData();

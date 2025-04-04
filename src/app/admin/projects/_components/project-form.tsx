@@ -1,9 +1,9 @@
 'use client';
 
-import { Project, ProjectCategory } from '@/types/types';
-import { updateProjectById } from '@/api/apiClient';
+import { Project, ProjectCategory, User } from '@/types/types';
+import { createProject, updateProjectById, getManagersList } from '@/api/apiClient';
 import { useRouter } from 'next/navigation';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { registerLocale, setDefaultLocale } from "react-datepicker";
@@ -28,6 +28,7 @@ import { debounce } from 'lodash';
 import { SortableImage } from './SortableImage';
 import { uploadImages } from '@/api/apiClient';
 import { useToast } from '@/components/ui/ToastContext';
+import { Preloader } from '@/components/ui/Preloader';
 
 registerLocale('ru', ru);
 setDefaultLocale('ru');
@@ -40,11 +41,13 @@ interface ProjectFormProps {
     isEditing: boolean;
 }
 
+
 export function ProjectForm({ project, categories, isEditing }: ProjectFormProps) {
-    const { showToast } = useToast();
     const router = useRouter();
-    const [loading, setLoading] = useState(false); // добавить прелоадер
-    const [editorContent, setEditorContent] = useState(project.Description || '');
+    const { showToast } = useToast();
+
+    const [loading, setLoading] = useState(false);
+    const [managers, setManagers] = useState<User[]>([]);
     const [formData, setFormData] = useState<{
         ID: number;
         title: string;
@@ -82,8 +85,9 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
         }>;
         deletedImages: number[];
         PublishDate: Date | null;
+        UserID: number | null;
       }>({
-        ID: project.ID || 0,
+        ID: project.ID ?? 0,
         title: project.Title || '',
         name: project.Name || '',
         description: project.Description || '',
@@ -108,8 +112,13 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
           .sort((a, b) => (a.Order ?? 0) - (b.Order ?? 0)),
         deletedImages: [],
         PublishDate: project.PublishDate ? new Date(project.PublishDate) : null,
+        UserID: project.User?.ID || null
       });
     
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedIndex, setSelectedIndex] = useState(-1);
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newFiles = Array.from(e.target.files || []);
         
@@ -142,11 +151,11 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
                         Order: image.Order
                     };
                 }
-    
+
                 const paths = await uploadImages([image.file!], `catalog/projects/${project.ID}`);
                 return {
                     ID: image.ID,
-                    ImageURL: paths.filePaths[0], // Используем путь из ответа сервера
+                    ImageURL: paths.filePaths[0],
                     Order: image.Order
                 };
             })
@@ -157,11 +166,11 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
             Images: processedImages,
             existingImages: prev.existingImages.map((img, index) => ({
                 ...img,
-                Order: index // Обновляем Order в existingImages
+                Order: index
             }))
         }));
         
-        return processedImages; // Возвращаем обработанные изображения
+        return processedImages;
     };
     
     const handleSubmit = async (e: React.FormEvent) => {
@@ -169,24 +178,40 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
         setLoading(true);
         
         try {
-            const processedImages = await handleUploadImages();
-            await updateProjectById(formData.ID, {
-                ...formData,
-                Images: processedImages
-            });
+            const existingImagesData = formData.existingImages
+                .filter(img => !img.isNew)
+                .map((img, index) => ({
+                    ID: img.ID,
+                    ImageURL: img.ShortURL || img.ImageURL,
+                    Order: index
+                }));
+            const newImages = await handleUploadImages();
+            
+            const allImages = [...existingImagesData, ...newImages.filter(img => !img.ID)];
+            if (isEditing) {
+                await updateProjectById(formData.ID, {
+                    ...formData,
+                    Images: allImages,
+                })
+                .then((res) => router.refresh())
+            } else {
+                await createProject({
+                    ...formData,
+                    Images: allImages,
+                });
+            }
+
+            console.log('formData', formData);
+
             showToast('Проект успешно сохранен', 'success');
-            router.push('/admin/projects');
-            router.refresh();
+            setLoading(false);
         } catch (error) {
-            console.error('Error updating project:', error);
             showToast('Ошибка при сохранении проекта', 'error');
-        } finally {
             setLoading(false);
         }
     };
 
-    const handleImageDelete = (index: number, isExisting: boolean) => {
-        console.log('удаление картинки', index, isExisting);
+    const handleImageDelete = (index: number) => {
         const imageToDelete = formData.existingImages[index];
         
         setFormData(prev => {
@@ -235,21 +260,25 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
         });
     };
 
-    // Create a debounced version of the state update 
-    const debouncedSetFormData = useCallback(
-        debounce((content: string) => {
-            setFormData(prev => ({
-                ...prev,
-                description: content
-            }));
-        }, 1000), // 1 second delay
-        []
-    );
-
-    const handleEditorChange = useCallback((content: string) => {
-        setEditorContent(content);
-        debouncedSetFormData(content);
-    }, [debouncedSetFormData]);
+    useEffect(() => {
+        const fetchManagers = async () => {
+            try {
+                const response = await getManagersList();
+                if (Array.isArray(response?.data)) {
+                    setManagers(response.data);
+                } else if (Array.isArray(response)) {
+                    setManagers(response);
+                } else {
+                    console.error('Unexpected managers data format:', response);
+                    showToast('Ошибка формата данных менеджеров', 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка при загрузке списка менеджеров:', error);
+                showToast('Ошибка при загрузке списка менеджеров', 'error');
+            }
+        };
+        fetchManagers();
+    }, []);
 
     const sensors = useSensors(
       useSensor(MouseSensor, {
@@ -264,179 +293,212 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
       })
     );
 
+    // Create a debounced version of the state update 
+    const debouncedSetFormData = useCallback(
+        debounce((content: string) => {
+            setFormData(prev => ({
+                ...prev,
+                description: content
+            }));
+        }, 1000), // 1 second delay
+        []
+    );
+
+    const handleEditorChange = useCallback((content: string) => {
+        debouncedSetFormData(content);
+    }, [debouncedSetFormData]);
+
     return (
-        <form onSubmit={handleSubmit}>
-        {/* Верхний блок с двумя колонками */}
-        <div className="flex gap-6 mb-6">
-          {/* Левая колонка - изображения */}
-          <div className="w-1/2">
-            <h2 className="text-2xl font-bold mb-6">1. Изображения проекта</h2>
-            <div className="mb-4">
-              <input
-                type="file"
-                multiple
-                onChange={handleFileChange}
-                className="hidden"
-                id="file-upload"
-                accept="image/*"
-                disabled={formData.existingImages.length >= MAX_IMAGES}
-              />
-              <label 
-                htmlFor="file-upload" 
-                className={`inline-block px-4 py-2 rounded-md cursor-pointer ${
-                  formData.existingImages.length >= MAX_IMAGES 
-                    ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-blue-500 hover:bg-blue-600 text-white'
-                }`}
-              >
-                {formData.existingImages.length >= MAX_IMAGES 
-                  ? 'Достигнут лимит изображений' 
-                  : 'Добавить изображения'
-                }
-              </label>
-              <div className="text-sm text-gray-500 mt-2">
-                {`${formData.existingImages.length}/${MAX_IMAGES} изображений`}
-              </div>
-
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={formData.existingImages.map((image, index) => `${image.ID || image.ImageURL}-${index}`)}
-                  strategy={rectSortingStrategy}
-                >
-                  <div className="grid grid-cols-4 mt-4">
-                    {formData.existingImages.map((image, index) => (
-                      <SortableImage
-                        key={`${image.ID || image.ImageURL}-${index}`}
-                        image={image}
-                        index={index}
-                        onDelete={() => handleImageDelete(index, true)}
-                      />
-                    ))}
+        <form onSubmit={handleSubmit} className="relative">
+            {loading && <Preloader fullScreen />}
+            {/* Верхний блок с двумя колонками */}
+            <div className="flex gap-6 mb-6">
+              {/* Левая колонка - изображения */}
+              <div className="w-1/2">
+                <h2 className="text-2xl font-bold mb-6">1. Изображения проекта</h2>
+                <div className="mb-4">
+                  <input
+                    type="file"
+                    multiple
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="file-upload"
+                    accept="image/*"
+                    disabled={formData.existingImages.length >= MAX_IMAGES}
+                  />
+                  <label 
+                    htmlFor="file-upload" 
+                    className={`inline-block px-4 py-2 rounded-md cursor-pointer ${
+                      formData.existingImages.length >= MAX_IMAGES 
+                        ? 'bg-gray-400 cursor-not-allowed' 
+                        : 'bg-blue-500 hover:bg-blue-600 text-white'
+                    }`}
+                  >
+                    {formData.existingImages.length >= MAX_IMAGES 
+                      ? 'Достигнут лимит изображений' 
+                      : 'Добавить изображения'
+                    }
+                  </label>
+                  <div className="text-sm text-gray-500 mt-2">
+                    {`${formData.existingImages.length}/${MAX_IMAGES} изображений`}
                   </div>
-                </SortableContext>
-              </DndContext>
-            </div>
-          </div>
 
-          {/* Правая колонка - основная информация */}
-          <div className="w-1/2">
-            <h2 className="text-2xl font-bold mb-6">2. Основная информация</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block mb-2">Название</label>
-                <input
-                  type="text"
-                  className="w-full p-2 border rounded"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                />
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <SortableContext
+                      items={formData.existingImages.map((image, index) => `${image.ID || image.ImageURL}-${index}`)}
+                      strategy={rectSortingStrategy}
+                    >
+                      <div className="grid grid-cols-4 mt-4">
+                        {formData.existingImages.map((image, index) => (
+                          <SortableImage
+                            key={`${image.ID || image.ImageURL}-${index}`}
+                            image={image}
+                            index={index}
+                            onDelete={() => handleImageDelete(index)}
+                          />
+                        ))}
+                      </div>
+                    </SortableContext>
+                  </DndContext>
+                </div>
               </div>
 
-              <div>
-                <label className="block mb-2">Категории проекта</label>
-                <div className="max-h-48 overflow-y-auto border rounded p-2">
-                  <label className="block mb-2">Выберите категории</label>
-                  {categories.map((category) => (
-                    <div key={category.ID} className="flex items-center mb-2">
-                      <input
-                        type="checkbox"
-                        id={`category-${category.ID}`}
-                        checked={formData.CategoriesID.includes(category.ID)}
-                        onChange={() => {
-                          const newCategories = formData.CategoriesID.includes(category.ID)
-                            ? formData.CategoriesID.filter((id) => id !== category.ID)
-                            : [...formData.CategoriesID, category.ID];
-                          setFormData({ ...formData, CategoriesID: newCategories });
-                        }}
-                        className="mr-2"
-                      />
-                      <label htmlFor={`category-${category.ID}`} className="cursor-pointer">
-                        {category.Name}
-                      </label>
+              {/* Правая колонка - основная информация */}
+              <div className="w-1/2">
+                <h2 className="text-2xl font-bold mb-6">2. Основная информация</h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block mb-2">Название</label>
+                    <input
+                      type="text"
+                      className="w-full p-2 border rounded"
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block mb-2">Категории проекта</label>
+                    <div className="max-h-48 overflow-y-auto border rounded p-2">
+                      <label className="block mb-2">Выберите категории</label>
+                      {categories.map((category) => (
+                        <div key={category.ID} className="flex items-center mb-2">
+                          <input
+                            type="checkbox"
+                            id={`category-${category.ID}`}
+                            checked={formData.CategoriesID.includes(category.ID)}
+                            onChange={() => {
+                              const newCategories = formData.CategoriesID.includes(category.ID)
+                                ? formData.CategoriesID.filter((id) => id !== category.ID)
+                                : [...formData.CategoriesID, category.ID];
+                              setFormData({ ...formData, CategoriesID: newCategories });
+                            }}
+                            className="mr-2"
+                          />
+                          <label htmlFor={`category-${category.ID}`} className="cursor-pointer">
+                            {category.Name}
+                          </label>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
 
-              {/* Мета-информация */}
-              <div className="space-y-4">
-                <div>
-                  <label className="block mb-2">Мета Заголовок</label>
-                  <input
-                    type="text"
-                    className="w-full p-2 border rounded"
-                    value={formData.metaTitle}
-                    onChange={(e) => setFormData({ ...formData, metaTitle: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className="block mb-2">Мета Описание</label>
-                  <textarea
-                    className="w-full p-2 border rounded"
-                    value={formData.metaDescription}
-                    onChange={(e) => setFormData({ ...formData, metaDescription: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className="block mb-2">Мета Ключевые слова</label>
-                  <input
-                    type="text"
-                    className="w-full p-2 border rounded"
-                    value={formData.metaKeyword}
-                    onChange={(e) => setFormData({ ...formData, metaKeyword: e.target.value })}
-                  />
+                  {/* Мета-информация */}
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block mb-2">Мета Заголовок</label>
+                      <input
+                        type="text"
+                        className="w-full p-2 border rounded"
+                        value={formData.metaTitle}
+                        onChange={(e) => setFormData({ ...formData, metaTitle: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block mb-2">Мета Описание</label>
+                      <textarea
+                        className="w-full p-2 border rounded"
+                        value={formData.metaDescription}
+                        onChange={(e) => setFormData({ ...formData, metaDescription: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block mb-2">Мета Ключевые слова</label>
+                      <input
+                        type="text"
+                        className="w-full p-2 border rounded"
+                        value={formData.metaKeyword}
+                        onChange={(e) => setFormData({ ...formData, metaKeyword: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                        <label className="block mb-2">Ответственный менеджер</label>
+                        <select
+                            className="w-full p-2 border rounded"
+                            value={formData.User?.ID || ''}
+                            onChange={(e) => {
+                                const selectedManager = managers.find(m => m.ID === Number(e.target.value));
+                                setFormData(prev => ({ ...prev, UserID: selectedManager?.ID || null }));
+                            }}
+                        >
+                            {managers.map((manager) => (
+                                <option key={manager.ID} value={manager.ID}>
+                                    {manager.LastName} {manager.FirstName}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Блок описания на всю ширину */}
-        <div className="w-full mb-6" style={{ display: 'block', width: '100%', minWidth: '100%', maxWidth: '100%' }}>
-          <h2 className="text-2xl font-bold mb-4">3. Описание проекта</h2>
-          <div style={{ display: 'block', width: '100%', minWidth: '100%', maxWidth: '100%' }}>
-            <LexicalEditor
-              initialContent={project.Description || ''}
-              onChange={handleEditorChange}
-              className="prose max-w-none"
-            />
-          </div>
-        </div>
-
-        {/* Нижний блок с датой и кнопкой */}
-        <div className="flex justify-between items-center mb-4">
-          <div className="text-gray-600">
-            4. Дата публикации:
-            <DatePicker
-              selected={formData.PublishDate}
-              onChange={(date) => setFormData({ ...formData, PublishDate: date })}
-              showTimeSelect
-              dateFormat="dd.MM.yyyy HH:mm"
-              timeFormat="HH:mm"
-              timeCaption="Время"
-              locale="ru"
-            placeholderText="Выберите дату и время"
-              timeIntervals={15}
-              className="ml-2 border rounded p-2 w-[200px]"
-              popperPlacement="bottom-start"
-            customInput={
-                <input
-                    className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            {/* Блок описания на всю ширину */}
+            <div className="w-full mb-6" style={{ display: 'block', width: '100%', minWidth: '100%', maxWidth: '100%' }}>
+              <h2 className="text-2xl font-bold mb-4">3. Описание проекта</h2>
+              <div style={{ display: 'block', width: '100%', minWidth: '100%', maxWidth: '100%' }}>
+                <LexicalEditor
+                  initialContent={project.Description || ''}
+                  onChange={handleEditorChange}
+                  className="prose max-w-none"
                 />
-            }
-            />
-          </div>
-          <button 
-            type="submit" 
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md"
-          >
-            Сохранить проект
-          </button>
-        </div>
-      </form>
+              </div>
+            </div>
+
+            {/* Нижний блок с датой и кнопкой */}
+            <div className="flex justify-between items-center mb-4">
+              <div className="text-gray-600">
+                4. Дата публикации:
+                <DatePicker
+                  selected={formData.PublishDate}
+                  onChange={(date) => setFormData({ ...formData, PublishDate: date })}
+                  showTimeSelect
+                  dateFormat="dd.MM.yyyy HH:mm"
+                  timeFormat="HH:mm"
+                  timeCaption="Время"
+                  locale="ru"
+                placeholderText="Выберите дату и время"
+                  timeIntervals={15}
+                  className="ml-2 border rounded p-2 w-[200px]"
+                  popperPlacement="bottom-start"
+                customInput={
+                    <input
+                        className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                }
+                />
+              </div>
+              <button 
+                type="submit" 
+                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md"
+              >
+                Сохранить проект
+              </button>
+            </div>
+          </form>
     );
 } 
