@@ -396,13 +396,15 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
         </div>
 
         {/* Блок описания на всю ширину */}
-        <div className="w-full mb-6">
+        <div className="w-full mb-6" style={{ display: 'block', width: '100%', minWidth: '100%', maxWidth: '100%' }}>
           <h2 className="text-2xl font-bold mb-4">3. Описание проекта</h2>
-          <LexicalEditor
-            initialContent={project.Description || ''}
-            onChange={handleEditorChange}
-            className="prose max-w-none"
-          />
+          <div style={{ display: 'block', width: '100%', minWidth: '100%', maxWidth: '100%' }}>
+            <LexicalEditor
+              initialContent={project.Description || ''}
+              onChange={handleEditorChange}
+              className="prose max-w-none"
+            />
+          </div>
         </div>
 
         {/* Нижний блок с датой и кнопкой */}

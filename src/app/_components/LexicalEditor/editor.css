@@ -1,0 +1,112 @@
+/* Общие стили для заголовков */
+.editor-input h1,
+.editor-input h2,
+.editor-input h3,
+.editor-input h4,
+.editor-input h5 {
+  font-weight: 700 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Специфичные стили для каждого заголовка */
+.editor-input h1 {
+  font-size: 2.25rem !important;
+  line-height: 2.5rem !important;
+  margin-top: 1.5rem !important;
+  padding-bottom: 0.5rem !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+.editor-input h2 {
+  font-size: 1.875rem !important;
+  line-height: 2.25rem !important;
+  margin-top: 1.25rem !important;
+}
+
+.editor-input h3 {
+  font-size: 1.5rem !important;
+  line-height: 2rem !important;
+  margin-top: 1rem !important;
+}
+
+.editor-input h4 {
+  font-size: 1.25rem !important;
+  line-height: 1.75rem !important;
+  margin-top: 0.75rem !important;
+}
+
+.editor-input h5 {
+  font-size: 1.125rem !important;
+  line-height: 1.75rem !important;
+  margin-top: 0.5rem !important;
+}
+
+/* Стили для параграфов */
+.editor-input p {
+  margin-bottom: 1rem !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Стили для списков */
+.editor-input ul,
+.editor-input ol {
+  margin: 1rem 0 !important;
+  padding-left: 2.5rem !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.editor-input ul {
+  list-style-type: disc !important;
+}
+
+.editor-input ol {
+  list-style-type: decimal !important;
+}
+
+.editor-input li {
+  margin-bottom: 0.25rem !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Стили для ссылок */
+.editor-input a {
+  color: #3b82f6 !important;
+  text-decoration: underline !important;
+}
+
+.editor-input a:hover {
+  color: #2563eb !important;
+}
+
+/* Стили контейнера */
+.editor-container {
+  position: relative !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  display: block !important;
+  box-sizing: border-box !important;
+}
+
+.editor-inner {
+  position: relative !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  display: block !important;
+  box-sizing: border-box !important;
+}
+
+.editor-input {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  white-space: pre-wrap !important;
+} 

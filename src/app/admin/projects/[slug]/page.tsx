@@ -24,9 +24,7 @@ export default async function EditProjectPage({ params }: Props) {
         if (!project) {
             notFound();
         }
-
-        console.log(project);
-
+        
         return (
             <BreadcrumbsWrapper pageName={project.data.Name}>
             <div className="container mx-auto px-4 py-8">

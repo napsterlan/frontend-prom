@@ -1,5 +1,7 @@
 'use client';
 
+import './editor.css';
+
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -58,7 +60,7 @@ export function LexicalEditor({ initialContent = '', onChange, className = '' }:
       QuoteNode,
     ],
     theme: {
-      root: 'prose max-w-none min-h-[200px] p-4 focus:outline-none',
+      root: 'prose max-w-none min-h-[200px] p-4 focus:outline-none w-full block',
       link: 'cursor-pointer text-blue-500 hover:text-blue-700 underline',
       text: {
         bold: 'font-bold',
@@ -66,29 +68,42 @@ export function LexicalEditor({ initialContent = '', onChange, className = '' }:
         underline: 'underline',
         strikethrough: 'line-through',
         underlineStrikethrough: 'underline line-through',
+        left: 'text-left',
+        center: 'text-center',
+        right: 'text-right',
       },
       heading: {
-        h1: 'text-4xl font-bold',
-        h2: 'text-3xl font-bold',
-        h3: 'text-2xl font-bold',
-        h4: 'text-xl font-bold',
-        h5: 'text-lg font-bold',
-        h6: 'font-bold',
+        h1: 'text-4xl font-bold mt-6 mb-4 pb-2 border-b',
+        h2: 'text-3xl font-bold mt-5 mb-3',
+        h3: 'text-2xl font-bold mt-4 mb-2',
+        h4: 'text-xl font-bold mt-3 mb-2',
+        h5: 'text-lg font-bold mt-2 mb-1',
+        h6: 'text-base font-bold mt-2 mb-1',
       },
       list: {
-        ul: 'list-disc list-inside',
-        ol: 'list-decimal list-inside',
+        ul: 'list-disc list-outside pl-[2.5em] my-4',
+        ol: 'list-decimal list-outside pl-[2.5em] my-4',
+        listitem: 'pl-[0.5em] mb-1',
+        nested: {
+          listitem: 'pl-[0.5em]'
+        },
+        olDepth: [
+          'list-decimal',
+          'list-[lower-alpha]',
+          'list-[lower-roman]'
+        ]
       },
+      paragraph: 'mb-4',
     },
   };
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div className={`editor-container border rounded-lg ${className}`}>
+      <div style={{ width: '100%', display: 'block' }} className={`editor-container border rounded-lg ${className}`}>
         <ToolbarPlugin />
-        <div className="editor-inner">
+        <div style={{ width: '100%', display: 'block' }}>
           <RichTextPlugin
-            contentEditable={<ContentEditable className="editor-input" />}
+            contentEditable={<ContentEditable style={{ width: '100%', display: 'block' }} className="editor-input" />}
             placeholder={<Placeholder />}
             ErrorBoundary={EditorErrorBoundary}
           />
@@ -113,6 +128,7 @@ function OnChangePlugin({ onChange }: { onChange?: (html: string) => void }) {
     if (!onChange) return;
 
     return editor.registerUpdateListener(({ editorState }) => {
+
       editorState.read(() => {
         const currentContent = JSON.stringify(editor.getEditorState().toJSON());
         
