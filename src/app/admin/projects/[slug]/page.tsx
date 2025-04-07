@@ -18,7 +18,11 @@ interface Props {
 export default async function EditProjectPage({ params }: Props) {
     try {
         const project = await getProjectBySlug(params.slug);
-        const categories = await getCategories();
+        const projectCategories = await getAllProjectCategories();
+
+        const productCategories = await getCategories();
+
+        console.log('productCategories', productCategories);
 
         if (!project) {
             notFound();
@@ -30,7 +34,8 @@ export default async function EditProjectPage({ params }: Props) {
                 <h1 className="text-2xl font-bold mb-6">Редактирование проекта: {project.data.Name}</h1>
                 <ProjectForm 
                     project={project.data} 
-                    categories={categories.data}
+                    projectCategories={projectCategories.data}
+                    productCategories={productCategories.data}
                     isEditing={true}
                 />
             </div>

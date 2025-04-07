@@ -1,9 +1,9 @@
 'use client';
 
-import { Project, ProjectCategory, User } from '@/types/types';
+import { Project, ProjectCategory, IProductCategory, User } from '@/types/types';
 import { createProject, updateProjectById, getManagersList } from '@/api/apiClient';
 import { useRouter } from 'next/navigation';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { registerLocale, setDefaultLocale } from "react-datepicker";
@@ -38,15 +38,15 @@ const MAX_IMAGES = 20;
 
 interface ProjectFormProps {
     project: Project;
-    categories: ProjectCategory[];
+    projectCategories: ProjectCategory[];
+    productCategories: IProductCategory[];
     isEditing: boolean;
 }
 
 type TabType = 'main' | 'relations';
 
-export function ProjectForm({ project, categories, isEditing }: ProjectFormProps) {
+export function ProjectForm({ project, projectCategories, productCategories, isEditing }: ProjectFormProps) {
     const router = useRouter();
-    console.log('project', project);
     const { showToast } = useToast();
     const [activeTab, setActiveTab] = useState<TabType>('main');
 
@@ -55,7 +55,7 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
     const [formData, setFormData] = useState<{
         ID: number;
         title: string;
-        name: string;
+        Name: string;
         description: string;
         metaTitle: string;
         metaDescription: string;
@@ -93,7 +93,7 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
       }>({
         ID: project.ID ?? 0,
         title: project.Title || '',
-        name: project.Name || '',
+        Name: project.Name || '',
         description: project.Description || '',
         metaTitle: project.MetaTitle || '',
         metaDescription: project.MetaDescription || '',
@@ -120,7 +120,6 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
       });
 
     const [isAutoSlug, setIsAutoSlug] = useState(!isEditing ? true : false);
-
     useEffect(() => {
         if (isAutoSlug && formData.title) {
             setFormData(prev => ({
@@ -325,9 +324,37 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
         []
     );
 
+    console.log('formData', formData);
+
     const handleEditorChange = useCallback((content: string) => {
         debouncedSetFormData(content);
     }, [debouncedSetFormData]);
+
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [filteredCategories, setFilteredCategories] = useState<ProjectCategory[]>(projectCategories);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    useEffect(() => {
+        setFilteredCategories(projectCategories);
+    }, [projectCategories]);
+
+    const handleCategorySearch = (searchValue: string) => {
+        const filtered = projectCategories.filter(cat => 
+            cat.Name.toLowerCase().includes(searchValue.toLowerCase())
+        );
+        setFilteredCategories(filtered);
+    };
 
     return (
         <form onSubmit={handleSubmit} className="relative">
@@ -442,8 +469,8 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
                                     <input
                                         type="text"
                                         className="w-full p-2 border rounded"
-                                        value={formData.name}
-                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        value={formData.Name}
+                                        onChange={(e) => setFormData({ ...formData, Name: e.target.value })}
                                     />
                                 </div>
 
@@ -470,9 +497,8 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
                                     />
                                 </div>
 
-
                                 <div>
-                                <label className="block mb-2">Мета Заголовок</label>
+                                <label className="block mb-2">metaTitle</label>
                                 <input
                                     type="text"
                                     className="w-full p-2 border rounded"
@@ -480,17 +506,9 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
                                     onChange={(e) => setFormData({ ...formData, metaTitle: e.target.value })}
                                 />
                                 </div>
+
                                 <div>
-                                <label className="block mb-2">Мета Описание</label>
-                                <textarea
-                                    className="w-full p-2 border rounded"
-                                    value={formData.metaDescription}
-                                    onChange={(e) => setFormData({ ...formData, metaDescription: e.target.value })}
-                                />
-                                </div>
-                                
-                                <div>
-                                    <label className="block mb-2">Мета Ключевые слова</label>
+                                    <label className="block mb-2">metaKeyword</label>
                                     <input
                                         type="text"
                                         className="w-full p-2 border rounded"
@@ -499,6 +517,15 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
                                     />
                                 </div>
 
+                                <div>
+                                    <label className="block mb-2">metaDescription</label>
+                                    <textarea
+                                        className="w-full p-2 border rounded"
+                                        value={formData.metaDescription}
+                                        onChange={(e) => setFormData({ ...formData, metaDescription: e.target.value })}
+                                    />
+                                </div>
+                                
                                 <div>
                                     <label className="block mb-2">Ответственный менеджер</label>
                                     <select
@@ -559,36 +586,117 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
                 </>
             )}
 
+            {/* Связи */}
             {activeTab === 'relations' && (
                 <div className="space-y-6">
                     <div>
-                        <h2 className="text-2xl font-bold mb-6">Связи проекта</h2>
                         <div>
-                            <label className="block mb-2">Категории проекта</label>
-                            <div className="max-h-48 overflow-y-auto border rounded p-2">
-                                {categories.map((category) => (
-                                    <div key={category.ID} className="flex items-center mb-2">
-                                        <input
-                                            type="checkbox"
-                                            id={`category-${category.ID}`}
-                                            checked={formData.CategoriesID.includes(category.ID)}
-                                            onChange={() => {
-                                                const newCategories = formData.CategoriesID.includes(category.ID)
-                                                    ? formData.CategoriesID.filter((id) => id !== category.ID)
-                                                    : [...formData.CategoriesID, category.ID];
-                                                setFormData({ ...formData, CategoriesID: newCategories });
-                                            }}
-                                            className="mr-2"
-                                        />
-                                        <label htmlFor={`category-${category.ID}`} className="cursor-pointer">
-                                            {category.Name}
-                                        </label>
+                            <label className="block mb-2">Показывать в категориях</label>
+                            
+                            {/* Выбранные категории (чипы) */}
+                            <div className="flex flex-wrap gap-2 mb-2">
+                                {formData.CategoriesID.map((id, index) => {
+                                    const category = projectCategories.find(cat => cat.ID === id);
+
+                                    if (!category) return null;
+                                    
+                                    const isMainCategory = index === 0; // Первая(нулевая) категория всегда главная
+                                    
+                                    return (
+                                        <div
+                                            key={id}
+                                            className={`flex items-center gap-1 px-2 py-1 rounded-full text-sm ${
+                                                isMainCategory 
+                                                    ? 'bg-green-100 text-green-800' 
+                                                    : 'bg-blue-100 text-blue-800'
+                                            }`}
+                                            title={isMainCategory ? "Главная категория" : ""}
+                                        >
+                                            <span>{category.Name}</span>
+                                            <button
+                                                type="button"
+                                                className={`ml-1 hover:text-red-800 ${
+                                                    isMainCategory ? 'text-green-600' : 'text-blue-600'
+                                                }`}
+                                                onClick={() => {
+                                                    const newCategories = formData.CategoriesID.filter(
+                                                        (catId) => catId !== id
+                                                    );
+                                                    
+                                                    setFormData({ 
+                                                        ...formData, 
+                                                        CategoriesID: newCategories,
+                                                    });
+                                                }}
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="relative" ref={dropdownRef}>
+                                <input
+                                    type="text"
+                                    className="w-full p-2 border rounded"
+                                    placeholder="Поиск категорий..."
+                                    onChange={(e) => handleCategorySearch(e.target.value)}
+                                    onFocus={() => setIsDropdownOpen(true)}
+                                />
+                                
+                                {/* Выпадающий список */}
+                                {isDropdownOpen && (
+                                    <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-96 overflow-y-auto">
+                                        {filteredCategories.map((category) => (
+                                            <div
+                                                key={category.ID}
+                                                className={`p-2 hover:bg-gray-100 cursor-pointer ${
+                                                    formData.CategoriesID.includes(category.ID) 
+                                                        ? formData.CategoriesID[0] === category.ID 
+                                                            ? 'bg-green-50' 
+                                                            : 'bg-blue-50' 
+                                                        : ''
+                                                }`}
+                                                onClick={() => {
+                                                    const isSelected = formData.CategoriesID.includes(category.ID);
+                                                    let newCategories;
+                                                    
+                                                    if (isSelected) {
+                                                        // Удаляем категорию
+                                                        newCategories = formData.CategoriesID.filter((id) => id !== category.ID);
+                                                    } else {
+                                                        // Добавляем категорию
+                                                        newCategories = [...formData.CategoriesID, category.ID];
+                                                    }
+                                                    
+                                                    setFormData({ 
+                                                        ...formData, 
+                                                        CategoriesID: newCategories,
+                                                    });
+                                                }}
+                                            >
+                                                {category.Name}
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
+                                )}
                             </div>
                         </div>
                     </div>
-                    {/* Здесь можно добавить другие поля для связей */}
+
+                    <div>
+                        <div>
+                            <label className="block mb-2">Связанные категории продуктов</label>
+
+                            <div>
+                                {productCategories.map((category) => (
+                                    <div key={category.ID}>{category.Name}</div>
+                                ))}
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             )}
         </form>

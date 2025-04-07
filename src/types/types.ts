@@ -6,7 +6,7 @@ export interface Images {
     ShortURL?: string;
 }
 
-export interface Category {
+export interface IProductCategory {
     ID: number;
     CategoryID: number;
     ParentID: number | null;
@@ -23,8 +23,12 @@ export interface Category {
     UpdatedAt: string;
     DeletedAt: string | null;
     Images: Images[] | null;
-    ChildrenCategories: Category[] | null;
+    ChildrenCategories: IProductCategory[] | null;
     ProductView: ProductView[] | null;
+    File: File[] | null;
+    Order: number;
+    Parent: IProductCategory | null;
+    RelatedProjects: Project[] | null;
 }
 
 export interface ProductView {
@@ -62,7 +66,7 @@ export interface ProductView {
 }
 
 export interface Response {
-    data: Category;
+    data: IProductCategory;
     fullPath: string;
     success: boolean;
 }
@@ -165,6 +169,7 @@ export interface Project { // поменять на IProject
         Name: string;
         Slug: string;
     }[];
+    MainCategoryID: number | null;
     Slug: string;
     Images: Images[] | null;
     User: User | null;

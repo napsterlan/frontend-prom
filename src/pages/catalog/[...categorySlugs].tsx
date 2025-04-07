@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query'; // Импортируем useQuery из react-query
 import { getCategoryBySlug } from '@/api/apiClient';
-import { Category, ProductView } from '@/types/types';
+import { IProductCategory, ProductView } from '@/types/types'; // поменять тип
 import Image from 'next/image';
 import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
 import { Breadcrumb } from '@/types/types';
@@ -99,7 +99,7 @@ export default function CategoryPage() {
     <Breadcrumbs />
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
       {categoryData?.data.ChildrenCategories ? (
-        categoryData.data.ChildrenCategories.map((childCategory: Category) => (
+        categoryData.data.ChildrenCategories.map((childCategory: IProductCategory) => (
           <div key={childCategory.ID} style={{ border: '1px solid #ccc', borderRadius: '8px', textDecoration: 'none', color: 'inherit', paddingTop: '10px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
             <a href={`/catalog/${Array.isArray(categorySlugs) ? categorySlugs.join('/') : ''}/${childCategory.Slug}`} style={{ display: 'block', textAlign: 'center' }}>
               <Image src={`${childCategory.Images?.[0].ImageURL}`} alt={childCategory.Images?.[0].AltText || childCategory.Name} layout="responsive" width={290} height={200} />

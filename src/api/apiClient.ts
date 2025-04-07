@@ -144,7 +144,6 @@ export const deleteNewsById = async (id: number) => {
 // Категории проектов
 export const getAllProjectCategories = async () => {
   const response = await apiClient.get('/projects-categories');
-  console.log(response.status);
   return response.data;
 };
 

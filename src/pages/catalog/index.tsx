@@ -1,13 +1,13 @@
 import { getCategories } from '../../api/apiClient';
 import Image from 'next/image';
-import { Category } from '@/types/types';
+import { IProductCategory } from '@/types/types'; // поменять тип
 import { useEffect, useState } from 'react';
 import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
 
 
 
 export default function MainCategories() {
-  const [categoryData, setCategoryData] = useState<Category[]>([]);
+  const [categoryData, setCategoryData] = useState<IProductCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
@@ -42,8 +42,8 @@ export default function MainCategories() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 290px)', gap: '20px' }}>
         {categoryData.length > 0 && // Проверка на наличие данных
         categoryData
-          .filter((category: Category) => category.ParentID === null) // Фильтруем категории с ParentID: null
-          .map((category: Category) => {
+          .filter((category: IProductCategory) => category.ParentID === null) // Фильтруем категории с ParentID: null
+          .map((category: IProductCategory) => {
             return (
               <a key={category.CategoryID} href={category.FullPath} style={{ width: '290px', height: '400px', border: '1px solid #ccc', textDecoration: 'none', color: 'inherit' }}>
                 <Image 
