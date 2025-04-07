@@ -29,6 +29,7 @@ import { SortableImage } from './SortableImage';
 import { uploadImages } from '@/api/apiClient';
 import { useToast } from '@/components/ui/ToastContext';
 import { Preloader } from '@/components/ui/Preloader';
+import { toSlug } from '@/utils/transliterate';
 
 registerLocale('ru', ru);
 setDefaultLocale('ru');
@@ -114,10 +115,26 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
         PublishDate: project.PublishDate ? new Date(project.PublishDate) : null,
         UserID: project.User?.ID || null
       });
-    
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedIndex, setSelectedIndex] = useState(-1);
+
+    const [isAutoSlug, setIsAutoSlug] = useState(!isEditing ? true : false);
+
+    useEffect(() => {
+        if (isAutoSlug && formData.title) {
+            setFormData(prev => ({
+                ...prev,
+                Slug: toSlug(formData.title)
+            }));
+        }
+    }, [formData.title, isAutoSlug]);
+
+    const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!isAutoSlug) {
+            setFormData(prev => ({
+                ...prev,
+                Slug: toSlug(e.target.value)
+            }));
+        }
+    };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newFiles = Array.from(e.target.files || []);
@@ -193,12 +210,13 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
                     ...formData,
                     Images: allImages,
                 })
-                .then((res) => router.refresh())
+                .then((res) => router.push(res.data.Slug));
             } else {
                 await createProject({
                     ...formData,
                     Images: allImages,
-                });
+                })
+                .then((res) => router.push(res.data.Slug));
             }
 
             console.log('formData', formData);
@@ -372,12 +390,45 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
                 <h2 className="text-2xl font-bold mb-6">2. Основная информация</h2>
                 <div className="space-y-4">
                   <div>
-                    <label className="block mb-2">Название</label>
+                    <label className="block mb-2">Title</label>
                     <input
                       type="text"
                       className="w-full p-2 border rounded"
                       value={formData.title}
                       onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block mb-2">Name</label>
+                    <input
+                      type="text"
+                      className="w-full p-2 border rounded"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label>SEO URL</label>
+                      <div 
+                        onClick={() => setIsAutoSlug(!isAutoSlug)}
+                        className="flex items-center gap-2 cursor-pointer select-none"
+                      >
+                        <span className="text-sm text-gray-500">Авто</span>
+                        <div className={`w-8 h-4 rounded-full transition-colors ${isAutoSlug ? 'bg-blue-500' : 'bg-gray-300'}`}>
+                          <div className={`w-3 h-3 rounded-full bg-white transform transition-transform mt-0.5 ${isAutoSlug ? 'translate-x-4' : 'translate-x-1'}`} />
+                        </div>
+                      </div>
+                    </div>
+                    <input
+                      type="text"
+                      className="w-full p-2 border rounded font-mono"
+                      value={formData.Slug}
+                      onChange={handleSlugChange}
+                      disabled={isAutoSlug}
+                      placeholder="seo-url"
                     />
                   </div>
 
@@ -439,7 +490,7 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
                         <label className="block mb-2">Ответственный менеджер</label>
                         <select
                             className="w-full p-2 border rounded"
-                            value={formData.User?.ID || ''}
+                            value={formData.UserID || ''}
                             onChange={(e) => {
                                 const selectedManager = managers.find(m => m.ID === Number(e.target.value));
                                 setFormData(prev => ({ ...prev, UserID: selectedManager?.ID || null }));
