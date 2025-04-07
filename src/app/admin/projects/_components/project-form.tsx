@@ -42,10 +42,13 @@ interface ProjectFormProps {
     isEditing: boolean;
 }
 
+type TabType = 'main' | 'relations';
 
 export function ProjectForm({ project, categories, isEditing }: ProjectFormProps) {
     const router = useRouter();
+    console.log('project', project);
     const { showToast } = useToast();
+    const [activeTab, setActiveTab] = useState<TabType>('main');
 
     const [loading, setLoading] = useState(false);
     const [managers, setManagers] = useState<User[]>([]);
@@ -329,227 +332,265 @@ export function ProjectForm({ project, categories, isEditing }: ProjectFormProps
     return (
         <form onSubmit={handleSubmit} className="relative">
             {loading && <Preloader fullScreen />}
-            {/* Верхний блок с двумя колонками */}
-            <div className="flex gap-6 mb-6">
-              {/* Левая колонка - изображения */}
-              <div className="w-1/2">
-                <h2 className="text-2xl font-bold mb-6">1. Изображения проекта</h2>
-                <div className="mb-4">
-                  <input
-                    type="file"
-                    multiple
-                    onChange={handleFileChange}
-                    className="hidden"
-                    id="file-upload"
-                    accept="image/*"
-                    disabled={formData.existingImages.length >= MAX_IMAGES}
-                  />
-                  <label 
-                    htmlFor="file-upload" 
-                    className={`inline-block px-4 py-2 rounded-md cursor-pointer ${
-                      formData.existingImages.length >= MAX_IMAGES 
-                        ? 'bg-gray-400 cursor-not-allowed' 
-                        : 'bg-blue-500 hover:bg-blue-600 text-white'
-                    }`}
-                  >
-                    {formData.existingImages.length >= MAX_IMAGES 
-                      ? 'Достигнут лимит изображений' 
-                      : 'Добавить изображения'
-                    }
-                  </label>
-                  <div className="text-sm text-gray-500 mt-2">
-                    {`${formData.existingImages.length}/${MAX_IMAGES} изображений`}
-                  </div>
-
-                  <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <SortableContext
-                      items={formData.existingImages.map((image, index) => `${image.ID || image.ImageURL}-${index}`)}
-                      strategy={rectSortingStrategy}
+            
+            {/* Верхняя панель с кнопкой сохранения */}
+            <div className="flex justify-between items-center mb-6 sticky top-0 bg-white z-10 py-4 border-b">
+                <div className="flex gap-4">
+                    <button
+                        type="button"
+                        onClick={() => setActiveTab('main')}
+                        className={`px-4 py-2 rounded-md ${
+                            activeTab === 'main'
+                                ? 'bg-blue-500 text-white'
+                                : 'bg-gray-100 hover:bg-gray-200'
+                        }`}
                     >
-                      <div className="grid grid-cols-4 mt-4">
-                        {formData.existingImages.map((image, index) => (
-                          <SortableImage
-                            key={`${image.ID || image.ImageURL}-${index}`}
-                            image={image}
-                            index={index}
-                            onDelete={() => handleImageDelete(index)}
-                          />
-                        ))}
-                      </div>
-                    </SortableContext>
-                  </DndContext>
+                        Основная информация
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setActiveTab('relations')}
+                        className={`px-4 py-2 rounded-md ${
+                            activeTab === 'relations'
+                                ? 'bg-blue-500 text-white'
+                                : 'bg-gray-100 hover:bg-gray-200'
+                        }`}
+                    >
+                        Связи
+                    </button>
                 </div>
-              </div>
+                <button 
+                    type="submit" 
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md"
+                >
+                    Сохранить проект
+                </button>
+            </div>
 
-              {/* Правая колонка - основная информация */}
-              <div className="w-1/2">
-                <h2 className="text-2xl font-bold mb-6">2. Основная информация</h2>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block mb-2">Title</label>
-                    <input
-                      type="text"
-                      className="w-full p-2 border rounded"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    />
-                  </div>
+            {activeTab === 'main' && (
+                <>
+                    {/* Верхний блок с двумя колонками */}
+                    <div className="flex gap-6 mb-6">
+                        {/* Левая колонка - изображения */}
+                        <div className="w-1/2">
+                            <div className="mb-4">
+                                <input
+                                    type="file"
+                                    multiple
+                                    onChange={handleFileChange}
+                                    className="hidden"
+                                    id="file-upload"
+                                    accept="image/*"
+                                    disabled={formData.existingImages.length >= MAX_IMAGES}
+                                />
+                                <label 
+                                    htmlFor="file-upload" 
+                                    className={`inline-block px-4 py-2 rounded-md cursor-pointer ${
+                                        formData.existingImages.length >= MAX_IMAGES 
+                                            ? 'bg-gray-400 cursor-not-allowed' 
+                                            : 'bg-blue-500 hover:bg-blue-600 text-white'
+                                    }`}
+                                >
+                                    {formData.existingImages.length >= MAX_IMAGES 
+                                        ? 'Достигнут лимит изображений' 
+                                        : 'Добавить изображения'
+                                    }
+                                </label>
+                                <div className="text-sm text-gray-500 mt-2">
+                                    {`${formData.existingImages.length}/${MAX_IMAGES} изображений`}
+                                </div>
 
-                  <div>
-                    <label className="block mb-2">Name</label>
-                    <input
-                      type="text"
-                      className="w-full p-2 border rounded"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <label>SEO URL</label>
-                      <div 
-                        onClick={() => setIsAutoSlug(!isAutoSlug)}
-                        className="flex items-center gap-2 cursor-pointer select-none"
-                      >
-                        <span className="text-sm text-gray-500">Авто</span>
-                        <div className={`w-8 h-4 rounded-full transition-colors ${isAutoSlug ? 'bg-blue-500' : 'bg-gray-300'}`}>
-                          <div className={`w-3 h-3 rounded-full bg-white transform transition-transform mt-0.5 ${isAutoSlug ? 'translate-x-4' : 'translate-x-1'}`} />
+                                <DndContext
+                                    sensors={sensors}
+                                    collisionDetection={closestCenter}
+                                    onDragEnd={handleDragEnd}
+                                >
+                                    <SortableContext
+                                        items={formData.existingImages.map((image, index) => `${image.ID || image.ImageURL}-${index}`)}
+                                        strategy={rectSortingStrategy}
+                                    >
+                                        <div className="grid grid-cols-4 mt-4">
+                                            {formData.existingImages.map((image, index) => (
+                                                <SortableImage
+                                                    key={`${image.ID || image.ImageURL}-${index}`}
+                                                    image={image}
+                                                    index={index}
+                                                    onDelete={() => handleImageDelete(index)}
+                                                />
+                                            ))}
+                                        </div>
+                                    </SortableContext>
+                                </DndContext>
+                            </div>
                         </div>
-                      </div>
-                    </div>
-                    <input
-                      type="text"
-                      className="w-full p-2 border rounded font-mono"
-                      value={formData.Slug}
-                      onChange={handleSlugChange}
-                      disabled={isAutoSlug}
-                      placeholder="seo-url"
-                    />
-                  </div>
 
-                  <div>
-                    <label className="block mb-2">Категории проекта</label>
-                    <div className="max-h-48 overflow-y-auto border rounded p-2">
-                      <label className="block mb-2">Выберите категории</label>
-                      {categories.map((category) => (
-                        <div key={category.ID} className="flex items-center mb-2">
-                          <input
-                            type="checkbox"
-                            id={`category-${category.ID}`}
-                            checked={formData.CategoriesID.includes(category.ID)}
-                            onChange={() => {
-                              const newCategories = formData.CategoriesID.includes(category.ID)
-                                ? formData.CategoriesID.filter((id) => id !== category.ID)
-                                : [...formData.CategoriesID, category.ID];
-                              setFormData({ ...formData, CategoriesID: newCategories });
-                            }}
-                            className="mr-2"
-                          />
-                          <label htmlFor={`category-${category.ID}`} className="cursor-pointer">
-                            {category.Name}
-                          </label>
+                        {/* Правая колонка - основная информация */}
+                        <div className="w-1/2">
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block mb-2">Title</label>
+                                    <input
+                                        type="text"
+                                        className="w-full p-2 border rounded"
+                                        value={formData.title}
+                                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block mb-2">Name</label>
+                                    <input
+                                        type="text"
+                                        className="w-full p-2 border rounded"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <label>SEO URL</label>
+                                        <div 
+                                            onClick={() => setIsAutoSlug(!isAutoSlug)}
+                                            className="flex items-center gap-2 cursor-pointer select-none"
+                                        >
+                                            <span className="text-sm text-gray-500">Авто</span>
+                                            <div className={`w-8 h-4 rounded-full transition-colors ${isAutoSlug ? 'bg-blue-500' : 'bg-gray-300'}`}>
+                                                <div className={`w-3 h-3 rounded-full bg-white transform transition-transform mt-0.5 ${isAutoSlug ? 'translate-x-4' : 'translate-x-1'}`} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        className="w-full p-2 border rounded font-mono"
+                                        value={formData.Slug}
+                                        onChange={handleSlugChange}
+                                        disabled={isAutoSlug}
+                                        placeholder="seo-url"
+                                    />
+                                </div>
+
+
+                                <div>
+                                <label className="block mb-2">Мета Заголовок</label>
+                                <input
+                                    type="text"
+                                    className="w-full p-2 border rounded"
+                                    value={formData.metaTitle}
+                                    onChange={(e) => setFormData({ ...formData, metaTitle: e.target.value })}
+                                />
+                                </div>
+                                <div>
+                                <label className="block mb-2">Мета Описание</label>
+                                <textarea
+                                    className="w-full p-2 border rounded"
+                                    value={formData.metaDescription}
+                                    onChange={(e) => setFormData({ ...formData, metaDescription: e.target.value })}
+                                />
+                                </div>
+                                
+                                <div>
+                                    <label className="block mb-2">Мета Ключевые слова</label>
+                                    <input
+                                        type="text"
+                                        className="w-full p-2 border rounded"
+                                        value={formData.metaKeyword}
+                                        onChange={(e) => setFormData({ ...formData, metaKeyword: e.target.value })}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block mb-2">Ответственный менеджер</label>
+                                    <select
+                                        className="w-full p-2 border rounded"
+                                        value={formData.UserID || ''}
+                                        onChange={(e) => {
+                                            const selectedManager = managers.find(m => m.ID === Number(e.target.value));
+                                            setFormData(prev => ({ ...prev, UserID: selectedManager?.ID || null }));
+                                        }}
+                                    >
+                                        <option value="">Выберите менеджера</option>
+                                        {managers.map((manager) => (
+                                            <option key={manager.ID} value={manager.ID}>
+                                                {manager.LastName} {manager.FirstName}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <div className="mb-2">
+                                        Дата публикации:
+                                        <DatePicker
+                                            selected={formData.PublishDate}
+                                            onChange={(date) => setFormData({ ...formData, PublishDate: date })}
+                                            showTimeSelect
+                                            dateFormat="dd.MM.yyyy HH:mm"
+                                            timeFormat="HH:mm"
+                                            timeCaption="Время"
+                                            locale="ru"
+                                            placeholderText="Выберите дату и время"
+                                            timeIntervals={15}
+                                            className="ml-2 border rounded p-2 w-[200px]"
+                                            popperPlacement="bottom-start"
+                                            customInput={
+                                                <input
+                                                    className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                            }
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                      ))}
                     </div>
-                  </div>
 
-                  {/* Мета-информация */}
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block mb-2">Мета Заголовок</label>
-                      <input
-                        type="text"
-                        className="w-full p-2 border rounded"
-                        value={formData.metaTitle}
-                        onChange={(e) => setFormData({ ...formData, metaTitle: e.target.value })}
-                      />
+                    {/* Блок описания на всю ширину */}
+                    <div className="w-full mb-6">
+                        <h2 className="text-2xl font-bold mb-4">3. Описание проекта</h2>
+                        <div className="w-full">
+                            <LexicalEditor
+                                initialContent={project.Description || ''}
+                                onChange={handleEditorChange}
+                                className="prose max-w-none"
+                            />
+                        </div>
                     </div>
+                </>
+            )}
+
+            {activeTab === 'relations' && (
+                <div className="space-y-6">
                     <div>
-                      <label className="block mb-2">Мета Описание</label>
-                      <textarea
-                        className="w-full p-2 border rounded"
-                        value={formData.metaDescription}
-                        onChange={(e) => setFormData({ ...formData, metaDescription: e.target.value })}
-                      />
+                        <h2 className="text-2xl font-bold mb-6">Связи проекта</h2>
+                        <div>
+                            <label className="block mb-2">Категории проекта</label>
+                            <div className="max-h-48 overflow-y-auto border rounded p-2">
+                                {categories.map((category) => (
+                                    <div key={category.ID} className="flex items-center mb-2">
+                                        <input
+                                            type="checkbox"
+                                            id={`category-${category.ID}`}
+                                            checked={formData.CategoriesID.includes(category.ID)}
+                                            onChange={() => {
+                                                const newCategories = formData.CategoriesID.includes(category.ID)
+                                                    ? formData.CategoriesID.filter((id) => id !== category.ID)
+                                                    : [...formData.CategoriesID, category.ID];
+                                                setFormData({ ...formData, CategoriesID: newCategories });
+                                            }}
+                                            className="mr-2"
+                                        />
+                                        <label htmlFor={`category-${category.ID}`} className="cursor-pointer">
+                                            {category.Name}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                      <label className="block mb-2">Мета Ключевые слова</label>
-                      <input
-                        type="text"
-                        className="w-full p-2 border rounded"
-                        value={formData.metaKeyword}
-                        onChange={(e) => setFormData({ ...formData, metaKeyword: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                        <label className="block mb-2">Ответственный менеджер</label>
-                        <select
-                            className="w-full p-2 border rounded"
-                            value={formData.UserID || ''}
-                            onChange={(e) => {
-                                const selectedManager = managers.find(m => m.ID === Number(e.target.value));
-                                setFormData(prev => ({ ...prev, UserID: selectedManager?.ID || null }));
-                            }}
-                        >
-                            {managers.map((manager) => (
-                                <option key={manager.ID} value={manager.ID}>
-                                    {manager.LastName} {manager.FirstName}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                  </div>
+                    {/* Здесь можно добавить другие поля для связей */}
                 </div>
-              </div>
-            </div>
-
-            {/* Блок описания на всю ширину */}
-            <div className="w-full mb-6" style={{ display: 'block', width: '100%', minWidth: '100%', maxWidth: '100%' }}>
-              <h2 className="text-2xl font-bold mb-4">3. Описание проекта</h2>
-              <div style={{ display: 'block', width: '100%', minWidth: '100%', maxWidth: '100%' }}>
-                <LexicalEditor
-                  initialContent={project.Description || ''}
-                  onChange={handleEditorChange}
-                  className="prose max-w-none"
-                />
-              </div>
-            </div>
-
-            {/* Нижний блок с датой и кнопкой */}
-            <div className="flex justify-between items-center mb-4">
-              <div className="text-gray-600">
-                4. Дата публикации:
-                <DatePicker
-                  selected={formData.PublishDate}
-                  onChange={(date) => setFormData({ ...formData, PublishDate: date })}
-                  showTimeSelect
-                  dateFormat="dd.MM.yyyy HH:mm"
-                  timeFormat="HH:mm"
-                  timeCaption="Время"
-                  locale="ru"
-                placeholderText="Выберите дату и время"
-                  timeIntervals={15}
-                  className="ml-2 border rounded p-2 w-[200px]"
-                  popperPlacement="bottom-start"
-                customInput={
-                    <input
-                        className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                }
-                />
-              </div>
-              <button 
-                type="submit" 
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md"
-              >
-                Сохранить проект
-              </button>
-            </div>
-          </form>
+            )}
+        </form>
     );
 } 
