@@ -1,9 +1,9 @@
 'use client';
 
 import { Project, ProjectCategory, IProductCategory, User } from '@/types/types';
-import { createProject, updateProjectById, getManagersList } from '@/api/apiClient';
+import { createProject, updateProjectById, getManagersList, getCategoryBySlug } from '@/api/apiClient';
 import { useRouter } from 'next/navigation';
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, createContext, useContext } from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { registerLocale, setDefaultLocale } from "react-datepicker";
@@ -30,6 +30,7 @@ import { uploadImages } from '@/api/apiClient';
 import { useToast } from '@/components/ui/ToastContext';
 import { Preloader } from '@/components/ui/Preloader';
 import { toSlug } from '@/utils/transliterate';
+import { searchFor } from '@/api/apiClient';
 
 registerLocale('ru', ru);
 setDefaultLocale('ru');
@@ -44,6 +45,46 @@ interface ProjectFormProps {
 }
 
 type TabType = 'main' | 'relations';
+
+// Создаем контекст для кеширования данных категорий
+interface CategoryCacheContextType {
+    categoriesCache: Record<string, IProductCategory>;
+    addToCache: (slug: string, data: IProductCategory) => void;
+    getFromCache: (slug: string) => IProductCategory | null;
+}
+
+const CategoryCacheContext = createContext<CategoryCacheContextType>({
+    categoriesCache: {},
+    addToCache: () => {},
+    getFromCache: () => null
+});
+
+// Провайдер для хранения кеша
+function CategoryCacheProvider({ children }: { children: React.ReactNode }) {
+    const [categoriesCache, setCategoriesCache] = useState<Record<string, IProductCategory>>({});
+
+    const addToCache = useCallback((slug: string, data: IProductCategory) => {
+        setCategoriesCache(prev => ({
+            ...prev,
+            [slug]: data
+        }));
+    }, []);
+
+    const getFromCache = useCallback((slug: string) => {
+        return categoriesCache[slug] || null;
+    }, [categoriesCache]);
+
+    return (
+        <CategoryCacheContext.Provider value={{ categoriesCache, addToCache, getFromCache }}>
+            {children}
+        </CategoryCacheContext.Provider>
+    );
+}
+
+// Хук для доступа к кешу
+function useCategoryCache() {
+    return useContext(CategoryCacheContext);
+}
 
 export function ProjectForm({ project, projectCategories, productCategories, isEditing }: ProjectFormProps) {
     const router = useRouter();
@@ -221,8 +262,6 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                 .then((res) => router.push(res.data.Slug));
             }
 
-            console.log('formData', formData);
-
             showToast('Проект успешно сохранен', 'success');
             setLoading(false);
         } catch (error) {
@@ -324,8 +363,6 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
         []
     );
 
-    console.log('formData', formData);
-
     const handleEditorChange = useCallback((content: string) => {
         debouncedSetFormData(content);
     }, [debouncedSetFormData]);
@@ -355,6 +392,33 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
         );
         setFilteredCategories(filtered);
     };
+
+    const handleToggleProduct = (product: any) => {
+        setFormData(prev => {
+            const isProductSelected = prev.relatedProducts.some(p => p.ID === product.ID);
+            
+            if (isProductSelected) {
+                // Если продукт уже выбран, удаляем его
+                return {
+                    ...prev,
+                    relatedProducts: prev.relatedProducts.filter(p => p.ID !== product.ID)
+                };
+            } else {
+                // Если продукт не выбран, добавляем его
+                return {
+                    ...prev,
+                    relatedProducts: [...prev.relatedProducts, product]
+                };
+            }
+        });
+    };
+
+    const [productSearchQuery, setProductSearchQuery] = useState('');
+
+    const testQuery = async () => {
+        const response = await searchFor('офис', 'category', 1, '');
+        console.log('response', response);
+    }
 
     return (
         <form onSubmit={handleSubmit} className="relative">
@@ -636,6 +700,14 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                                 })}
                             </div>
 
+                            <button
+                            type='button'
+                                onClick={() => testQuery()}
+                                className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                            >
+                                test
+                            </button>
+
                             <div className="relative" ref={dropdownRef}>
                                 <input
                                     type="text"
@@ -689,16 +761,252 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                         <div>
                             <label className="block mb-2">Связанные категории продуктов</label>
 
-                            <div>
-                                {productCategories.map((category) => (
-                                    <div key={category.ID}>{category.Name}</div>
-                                ))}
+                            <div className="border rounded p-4 max-h-[600px]">
+                                <div className="sticky top-0 bg-white pb-2 mb-2 border-b">
+                                    <input
+                                        type="text"
+                                        className="w-full p-2 border rounded"
+                                        placeholder="Поиск по категориям..."
+                                        onChange={(e) => setProductSearchQuery(e.target.value)}
+                                        value={productSearchQuery}
+                                    />
+                                    {productSearchQuery && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setProductSearchQuery('')}
+                                            className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                                        >
+                                            ×
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="overflow-auto max-h-[520px]">
+                                    <CategoryCacheProvider>
+                                        {productCategories.map((category) => (
+                                            <TreeCategoryNode 
+                                                key={category.ID} 
+                                                category={category} 
+                                                selectedProducts={formData.relatedProducts}
+                                                onToggleProduct={handleToggleProduct}
+                                                level={0}
+                                                searchQuery={productSearchQuery}
+                                            />
+                                        ))}
+                                    </CategoryCacheProvider>
+                                </div>
                             </div>
-                        </div>
 
+                            {formData.relatedProducts.length > 0 && (
+                                <div className="mt-4">
+                                    <h3 className="font-semibold mb-2">Выбранные товары:</h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {formData.relatedProducts.map(product => (
+                                            <div 
+                                                key={product.ID} 
+                                                className="flex items-center p-2 bg-blue-50 rounded gap-2 text-sm"
+                                            >
+                                                {product.Images && product.Images.length > 0 && (
+                                                    <div className="w-8 h-8 relative flex-shrink-0">
+                                                        <img 
+                                                            src={product.Images[0].ImageURL} 
+                                                            alt={product.Name} 
+                                                            className="w-full h-full object-cover rounded"
+                                                        />
+                                                    </div>
+                                                )}
+                                                <span>{product.Name}</span>
+                                                <button 
+                                                    type="button"
+                                                    className="text-red-500 hover:text-red-700"
+                                                    onClick={() => handleToggleProduct(product)}
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}
         </form>
+    );
+}
+
+interface TreeCategoryNodeProps {
+    category: IProductCategory;
+    level?: number;
+    selectedProducts: {
+        ID: number;
+        Name: string;
+        Images: {
+            ID: number;
+            ImageURL: string;
+            AltText: string;
+            Order: number;
+        }[];
+        fullPath: string;
+    }[];
+    onToggleProduct: (product: any) => void;
+    searchQuery: string;
+}
+
+function TreeCategoryNode({ category, level = 0, selectedProducts, onToggleProduct, searchQuery }: TreeCategoryNodeProps) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [childCategories, setChildCategories] = useState<IProductCategory[] | null>(category.ChildrenCategories);
+    const [isLoading, setIsLoading] = useState(false);
+    const [hasMatchingDeepChildren, setHasMatchingDeepChildren] = useState(false);
+    const { getFromCache, addToCache } = useCategoryCache();
+    
+    // Автоматически раскрывать категорию при поиске
+    useEffect(() => {
+        if (searchQuery && !isOpen) {
+            const categoryMatchesSearch = category.Name.toLowerCase().includes(searchQuery.toLowerCase());
+            const hasChildCategories = childCategories && childCategories.length > 0;
+            
+            // Раскрываем категорию либо если она сама соответствует запросу, 
+            // либо если у нее есть дочерние категории (чтобы проверить их)
+            if (categoryMatchesSearch || (hasChildCategories || category.Slug)) {
+                toggleOpen();
+            }
+        }
+    }, [searchQuery]);
+
+    // Проверяем, содержит ли текущая категория искомый текст
+    const categoryMatchesSearch = searchQuery 
+        ? category.Name.toLowerCase().includes(searchQuery.toLowerCase())
+        : true;
+
+    // Проверяем, соответствуют ли дочерние категории первого уровня поисковому запросу
+    const hasMatchingDirectChildren = searchQuery && childCategories
+        ? childCategories.some(child => child.Name.toLowerCase().includes(searchQuery.toLowerCase()))
+        : false;
+    
+    // Функция для отслеживания результатов из дочерних компонентов
+    const updateHasMatchingChildren = (hasMatches: boolean) => {
+        if (hasMatches && !hasMatchingDeepChildren) {
+            setHasMatchingDeepChildren(true);
+            // Если найдены соответствия в глубоких дочерних элементах, раскрываем родителя
+            if (!isOpen && searchQuery) {
+                setIsOpen(true);
+            }
+        }
+    };
+    
+    // Должны ли мы показывать эту категорию?
+    // 1. Если нет поиска - показываем все
+    // 2. Если категория соответствует поиску - показываем
+    // 3. Если прямые дочерние элементы соответствуют - показываем
+    // 4. Если глубокие дочерние элементы соответствуют - показываем
+    const shouldShowCategory = !searchQuery || 
+                               categoryMatchesSearch || 
+                               hasMatchingDirectChildren || 
+                               hasMatchingDeepChildren;
+
+    // Функция для загрузки подкатегорий
+    const toggleOpen = async () => {
+        if (!isOpen && category.Slug) {
+            // Проверяем наличие данных в кеше
+            const cachedData = getFromCache(category.Slug);
+            
+            if (cachedData) {
+                // Используем данные из кеша
+                setChildCategories(cachedData.ChildrenCategories || []);
+                
+                // Если активен поиск, проверяем на соответствие
+                if (searchQuery && cachedData.ChildrenCategories) {
+                    const hasMatches = cachedData.ChildrenCategories.some(
+                        (child: IProductCategory) => child.Name.toLowerCase().includes(searchQuery.toLowerCase())
+                    );
+                    if (hasMatches) {
+                        setHasMatchingDeepChildren(true);
+                    }
+                }
+            } else {
+                // Если данных нет в кеше, делаем запрос
+                setIsLoading(true);
+                try {
+                    const response = await getCategoryBySlug(category.Slug);
+                    setChildCategories(response.data.ChildrenCategories || []);
+                    
+                    // Сохраняем полученные данные в кеш
+                    addToCache(category.Slug, response.data);
+                    
+                    // Если активен поиск и загружены подкатегории, проверяем их на соответствие
+                    if (searchQuery && response.data.ChildrenCategories) {
+                        const hasMatches = response.data.ChildrenCategories.some(
+                            (child: IProductCategory) => child.Name.toLowerCase().includes(searchQuery.toLowerCase())
+                        );
+                        if (hasMatches) {
+                            setHasMatchingDeepChildren(true);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Ошибка при загрузке подкатегорий:', error);
+                } finally {
+                    setIsLoading(false);
+                }
+            }
+        }
+        setIsOpen(!isOpen);
+    };
+
+    const isExpandable = (childCategories && childCategories.length > 0) || (!childCategories && category.Slug);
+
+    if (!shouldShowCategory) {
+        return null;
+    }
+
+    return (
+        <div className="pl-2">
+            <div 
+                className={`flex items-center py-2 cursor-pointer hover:bg-gray-50 group ${
+                    searchQuery && categoryMatchesSearch ? 'bg-yellow-50' : ''
+                }`}
+                onClick={toggleOpen}
+            >
+                <div className="w-5 mr-2 text-gray-500 flex items-center justify-center">
+                    {isExpandable ? (
+                        isOpen ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" className="text-blue-500">
+                                <path d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z" transform="rotate(180, 8, 8)" />
+                            </svg>
+                        ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" className="text-blue-500">
+                                <path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+                            </svg>
+                        )
+                    ) : (
+                        <span className="w-4 inline-block"></span>
+                    )}
+                </div>
+                <div className="flex-1 truncate font-medium" style={{ paddingLeft: `${level * 20}px` }}>
+                    {category.Name}
+                </div>
+            </div>
+
+            {isLoading && (
+                <div className="pl-10 py-2 text-sm text-gray-500">
+                    Загрузка...
+                </div>
+            )}
+
+            {isOpen && childCategories && childCategories.length > 0 && (
+                <div className="pl-6 border-l ml-2 border-gray-200">
+                    {childCategories.map(childCategory => (
+                        <TreeCategoryNode
+                            key={childCategory.ID}
+                            category={childCategory}
+                            level={level + 1}
+                            selectedProducts={selectedProducts}
+                            onToggleProduct={onToggleProduct}
+                            searchQuery={searchQuery}
+                        />
+                    ))}
+                </div>
+            )}
+        </div>
     );
 } 
