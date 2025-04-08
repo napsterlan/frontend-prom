@@ -22,10 +22,13 @@ import {
   $setSelection,
   UNDO_COMMAND,
   REDO_COMMAND,
+  $insertNodes,
 } from 'lexical';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useToast } from '@/components/ui/ToastContext';
 import { $createLinkNode, $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
+import { uploadImages } from '@/api/apiClient';
+import { $createImageNode } from '../nodes/ImageNode';
 
 // Иконки
 const UndoIcon = () => (
@@ -39,6 +42,14 @@ const RedoIcon = () => (
   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M20 10H7C4.79086 10 3 11.7909 3 14C3 16.2091 4.79086 18 7 18H12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M17 6L21 10L17 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const ImageIcon = () => (
+  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M8.5 10C9.32843 10 10 9.32843 10 8.5C10 7.67157 9.32843 7 8.5 7C7.67157 7 7 7.67157 7 8.5C7 9.32843 7.67157 10 8.5 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M21 15L16 10L5 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
@@ -104,6 +115,7 @@ export default function ToolbarPlugin() {
   
   const headingsRef = useRef<HTMLDivElement>(null);
   const listsRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const headingButtons = HEADING_TAGS.map((tag) => ({
     tag,
@@ -377,6 +389,44 @@ export default function ToolbarPlugin() {
     });
   }, [editor]);
 
+  const handleImageUpload = useCallback(async (files: FileList) => {
+    try {
+      const paths = await uploadImages(Array.from(files), 'editor/images');
+      
+      editor.update(() => {
+        const nodes = paths.filePaths.map(path => {
+          // Добавляем полный URL к MinIO
+          const apiUrl = process.env.NEXT_PUBLIC_MINIO_URL || 'http://192.168.31.40:9015/promled-website-test/';
+          const fullPath = `${apiUrl}${path}`;
+          const imageNode = $createImageNode(fullPath);
+          const paragraphNode = $createParagraphNode();
+          paragraphNode.append(imageNode);
+          return paragraphNode;
+        });
+        
+        $insertNodes(nodes);
+      });
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      showToast('Ошибка при загрузке изображений', 'error');
+    }
+  }, [editor, showToast]);
+
+  const handleImageClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      handleImageUpload(files);
+    }
+    // Очищаем input чтобы можно было загрузить тот же файл повторно
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, [handleImageUpload]);
+
   return (
     <div className="border-b p-2 mb-4 flex flex-wrap gap-2">
       <div className="flex gap-2 items-center">
@@ -602,6 +652,25 @@ export default function ToolbarPlugin() {
             </div>
           </div>
         )}
+
+        <div className="w-px h-6 bg-gray-300 mx-2" />
+        
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleImageChange}
+          className="hidden"
+        />
+        <button
+          type="button"
+          onClick={handleImageClick}
+          className="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200"
+          title="Загрузить изображение"
+        >
+          <ImageIcon />
+        </button>
 
         <div className="flex-1" />
         

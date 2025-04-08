@@ -16,13 +16,16 @@ import { ListNode, ListItemNode } from '@lexical/list';
 import { LinkNode } from '@lexical/link';
 import { CodeNode } from '@lexical/code';
 import { TableNode } from '@lexical/table';
+import { ImageNode } from './nodes/ImageNode';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $getRoot, $createParagraphNode, $createTextNode, EditorState, $insertNodes } from 'lexical';
-import { useCallback, useEffect, useRef } from 'react';
+import { $getRoot, $insertNodes } from 'lexical';
+import { useEffect, useRef } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { $generateNodesFromDOM } from '@lexical/html';
 
 import ToolbarPlugin from './plugins/ToolbarPlugin';
+import ImagePlugin from './plugins/ImagePlugin';
+
 interface LexicalEditorProps {
   initialContent?: string;
   onChange?: (html: string) => void;
@@ -58,6 +61,7 @@ export function LexicalEditor({ initialContent = '', onChange, className = '' }:
       CodeNode,
       TableNode,
       QuoteNode,
+      ImageNode,
     ],
     theme: {
       root: 'prose max-w-none min-h-[200px] p-4 focus:outline-none w-full block',
@@ -94,6 +98,7 @@ export function LexicalEditor({ initialContent = '', onChange, className = '' }:
         ]
       },
       paragraph: 'mb-4',
+      image: 'max-w-full h-auto my-4',
     },
   };
 
@@ -111,6 +116,7 @@ export function LexicalEditor({ initialContent = '', onChange, className = '' }:
           <AutoFocusPlugin />
           <ListPlugin />
           <LinkPlugin />
+          <ImagePlugin />
           <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
           <OnChangePlugin onChange={onChange} />
           <InitialContentPlugin content={initialContent} />
