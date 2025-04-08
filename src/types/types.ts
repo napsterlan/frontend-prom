@@ -195,7 +195,7 @@ export interface Project { // поменять на IProject
         }>;
     }>;
     fullPath: string;
-    
+    Status: boolean;
     CreatedAt: string;
     UpdatedAt: string;
     DeletedAt: string | null;

@@ -1,16 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
-import { createProject, uploadImages, getAllProjectCategories, getProjectBySlug } from '@/api/apiClient';
-import { useRouter } from 'next/router';
-import { ProjectCategory } from '@/types/types';
-import DatePicker from 'react-datepicker';
+import { getAllProjectCategories, getCategories } from '@/api/apiClient';
 import 'react-datepicker/dist/react-datepicker.css';
-import { transliterate } from '@/utils/transliterate';
-import { Draggable } from 'react-beautiful-dnd';
-import { Droppable } from 'react-beautiful-dnd';
-import { DragDropContext } from 'react-beautiful-dnd';
-import { DropResult } from 'react-beautiful-dnd';
-import NextImage from 'next/image';
-import { LexicalEditor } from '@/app/_components/LexicalEditor/LexicalEditor';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
 import { notFound } from 'next/navigation';
 import { ProjectForm } from '../_components/project-form';
@@ -25,7 +14,7 @@ export default async function AddProjectPage({ params }: Props) {
     const { slug } = params;
     
     try {
-        const categories = await getAllProjectCategories();
+        const projectCategories = await getAllProjectCategories();
         const project = {
             ID: 0,
             Title: '',
@@ -38,15 +27,28 @@ export default async function AddProjectPage({ params }: Props) {
             RelatedProducts: [],
             Images: [],
             PublishDate: null,
+            MainCategoryID: null,
+            User: null,
+            Slug: '',
+            Status: false,
+            RelatedNews: [],
+            ProjectImages: [],
+            fullPath: '',
+            CreatedAt: '',
+            UpdatedAt: '',
+            DeletedAt: ''
         }
+        const productCategories = await getCategories();
+
         return (
             <BreadcrumbsWrapper pageName="Добавление проекта">
             <div className="container mx-auto px-4 py-8">
                 <h1 className="text-2xl font-bold mb-6">Добавление проекта</h1>
                 <ProjectForm 
                     project={project}
+                    projectCategories={projectCategories.data}
+                    productCategories={productCategories.data}
                     isEditing={false}
-                    categories={categories.data}
                 />
             </div>
             </BreadcrumbsWrapper>

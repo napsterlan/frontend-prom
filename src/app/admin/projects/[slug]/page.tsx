@@ -22,7 +22,7 @@ export default async function EditProjectPage({ params }: Props) {
 
         const productCategories = await getCategories();
 
-        console.log('productCategories', productCategories);
+        console.log('project', project);
 
         if (!project) {
             notFound();
