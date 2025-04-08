@@ -36,6 +36,67 @@ setDefaultLocale('ru');
 
 const MAX_IMAGES = 20;
 
+interface ValidationErrors {
+    title?: string;
+    name?: string;
+    description?: string;
+    userID?: string;
+    publishDate?: string;
+    images?: string;
+    projectsCategories?: string;
+}
+
+function validateProject(formData: typeof ProjectForm.prototype.formData): ValidationErrors {
+    const errors: ValidationErrors = {};
+
+    if (!formData.Title) {
+        errors.title = 'Заголовок обязателен';
+    } else if (formData.Title.length > 255) {
+        errors.title = 'Заголовок должен быть меньше 255 символов';
+    }
+
+    if (!formData.Name) {
+        errors.name = 'Название обязательно';
+    } else if (formData.Name.length > 255) {
+        errors.name = 'Название должно быть меньше 255 символов';
+    }
+
+    // Проверка пустого описания в формате Lexical Editor
+    try {
+        const descriptionJson = JSON.parse(formData.description || '{}');
+        const isEmpty = descriptionJson.root?.children?.every?.(
+            (node: any) => 
+                node.type === 'paragraph' && 
+                (!node.children || node.children.length === 0)
+        );
+        
+        if (!formData.description || isEmpty) {
+            errors.description = 'Описание обязательно';
+        }
+    } catch (e) {
+        // Если не удалось распарсить JSON, считаем описание пустым
+        errors.description = 'Описание обязательно';
+    }
+
+    if (!formData.UserID) {
+        errors.userID = 'Пользователь обязателен';
+    }
+
+    if (!formData.PublishDate) {
+        errors.publishDate = 'Дата публикации обязательна';
+    }
+
+    if (!formData.existingImages.length) {
+        errors.images = 'Как минимум одно изображение обязательно';
+    }
+
+    if (!formData.CategoriesID.length) {
+        errors.projectsCategories = 'Как минимум одна категория обязательна';
+    }
+
+    return errors;
+}
+
 interface ProjectFormProps {
     project: Project;
     projectCategories: ProjectCategory[];
@@ -49,7 +110,7 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
     const router = useRouter();
     const { showToast } = useToast();
     const [activeTab, setActiveTab] = useState<TabType>('main');
-
+    const [errors, setErrors] = useState<ValidationErrors>({});
     const [loading, setLoading] = useState(false);
     const [managers, setManagers] = useState<User[]>([]);
     const [formData, setFormData] = useState<{
@@ -197,7 +258,16 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
     };
     
     const handleSubmit = async (e: React.FormEvent) => {
+        console.log('formData', formData);
         e.preventDefault();
+        
+        const validationErrors = validateProject(formData);
+        setErrors(validationErrors);
+        
+        if (Object.keys(validationErrors).length > 0) {
+            return;
+        }
+
         setLoading(true);
         
         try {
@@ -428,6 +498,9 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                                 <div className="text-sm text-gray-500 mt-2">
                                     {`${formData.existingImages.length}/${MAX_IMAGES} изображений`}
                                 </div>
+                                {errors.images && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.images}</p>
+                                )}
 
                                 <DndContext
                                     sensors={sensors}
@@ -460,20 +533,36 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                                     <label className="block mb-2">Title</label>
                                     <input
                                         type="text"
-                                        className="w-full p-2 border rounded"
+                                        className={`w-full p-2 border rounded ${errors.title ? 'border-red-500' : ''}`}
                                         value={formData.Title}
-                                        onChange={(e) => setFormData({ ...formData, Title: e.target.value })}
+                                        onChange={(e) => {
+                                            setFormData({ ...formData, Title: e.target.value });
+                                            if (errors.title) {
+                                                setErrors({ ...errors, title: undefined });
+                                            }
+                                        }}
                                     />
+                                    {errors.title && (
+                                        <p className="text-red-500 text-sm mt-1">{errors.title}</p>
+                                    )}
                                 </div>
 
                                 <div>
                                     <label className="block mb-2">Name</label>
                                     <input
                                         type="text"
-                                        className="w-full p-2 border rounded"
+                                        className={`w-full p-2 border rounded ${errors.name ? 'border-red-500' : ''}`}
                                         value={formData.Name}
-                                        onChange={(e) => setFormData({ ...formData, Name: e.target.value })}
+                                        onChange={(e) => {
+                                            setFormData({ ...formData, Name: e.target.value });
+                                            if (errors.name) {
+                                                setErrors({ ...errors, name: undefined });
+                                            }
+                                        }}
                                     />
+                                    {errors.name && (
+                                        <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                                    )}
                                 </div>
 
                                 <div>
@@ -531,11 +620,14 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                                 <div>
                                     <label className="block mb-2">Ответственный менеджер</label>
                                     <select
-                                        className="w-full p-2 border rounded"
+                                        className={`w-full p-2 border rounded ${errors.userID ? 'border-red-500' : ''}`}
                                         value={formData.UserID || ''}
                                         onChange={(e) => {
                                             const selectedManager = managers.find(m => m.ID === Number(e.target.value));
                                             setFormData(prev => ({ ...prev, UserID: selectedManager?.ID || null }));
+                                            if (errors.userID) {
+                                                setErrors({ ...errors, userID: undefined });
+                                            }
                                         }}
                                     >
                                         <option value="">Выберите менеджера</option>
@@ -545,6 +637,9 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                                             </option>
                                         ))}
                                     </select>
+                                    {errors.userID && (
+                                        <p className="text-red-500 text-sm mt-1">{errors.userID}</p>
+                                    )}
                                 </div>
 
                                 <div>
@@ -552,7 +647,12 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                                         Дата публикации:
                                         <DatePicker
                                             selected={formData.PublishDate}
-                                            onChange={(date) => setFormData({ ...formData, PublishDate: date })}
+                                            onChange={(date) => {
+                                                setFormData({ ...formData, PublishDate: date });
+                                                if (errors.publishDate) {
+                                                    setErrors({ ...errors, publishDate: undefined });
+                                                }
+                                            }}
                                             showTimeSelect
                                             dateFormat="dd.MM.yyyy HH:mm"
                                             timeFormat="HH:mm"
@@ -560,14 +660,19 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                                             locale="ru"
                                             placeholderText="Выберите дату и время"
                                             timeIntervals={15}
-                                            className="ml-2 border rounded p-2 w-[200px]"
+                                            className={`ml-2 border rounded p-2 w-[200px] ${errors.publishDate ? 'border-red-500' : ''}`}
                                             popperPlacement="bottom-start"
                                             customInput={
                                                 <input
-                                                    className="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className={`border rounded p-2 w-full focus:outline-none focus:ring-2 ${
+                                                        errors.publishDate ? 'border-red-500 focus:ring-red-500' : 'focus:ring-blue-500'
+                                                    }`}
                                                 />
                                             }
                                         />
+                                        {errors.publishDate && (
+                                            <p className="text-red-500 text-sm mt-1">{errors.publishDate}</p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -589,13 +694,21 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                     {/* Блок описания на всю ширину */}
                     <div className="w-full mb-6">
                         <h2 className="text-2xl font-bold mb-4">Описание проекта</h2>
-                        <div className="w-full">
+                        <div className={`w-full ${errors.description ? 'border-2 border-red-500 rounded-md' : ''}`}>
                             <LexicalEditor
                                 initialContent={project.Description || ''}
-                                onChange={handleEditorChange}
+                                onChange={(content) => {
+                                    handleEditorChange(content);
+                                    if (errors.description) {
+                                        setErrors({ ...errors, description: undefined });
+                                    }
+                                }}
                                 className="prose max-w-none"
                             />
                         </div>
+                        {errors.description && (
+                            <p className="text-red-500 text-sm mt-1">{errors.description}</p>
+                        )}
                     </div>
                 </>
             )}
@@ -649,13 +762,21 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                                     );
                                 })}
                             </div>
+                            {errors.projectsCategories && (
+                                <p className="text-red-500 text-sm mb-2">{errors.projectsCategories}</p>
+                            )}
 
                             <div className="relative" ref={dropdownRef}>
                                 <input
                                     type="text"
-                                    className="w-full p-2 border rounded"
+                                    className={`w-full p-2 border rounded ${errors.projectsCategories ? 'border-red-500' : ''}`}
                                     placeholder="Поиск категорий..."
-                                    onChange={(e) => handleCategorySearch(e.target.value)}
+                                    onChange={(e) => {
+                                        handleCategorySearch(e.target.value);
+                                        if (errors.projectsCategories) {
+                                            setErrors({ ...errors, projectsCategories: undefined });
+                                        }
+                                    }}
                                     onFocus={() => setIsDropdownOpen(true)}
                                 />
                                 
@@ -698,8 +819,6 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                             </div>
                         </div>
                     </div>
-
-                    
                 </div>
             )}
         </form>
