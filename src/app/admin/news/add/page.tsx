@@ -2,43 +2,36 @@ import { getAllProjectCategories, getCategories } from '@/api/apiClient';
 import 'react-datepicker/dist/react-datepicker.css';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
 import { notFound } from 'next/navigation';
-import { ProjectForm } from '../_components/project-form';
+import { NewsForm } from '../_components/news-form';
 
-export default async function AddProjectPage() {
+export default async function AddNewsPage() {
     
     try {
         const projectCategories = await getAllProjectCategories();
-        const project = {
+        const news= {
             ID: 0,
             Title: '',
             Name: '',
             Description: '',
+            Images: [],
             MetaTitle: '',
             MetaDescription: '',
             MetaKeyword: '',
-            ProjectsCategories: [],
-            RelatedProducts: [],
-            Images: [],
-            PublishDate: null,
-            MainCategoryID: null,
-            User: null,
+            FullPath: '',
             Slug: '',
-            Status: false,
-            RelatedNews: [],
-            ProjectImages: [],
-            fullPath: '',
             CreatedAt: '',
             UpdatedAt: '',
-            DeletedAt: ''
+            DeletedAt: null,
+            PublishDate: null,
         }
         const productCategories = await getCategories();
 
         return (
-            <BreadcrumbsWrapper pageName="Добавление проекта">
+            <BreadcrumbsWrapper pageName="Добавление новости">
             <div className="container mx-auto px-4 py-8">
-                <h1 className="text-2xl font-bold mb-6">Добавление проекта</h1>
-                <ProjectForm 
-                    project={project}
+                <h1 className="text-2xl font-bold mb-6">Добавление новости</h1>
+                <NewsForm 
+                    news={news}
                     projectCategories={projectCategories.data}
                     productCategories={productCategories.data}
                     isEditing={false}

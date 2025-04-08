@@ -1,6 +1,8 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { getSession, signOut } from "next-auth/react"
+import { INewsFormData } from '@/types/news';
+import { API_URL } from '@/config';
 
 // let currentSession: any = null;
 
@@ -126,14 +128,26 @@ export const getNewsBySlug = async (slug: string) => {
   return response.data;
 };
 
-export const createNews = async (newsData: object) => {
-  const response = await apiClient.post('/news', newsData);
-  return response.data;
+export const createNews = async (data: INewsFormData) => {
+  const response = await fetch(`${API_URL}/news`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  return handleResponse(response);
 };
 
-export const updateNewsById = async (id: number, newsData: object) => {
-  const response = await apiClient.put(`/news/${id}`, newsData);
-  return response.data;
+export const updateNews = async (id: number, data: INewsFormData) => {
+  const response = await fetch(`${API_URL}/news/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  return handleResponse(response);
 };
 
 export const deleteNewsById = async (id: number) => {
@@ -332,6 +346,14 @@ export const uploadFiles = async (files: File[], path: string) => {
   });
   
   return response.data;
+};
+
+const handleResponse = async (response: Response) => {
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Something went wrong');
+    }
+    return response.json();
 };
 
 export default apiClient;

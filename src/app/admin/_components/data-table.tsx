@@ -1,25 +1,42 @@
 'use client';
 
-import { Project } from '@/types/types';
-import { deleteProjectById } from '@/api/apiClient';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/ToastContext';
-interface ProjectsTableProps {
-    initialProjects: Project[];
+import { Images} from '@/types/types'
+import Image from 'next/image';
+
+interface DataTableProps<T extends { 
+    ID: number; 
+    Name: string; 
+    FullPath: string;
+    Images?: Images[] | null;
+}> {
+    initialData: T[];
     currentPage: number;
     totalPages: number;
     totalRecords: number;
+    onDelete: (id: number) => Promise<void>;
 }
 
-export function ProjectsTable({ initialProjects, currentPage, totalPages, totalRecords }: ProjectsTableProps) {
+export function DataTable<T extends { 
+    ID: number; 
+    Name: string; 
+    FullPath: string;
+    Images?: Images[] | null;
+}>({ 
+    initialData, 
+    currentPage, 
+    totalPages, 
+    totalRecords, 
+    onDelete 
+}: DataTableProps<T>) {
     const router = useRouter();
     const { showToast } = useToast();
-    const handleDelete = async (projectId: number) => {
+    const handleDelete = async (itemId: number) => {
         if (confirm('Вы уверены, что хотите удалить этот проект?')) {
             try {
-                await deleteProjectById(projectId);
+                await onDelete(itemId);
                 router.refresh(); // Refresh the page after deletion
                 showToast('Проект успешно удален', 'success');
             } catch (error) {
@@ -34,16 +51,16 @@ export function ProjectsTable({ initialProjects, currentPage, totalPages, totalR
         router.refresh();
     };
 
-    const getProjectImageUrl = (project: Project): string => {
-        if (project.Images && project.Images.length > 0 && project.Images[0].ImageURL) {
-            return project.Images[0].ImageURL;
+    const getProjectImageUrl = (item: T): string => {
+        if (item.Images && item.Images.length > 0 && item.Images[0].ImageURL) {
+            return item.Images[0].ImageURL;
         }
         return '/placeholder.png';
     };
 
-    const getProjectImageAlt = (project: Project): string => {
-        if (project.Images && project.Images.length > 0 && project.Images[0].AltText) {
-            return project.Images[0].AltText;
+    const getProjectImageAlt = (item: T): string => {
+        if (item.Images && item.Images.length > 0 && item.Images[0].AltText) {
+            return item.Images[0].AltText;
         }
         return 'Заглушка';
     };
@@ -135,12 +152,12 @@ export function ProjectsTable({ initialProjects, currentPage, totalPages, totalR
                     </tr>
                 </thead>
                 <tbody className="text-gray-600 text-sm font-light">
-                    {initialProjects.map(project => (
-                        <tr key={project.ID} className="border-b border-gray-200 hover:bg-gray-100">
+                    {initialData.map(item => (
+                        <tr key={item.ID} className="border-b border-gray-200 hover:bg-gray-100">
                             <td className="py-3 px-6">
                                 <Image 
-                                    src={getProjectImageUrl(project)}
-                                    alt={getProjectImageAlt(project)}
+                                    src={getProjectImageUrl(item)}
+                                    alt={getProjectImageAlt(item)}
                                     className="object-cover" 
                                     width={64}
                                     height={64}
@@ -150,16 +167,16 @@ export function ProjectsTable({ initialProjects, currentPage, totalPages, totalR
                                     }}
                                 />
                             </td>
-                            <td className="py-3 px-6">{project.Name}</td>
+                            <td className="py-3 px-6">{item.Name}</td>
                             <td className="py-3 px-6 text-right">
                                 <Link
-                                    href={`/admin/projects/${project.Slug}`}
+                                    href={`/admin/${item.FullPath}`}
                                     className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2"
                                 >
                                     Редактировать
                                 </Link>
                                 <button 
-                                    onClick={() => handleDelete(project.ID)} 
+                                    onClick={() => handleDelete(item.ID)} 
                                     className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                                 >
                                     Удалить

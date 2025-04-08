@@ -128,8 +128,6 @@ export interface Product {
     DeletedAt: string | null;
 }
 
-
-
 export interface ProjectCategory {
     ID: number;
     Name: string;
@@ -196,23 +194,6 @@ export interface Project { // поменять на IProject
     }>;
     fullPath: string;
     Status: boolean;
-    CreatedAt: string;
-    UpdatedAt: string;
-    DeletedAt: string | null;
-    PublishDate?: string | null;
-}
-
-export interface News {
-    ID: number;
-    Title: string;
-    Name: string;
-    Description: string;
-    Images: Images[] | null;
-    MetaTitle: string;
-    MetaDescription: string;
-    MetaKeyword: string;
-    FullPath: string;
-    Slug: string;
     CreatedAt: string;
     UpdatedAt: string;
     DeletedAt: string | null;

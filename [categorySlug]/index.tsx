@@ -43,7 +43,7 @@ export default function ProjectsPage({ projectsList, categoriesList }: { project
           <ul>
             {categoriesList.map(category => (
               <li key={category.ID} className="mb-2">
-                <Link href={`/projects/${category.Slug}`} className="text-blue-600 hover:underline">
+                <Link href={`/project/${category.Slug}`} className="text-blue-600 hover:underline">
                   {category.Name}
                 </Link>
               </li>
@@ -52,7 +52,7 @@ export default function ProjectsPage({ projectsList, categoriesList }: { project
         </aside>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4 w-3/4">
           {projectsList.map((project: Project) => (
-            <Link href={`/projects/${project.Slug}`} key={project.ID} className="relative border rounded-lg overflow-hidden">
+            <Link href={`/project/${project.Slug}`} key={project.ID} className="relative border rounded-lg overflow-hidden">
               {project.Images?.[0] && (
                 <div 
                   style={{ backgroundImage: `url(${project.Images[0].ImageURL})` }} 
