@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { deleteProjectCategoryById, getAllProjectCategories } from '../../../api/apiClient';
-import { ProjectCategory } from '@/types/types';
+import { deleteProjectCategoryById, getAllProjectCategories } from '@/api';
+import { IProjectCategory } from '@/types';
 import Image from 'next/image';
 
 export const getServerSideProps = async () => {
@@ -29,7 +29,7 @@ const handleDelete = async (id: number) => {
   }
 };
 
-const ProjectCategoriesList = ({ categories }: { categories: ProjectCategory[] }) => {
+const ProjectCategoriesList = ({ categories }: { categories: IProjectCategory[] }) => {
     return (
         <div className="container mx-auto px-4">
           <h1 className="text-2xl font-bold mb-4">Категории проектов</h1>
@@ -56,7 +56,7 @@ const ProjectCategoriesList = ({ categories }: { categories: ProjectCategory[] }
               </tr>
             </thead>
             <tbody className="text-gray-600 text-sm font-light">
-              {categories.map(category => (
+              {categories.map((category: IProjectCategory) => (
                 <tr key={category.ID} className="border-b border-gray-200 hover:bg-gray-100">
                   <td className="py-3 px-6">
                     <Image 

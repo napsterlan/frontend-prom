@@ -14,6 +14,7 @@ interface SortableImageProps {
   onDelete: () => void;
 }
 
+// Сортируемый компонент изображения
 export function SortableImage({ image, index, onDelete }: SortableImageProps) {
   const { 
     attributes,

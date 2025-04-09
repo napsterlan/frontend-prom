@@ -1,9 +1,7 @@
 import {getAllProjectCategories, getAllProjects, searchFor} from '@/api';
-import {Project, ProjectCategory} from '@/types/types';
-// import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
 import { ProjectsClient } from './projects-client';
 
-interface SearchResult {
+interface ISearchResult {
     id: number;
     name: string;
     href: string;
@@ -20,7 +18,7 @@ async function getProjects(page: number = 1, category: string = "", search: stri
         let projects;
         if (search) {
             const searchResponse = await searchFor(search, "projects", page, category);
-            projects = searchResponse.projects.map((result: SearchResult) => ({
+            projects = searchResponse.projects.map((result: ISearchResult) => ({
                 ID: result.id,
                 Name: result.name,
                 Slug: result.href,

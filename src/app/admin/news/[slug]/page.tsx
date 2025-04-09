@@ -1,7 +1,7 @@
 import { getNewsBySlug, getCategories, getAllProjectCategories } from '@/api';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { NewsForm } from '../_components/news-form';
+import { NewsForm } from '../_components/NewsForm';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
 
 export const metadata: Metadata = {

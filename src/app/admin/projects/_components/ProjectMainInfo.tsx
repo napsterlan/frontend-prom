@@ -1,6 +1,6 @@
 'use client';
 
-import { User } from '@/types/types';
+import { IUser } from '@/types';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { ru } from 'date-fns/locale/ru';
@@ -34,7 +34,7 @@ interface ProjectMainInfoProps {
     /**
      * Список менеджеров для выбора
      */
-    managers: User[];
+    managers: IUser[];
     /**
      * Флаг автоматической генерации SEO URL
      */

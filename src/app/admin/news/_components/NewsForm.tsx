@@ -1,6 +1,6 @@
 'use client';
 
-import { INews, INewsFormData } from '@/types/news';
+import { INews, INewsData, IProjectCategory, IProductCategory } from '@/types';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/ToastContext';
@@ -9,14 +9,14 @@ import { createNews, updateNews } from '@/api';
 interface NewsFormProps {
     news: INews;
     isEditing: boolean;
-    projectCategories: any[];
-    productCategories: any[];
+    projectCategories: IProjectCategory[]; 
+    productCategories: IProductCategory[];
 }
 
 export function NewsForm({ news, isEditing, projectCategories, productCategories }: NewsFormProps) {
     const router = useRouter();
     const { showToast } = useToast();
-    const [formData, setFormData] = useState<INewsFormData>({
+    const [formData, setFormData] = useState<INewsData>({
         title: news.Title,   
         description: news.Description,
         metaTitle: news.MetaTitle,

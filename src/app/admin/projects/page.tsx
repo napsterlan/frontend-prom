@@ -1,5 +1,5 @@
 import { getAllProjects, getCategories } from '@/api';
-import { ProjectsDataTable } from '../_components/ProjectsDataTable';
+import { ProjectsDataTable } from './_components/ProjectsDataTable';
 import Link from 'next/link';
 import { Metadata } from 'next';
 

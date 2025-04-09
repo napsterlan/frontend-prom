@@ -1,3 +1,4 @@
+import { IUser } from "@/types";
 import { apiClient } from "./apiClient";
 
 // Добавление авторизационного заголовка
@@ -11,13 +12,7 @@ export const removeAuthHeader = () => {
 };
 
 // Регистрация нового пользователя
-export const createUser = async (user: {
-    email: string,
-    password: string,
-    firstName: string
-    lastName: string,
-    phone: string,
-}) => {
+export const createUser = async (user: IUser) => {
     const response = await apiClient.post(`/users`, user)
     return response.data;
 };

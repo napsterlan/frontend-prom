@@ -1,11 +1,11 @@
 'use client';
 
-import { DataTable } from './data-table';
+import { DataTable } from '../../_components/DataTable';
 import { deleteProjectById } from '@/api';
-import { Project } from '@/types/project';
+import { IProject } from '@/types';
 
-interface ProjectsDataTableProps {
-    initialData: Project[];
+interface IProjectsDataTableProps {
+    initialData: IProject[];
     currentPage: number;
     totalPages: number;
     totalRecords: number;
@@ -16,7 +16,7 @@ export function ProjectsDataTable({
     currentPage, 
     totalPages, 
     totalRecords 
-}: ProjectsDataTableProps) {
+}: IProjectsDataTableProps) {
     return (
         <DataTable 
             initialData={initialData}

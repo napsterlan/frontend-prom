@@ -2,7 +2,7 @@ import { getAllProjectCategories, getCategories } from '@/api';
 import 'react-datepicker/dist/react-datepicker.css';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
 import { notFound } from 'next/navigation';
-import { NewsForm } from '../_components/news-form';
+import { NewsForm } from '../_components/NewsForm';
 
 export default async function AddNewsPage() {
     

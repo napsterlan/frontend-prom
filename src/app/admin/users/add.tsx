@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { createUser } from '../../../api/apiClient'; // Импорт функции для создания пользователя
-import { User } from '../../../types/types';
+import { createUser } from '@/api';
+import { IUser } from '@/types';
 
 const AddUser: React.FC = () => {
-  const [newUser, setNewUser] = useState<User>({
+  const [newUser, setNewUser] = useState<IUser>({
     ID: 0,
     CreatedAt: '',
     UpdatedAt: '',

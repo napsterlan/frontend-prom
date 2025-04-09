@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { getProjectCategoryBySlug, updateProjectCategoryById, uploadImages } from '../../../../api/apiClient';
-// import {uploadFiles } from '../../../../api/apiClient';
-import { ProjectCategory } from '@/types/types';
+import { getProjectCategoryBySlug, updateProjectCategoryById, uploadImages } from '@/api';
+import { IProjectCategory, IDraggableImage } from '@/types';
 import { transliterate } from '@/utils/transliterate';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { DraggableImage } from '@/types/types';
 import Image from 'next/image';
 
 export const getServerSideProps = async (context: { params: { slug: string } }) => {
@@ -22,7 +20,7 @@ export const getServerSideProps = async (context: { params: { slug: string } }) 
   return { props: { category } };
 };
 
-const EditProjectCategory = ({ category }: { category: ProjectCategory }) => {
+const EditProjectCategory = ({ category }: { category: IProjectCategory }) => {
   const router = useRouter();
   const [formData, setFormData] = useState<{
     name: string;
@@ -67,7 +65,7 @@ const EditProjectCategory = ({ category }: { category: ProjectCategory }) => {
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
-    const reorder = (list: DraggableImage[], startIndex: number, endIndex: number) => {
+    const reorder = (list: IDraggableImage[], startIndex: number, endIndex: number) => {
       const result = Array.from(list);
       const [removed] = result.splice(startIndex, 1);
       result.splice(endIndex, 0, removed);

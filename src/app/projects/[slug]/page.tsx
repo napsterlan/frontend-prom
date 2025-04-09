@@ -1,5 +1,4 @@
 import { getProjectBySlug } from "@/api";
-import { Project } from "@/types/types";
 // import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
 import { ProjectDetailClient } from './project-detail-client';
 import { notFound } from 'next/navigation';

@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { createProjectCategory, uploadImages } from '../../../api/apiClient';
+import { createProjectCategory, uploadImages } from '@/api';
 import { transliterate } from '@/utils/transliterate';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 import Image from 'next/image';
-import { DraggableImage } from '@/types/types';
+import { IDraggableImage } from '@/types';
+// стоит, импортировать IImages и добавить тип в фурму
 
 const AddProjectCategory = () => {
   const router = useRouter();
@@ -37,7 +38,7 @@ const AddProjectCategory = () => {
 
 
     // Вспомогательная функция для переупорядочивания элементов списка
-    const reorder = (list: DraggableImage[], startIndex: number, endIndex: number) => {
+    const reorder = (list: IDraggableImage[], startIndex: number, endIndex: number) => {
       // Создаем копию массива
       const result = Array.from(list);
       // Удаляем элемент из начальной позиции

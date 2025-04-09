@@ -1,5 +1,5 @@
 
-import {News} from "@/types/types";
+import { INews } from "@/types";
 import {getAllNews} from "@/api";
 import Link from "next/link";
 import Image from "next/image";
@@ -20,7 +20,7 @@ export default async function NewsPage({
     searchParams: {page?: string}
 }) {
     const page = Number(searchParams.page) || 1;
-    let news: News[] = [];
+    let news: INews[] = [];
     let totalPages = 1;
     try {
         const response = await getAllNews(page);

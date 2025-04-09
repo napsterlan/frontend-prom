@@ -1,5 +1,5 @@
 import { apiClient } from "./apiClient";
-import { INewsData } from "@/types/news";
+import { INewsData } from "@/types";
 
 // Получение списка всех новостей
 export const getAllNews = async (page: number = 1) => {

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Breadcrumb } from '@/types/types';
+import { IBreadcrumb } from '@/types';
 
 export const Breadcrumbs = () => {
-  const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
+  const [breadcrumbs, setBreadcrumbs] = useState<IBreadcrumb[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export const Breadcrumbs = () => {
     };
   }, [router]);
 
-  const handleCrumbClick = (crumb: Breadcrumb, index: number) => {
+  const handleCrumbClick = (crumb: IBreadcrumb, index: number) => {
     const newBreadcrumbs = breadcrumbs.slice(0, index + 1);
     sessionStorage.setItem('breadcrumbs', JSON.stringify(newBreadcrumbs));
     setBreadcrumbs(newBreadcrumbs);

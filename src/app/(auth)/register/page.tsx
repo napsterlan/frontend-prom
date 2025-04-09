@@ -3,13 +3,13 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import type { AuthFormData } from '@/types/types'
+import type { IAuthFormData } from '@/types'
 
 export default function RegisterPage() {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState<AuthFormData>({
+  const [formData, setFormData] = useState<IAuthFormData>({
     email: '',
     password: '',
     name: ''

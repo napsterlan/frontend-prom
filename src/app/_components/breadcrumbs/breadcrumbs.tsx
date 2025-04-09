@@ -36,17 +36,17 @@ function translatePathName(path: string): string {
            path.slice(1).replace(/[-_]/g, ' ');
 }
 
-type BreadcrumbsContainerProps = {
+interface IBreadcrumbsContainerProps {
   children: ReactNode;
   separator?: string | ReactNode;
 }
 
-type BreadcrumbsProps = {
+interface IBreadcrumbsProps {
   children: ReactNode;
   withHome?: boolean;
 }
 
-type BreadcrumbItemProps = {
+interface IBreadcrumbItemProps {
   children: ReactNode;
   href: string;
 }
@@ -55,7 +55,7 @@ const BreadcrumbsItem = ({
   children,
   href,
   ...props
-}: BreadcrumbItemProps) => {
+}: IBreadcrumbItemProps) => {
   return (
     <li {...props} className="last:border-solid border-b border-transparent hover:border-PLGreen hover:border-b ">
       <Link href={href} passHref>
@@ -71,7 +71,7 @@ const BreadcrumbsItem = ({
 const BreadcrumbsContainer = ({
   children,
   separator = '/',
-}: BreadcrumbsContainerProps) => (
+}: IBreadcrumbsContainerProps) => (
   <nav className="min-h-6 pb-6 pt-6 pl-36">
     <ol className="flex items-center space-x-4 justify-start text-[14px] text-gray-600 font-medium">
       {Children.map(children, (child, index) => (
@@ -89,7 +89,7 @@ const BreadcrumbsContainer = ({
 export const BreadCrumbs = ({
   children,
   withHome = false,
-}: BreadcrumbsProps) => {
+}: IBreadcrumbsProps) => {
   const paths = usePathname();
   const [trailingPath, setTrailingPath] = useState('');
   const context = useMemo(() => ({

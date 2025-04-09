@@ -1,9 +1,9 @@
 import React from 'react';
-import { deleteUserById, getAllUsers } from '../../../api/apiClient';
-import { User } from '../../../types/types';
+import { deleteUserById, getAllUsers } from '@/api';
+import { IUser } from '@/types';
 
 interface UserListProps {
-  users: User[];
+  users: IUser[];
 }
 // Добавлено для получения данных на сервере
 export async function getServerSideProps() {

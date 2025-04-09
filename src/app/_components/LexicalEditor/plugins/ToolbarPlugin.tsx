@@ -6,7 +6,6 @@ import {
   INSERT_UNORDERED_LIST_COMMAND,
   REMOVE_LIST_COMMAND,
   $isListNode,
-  ListNode
 } from '@lexical/list';
 import {
   $createHeadingNode,
@@ -18,7 +17,6 @@ import {
   $createParagraphNode,
   FORMAT_TEXT_COMMAND,
   $isElementNode,
-  $createRangeSelection,
   $setSelection,
   UNDO_COMMAND,
   REDO_COMMAND,
@@ -26,7 +24,7 @@ import {
 } from 'lexical';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useToast } from '@/components/ui/ToastContext';
-import { $createLinkNode, $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
+import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { uploadImages } from '@/api';
 import { $createImageNode } from '../nodes/ImageNode';
 

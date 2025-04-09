@@ -1,10 +1,8 @@
-import { getCategories } from '../../api/apiClient';
-import Image from 'next/image';
-import { IProductCategory } from '@/types/types'; // поменять тип
+import { getCategories } from '@/api';
+import { IProductCategory } from '@/types';
 import { useEffect, useState } from 'react';
 import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
-
-
+import Image from 'next/image';
 
 export default function MainCategories() {
   const [categoryData, setCategoryData] = useState<IProductCategory[]>([]);

@@ -1,7 +1,7 @@
 'use client';
 
-import { Project, ProjectCategory, IProductCategory, User } from '@/types/types';
-import { createProject, updateProjectById, getManagersList, getCategoryBySlug } from '@/api';
+import { IProject, IProjectCategory, IProductCategory, User } from '@/types';
+import { createProject, updateProjectById, getManagersList } from '@/api';
 import { useRouter } from 'next/navigation';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import "react-datepicker/dist/react-datepicker.css";
@@ -24,7 +24,7 @@ import {
 } from '@dnd-kit/sortable';
 import { LexicalEditor } from '@/app/_components/LexicalEditor/LexicalEditor';
 import { debounce } from 'lodash';
-import { SortableImage } from './SortableImage';
+import { SortableImage } from '../../_components/SortableImage';
 import { uploadImages } from '@/api';
 import { useToast } from '@/components/ui/ToastContext';
 import { Preloader } from '@/components/ui/Preloader';
@@ -97,16 +97,16 @@ function validateProject(formData: typeof ProjectForm.prototype.formData): Valid
     return errors;
 }
 
-interface ProjectFormProps {
-    project: Project;
-    projectCategories: ProjectCategory[];
+interface IProjectFormProps {
+    project: IProject;
+    projectCategories: IProjectCategory[];
     productCategories: IProductCategory[];
     isEditing: boolean;
 }
 
 type TabType = 'main' | 'relations';
 
-export function ProjectForm({ project, projectCategories, productCategories, isEditing }: ProjectFormProps) {
+export function ProjectForm({ project, projectCategories, productCategories, isEditing }: IProjectFormProps) {
     const router = useRouter();
     const { showToast } = useToast();
     const [activeTab, setActiveTab] = useState<TabType>('main');
@@ -403,7 +403,7 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
     }, [debouncedSetFormData]);
 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [filteredCategories, setFilteredCategories] = useState<ProjectCategory[]>(projectCategories);
+    const [filteredCategories, setFilteredCategories] = useState<IProjectCategory[]>(projectCategories);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {

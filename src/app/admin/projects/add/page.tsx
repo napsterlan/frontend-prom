@@ -27,6 +27,7 @@ export default async function AddProjectPage() {
             RelatedNews: [],
             ProjectImages: [],
             fullPath: '',
+            FullPath: '',
             CreatedAt: '',
             UpdatedAt: '',
             DeletedAt: ''

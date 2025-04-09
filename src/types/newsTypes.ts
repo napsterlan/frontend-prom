@@ -1,11 +1,12 @@
-import { Images } from './types';
+import { IImages } from './index';
 
+// Новость
 export interface INews {
     ID: number;
     Title: string;
     Name: string;
     Description: string;
-    Images: Images[] | null;
+    Images: IImages[] | null;
     MetaTitle: string;
     MetaDescription: string;
     MetaKeyword: string;
@@ -17,6 +18,7 @@ export interface INews {
     PublishDate?: string | null;
 }
 
+// Данные новости
 export interface INewsData {
     title: string;
     description: string;
@@ -24,7 +26,7 @@ export interface INewsData {
     metaDescription: string;
     metaKeyword: string;
     slug: string;
-    existingImages: Images[];
+    existingImages: IImages[];
     newImages: File[];
     deletedImageIds: number[];
 } 

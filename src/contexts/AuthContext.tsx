@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import * as api from  '@/api';
 import {User} from "next-auth";
 import { useSession } from 'next-auth/react';
-interface AuthContextType {
+interface IAuthContextType {
     isAuthenticated: boolean;
     user: any | null;
     login: (email: string, password: string) => Promise<void>;
@@ -11,7 +11,7 @@ interface AuthContextType {
     loading: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<IAuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);

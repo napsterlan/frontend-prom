@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { getProjectBySlug } from '@/api'; // Импортируем функцию для получения данных проекта
-import { Project } from '@/types/types';
+import { getProjectBySlug } from '@/api';
+import { IProject, IImages } from '@/types';
 import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
 import Image from 'next/image';
 
@@ -26,7 +26,7 @@ export async function getServerSideProps(context: { params: { categorySlug: stri
   }
 }
 
-export default function ProjectDetailPage({ project }: { project: Project }) {
+export default function ProjectDetailPage({ project }: { project: IProject }) {
   const router = useRouter();
   const { categorySlug, projectSlug } = router.query;
 
@@ -64,7 +64,12 @@ export default function ProjectDetailPage({ project }: { project: Project }) {
           <p>{project?.Description}</p>
           <h2 className="text-xl font-semibold">Связанные товары</h2>
           <ul>
-            {project?.RelatedProducts?.map(product => (
+            {project?.RelatedProducts?.map((product: {
+                ID: number;
+                Name: string;
+                Images: IImages[] | null;
+                fullPath: string;
+            }) => (
               <li key={product.ID}>{product.Name}</li>
             ))}
           </ul>

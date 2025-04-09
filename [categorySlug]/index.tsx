@@ -1,13 +1,13 @@
 import { getAllProjectCategories, getProjectCategoryBySlug } from '@/api';
-import { Project, ProjectCategory } from '@/types/types';
+import { IProject, IProjectCategory } from '@/types';
 import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
 import Link from 'next/link';
 
 export async function getServerSideProps(context: { params: { categorySlug: string } }) {
   const { categorySlug } = context.params;
  
-  let projectsList: Project[] = [];
-  let categoriesList: ProjectCategory[] = [];
+  let projectsList: IProject[] = [];
+  let categoriesList: IProjectCategory[] = [];
 //   let error = null;
   
   try {
@@ -28,7 +28,7 @@ export async function getServerSideProps(context: { params: { categorySlug: stri
 
 }
 
-export default function ProjectsPage({ projectsList, categoriesList }: { projectsList: Project[], categoriesList: ProjectCategory[] }) {
+export default function ProjectsPage({ projectsList, categoriesList }: { projectsList: IProject[], categoriesList: IProjectCategory[] }) {
   return (
     <div className="container mx-auto px-4">
       <Breadcrumbs />
@@ -51,7 +51,7 @@ export default function ProjectsPage({ projectsList, categoriesList }: { project
           </ul>
         </aside>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4 w-3/4">
-          {projectsList.map((project: Project) => (
+          {projectsList.map((project: IProject) => (
             <Link href={`/project/${project.Slug}`} key={project.ID} className="relative border rounded-lg overflow-hidden">
               {project.Images?.[0] && (
                 <div 

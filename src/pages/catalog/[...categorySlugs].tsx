@@ -2,10 +2,9 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query'; // Импортируем useQuery из react-query
 import { getCategoryBySlug } from '@/api';
-import { IProductCategory, ProductView } from '@/types/types'; // поменять тип
+import { IProductCategory, IProductView, IBreadcrumb } from '@/types';
 import Image from 'next/image';
 import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
-import { Breadcrumb } from '@/types/types';
 import { ColumnVisibilityManager, ColumnVisibility } from '@/app/_components/ColumnVisibilityManager';
 import { getColumnSettings } from '@/utils/columnSettings';
 
@@ -44,7 +43,7 @@ export default function CategoryPage() {
 
   useEffect(() => {
     if (categoryData) {
-      const newBreadcrumbs: Breadcrumb[] = [
+      const newBreadcrumbs: IBreadcrumb[] = [
         {
           label: 'Каталог',
           href: '/catalog'
@@ -59,7 +58,7 @@ export default function CategoryPage() {
               href: `/catalog/${categorySlugs.slice(0, i + 1).join('/')}`
             });
           } else {
-            const existingBreadcrumbs: Breadcrumb[] = JSON.parse(sessionStorage.getItem('breadcrumbs') || '[]');
+            const existingBreadcrumbs: IBreadcrumb[] = JSON.parse(sessionStorage.getItem('breadcrumbs') || '[]');
             const existingCrumb = existingBreadcrumbs.find(
               crumb => crumb.href === `/catalog/${categorySlugs.slice(0, i + 1).join('/')}`
             );
@@ -141,7 +140,7 @@ export default function CategoryPage() {
             </tr>
           </thead>
           <tbody>
-            {categoryData.data.ProductView.map((productView: ProductView) => (
+            {categoryData.data.ProductView.map((productView: IProductView) => (
               <tr key={productView.ProductID} style={{ cursor: 'pointer' }} onClick={() => window.location.href = `/product/${productView.Slug}`}>
                 {visibleColumns.Name && <td style={{ border: '1px solid #ccc', padding: '10px' }}>{productView.Name}</td>}
                 {visibleColumns.Price && <td style={{ border: '1px solid #ccc', padding: '10px' }}>{productView.Price} ₽</td>}

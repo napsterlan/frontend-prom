@@ -4,8 +4,8 @@ import Link from "next/link"
 import { FiUser, FiLock, FiSettings, FiShield } from "react-icons/fi"
 import {getAllProjects, getCurrentUser, searchFor} from "@/api";   
 import { getAllProjectCategories } from "@/api";
-// import {Project, ProjectCategory} from "@/types/types";
-import {User} from "@/types/types"
+// import {Project, IProjectCategory} from "@/types";
+import { IUser } from "@/types"
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth.config";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
@@ -41,7 +41,7 @@ export default async function AccountPage() {
 
         console.log("Making API call with session token:", session.jwt);
         const response = await getCurrentUser(session.jwt);
-        const user = response.data as User;
+        const user = response.data as IUser;
         let userRole = "";
         if (user.Role === "admin") {
             userRole = "Администратор";

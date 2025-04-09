@@ -1,11 +1,10 @@
 import { notFound } from 'next/navigation'
-import {getNewsBySlug} from "@/api";
-import {News} from "@/types/types";
-import {HtmlContent} from "@/app/_components/HtmlComponent/HtmlContent";
+import { getNewsBySlug } from "@/api";
+import { INews, IImages } from "@/types";
+import { HtmlContent } from "@/app/_components/HtmlComponent/HtmlContent";
 import Image from "next/image";
-import {Images} from "@/types/types";
 import Carousel from "@/app/_components/Carousel/Carousel";
-import {EmblaOptionsType} from "embla-carousel";
+import { EmblaOptionsType } from "embla-carousel";
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
@@ -34,7 +33,7 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
         return notFound();
     }
 
-    let newsData: News;
+    let newsData: INews;
 
     try {
         const response = await getNewsBySlug(params.slug);
@@ -50,8 +49,8 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
     const OPTIONS: EmblaOptionsType = { loop: true }
     const SLIDE_COUNT = newsData.Images?newsData.Images.length:0;
     const SLIDES = Array.from(Array(SLIDE_COUNT).keys())
-    const thumbnailImage: Images = newsData.Images ? newsData.Images[0] : {} as Images;
-    let postImages: Images[] = []
+    const thumbnailImage: IImages = newsData.Images ? newsData.Images[0] : {} as IImages;
+    let postImages: IImages[] = []
     
     if (SLIDE_COUNT > 1 && newsData.Images) {
         postImages = newsData.Images;

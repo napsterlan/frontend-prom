@@ -1,6 +1,6 @@
 "use client"
 
-import {Images} from "@/types/types";
+import {IImages} from "@/types";
 import Link from "next/link";
 import Image from "next/image";
 import useEmblaCarousel from 'embla-carousel-react'
@@ -13,12 +13,12 @@ import {
 import { DotButton, useDotButton } from './CarouselDotButton'
 import {useCallback, useEffect, useState} from "react";
 interface CarouselProps {
-    images: Images[]
+    images: IImages[]
     // onPageChange: (page: number) => void;
 }
 type PropType = {
     slides: number[]
-    images: Images[]
+    images: IImages[]
     options?: EmblaOptionsType
 }
 

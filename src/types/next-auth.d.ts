@@ -1,5 +1,6 @@
 import 'next-auth'
 
+// Определение типа для сессии
 declare module 'next-auth' {
   interface Session {
     user: {
@@ -11,6 +12,7 @@ declare module 'next-auth' {
     jwt: string
   }
 
+  // Определение типа для пользователя
   interface User {
     id: string
     email: string
@@ -20,6 +22,7 @@ declare module 'next-auth' {
   }
 }
 
+// Определение типа для JWT
 declare module 'next-auth/jwt' {
   interface JWT {
     role: string

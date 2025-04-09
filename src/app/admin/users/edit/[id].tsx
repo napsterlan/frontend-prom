@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { getUserById, updateUserById } from '../../../../api/apiClient';
-import { User } from '../../../../types/types';
+import { getUserById, updateUserById } from '@/api';
+import { IUser } from '@/types/';
 
 export async function getServerSideProps(context: { params: { id: string } }) {
   const { id } = context.params;
@@ -13,8 +13,8 @@ export async function getServerSideProps(context: { params: { id: string } }) {
   };
 }
 
-const UserDetail: React.FC<{ user: User }> = ({ user }) => {
-  const [editedUser, setEditedUser] = useState<User>(user);
+const UserDetail: React.FC<{ user: IUser }> = ({ user }) => {
+  const [editedUser, setEditedUser] = useState<IUser>(user);
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

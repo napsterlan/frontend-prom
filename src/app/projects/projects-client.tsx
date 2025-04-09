@@ -1,6 +1,6 @@
 'use client';
 
-import { Project, ProjectCategory } from '@/types/types';
+import { IProject, IProjectCategory } from '@/types';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
@@ -8,9 +8,9 @@ import { useState, useEffect } from 'react';
 import { Pagination } from "@/app/_components/Pagination";
 import { HtmlContent } from "@/app/_components/HtmlComponent/HtmlContent";
 
-interface ProjectsClientProps {
-    initialProjects: Project[];
-    initialCategories: ProjectCategory[];
+interface IProjectsClientProps {
+    initialProjects: IProject[];
+    initialCategories: IProjectCategory[];
     currentPage: number;
     totalPages: number;
     totalRecords: number;
@@ -42,7 +42,7 @@ export function ProjectsClient({
     totalRecords,
     searchQuery,
     currentCategory
-}: ProjectsClientProps) {
+}: IProjectsClientProps) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParamsObj = useSearchParams();

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Product,  FileGroup } from '@/types/types';
+import { IProduct,  IFileGroup } from '@/types';
 import Image from 'next/image';
 import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
 import Lightbox from 'yet-another-react-lightbox';
@@ -13,7 +13,7 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { getProductBySlug } from '@/api';
 
 interface ProductPageProps {
-    initialProductData: Product | null;
+    initialProductData: IProduct | null;
 }
 // Экспортируем асинхронную функцию getServerSideProps, которая будет вызываться на сервере перед рендерингом страницы
 export async function getServerSideProps({ params }: { params: { productSlug: string } }) {
@@ -67,8 +67,8 @@ const groupFiles = (files: {
     FileURL: string;
     FileName: string;
     FileType: string;
-}[]): FileGroup[] => {
-    const groups: { [key: string]: FileGroup } = {
+}[]): IFileGroup[] => {
+    const groups: { [key: string]: IFileGroup } = {
         'Техническая информация': {
             title: 'Техническая информация',
             files: files.filter(f => ['TD', 'PD', 'IG', 'BIM'].includes(f.FileType))
@@ -186,7 +186,7 @@ const scrollToElement = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => 
 };
 
 export default function ProductPage({ initialProductData }: ProductPageProps) {
-    const [productData] = useState<Product | null>(initialProductData);
+    const [productData] = useState<IProduct | null>(initialProductData);
     const [loading] = useState(false);
     const [error] = useState<string | null>(null);
     // const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);

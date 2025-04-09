@@ -1,22 +1,21 @@
 'use client';
 
-import { Project } from "@/types/types";
+import { IProject, IImages } from "@/types";
 import { HtmlContent } from "@/app/_components/HtmlComponent/HtmlContent";
 import Image from "next/image";
-import { Images } from "@/types/types";
 import Carousel from "@/app/_components/Carousel/Carousel";
 import { EmblaOptionsType } from "embla-carousel";
 
-interface ProjectDetailClientProps {
-    projectData: Project;
+interface IProjectDetailClientProps {
+    projectData: IProject;
 }
 
-export function ProjectDetailClient({ projectData }: ProjectDetailClientProps) {
+export function ProjectDetailClient({ projectData }: IProjectDetailClientProps) {
     const OPTIONS: EmblaOptionsType = { loop: true };
     const SLIDE_COUNT = projectData.Images ? projectData.Images.length : 0;
     const SLIDES = Array.from(Array(SLIDE_COUNT).keys());
-    const thumbnailImage: Images = projectData.Images ? projectData.Images[0] : {} as Images;
-    const postImages: Images[] = SLIDE_COUNT > 1 && projectData.Images ? projectData.Images : [];
+    const thumbnailImage: IImages = projectData.Images ? projectData.Images[0] : {} as IImages;
+    const postImages: IImages[] = SLIDE_COUNT > 1 && projectData.Images ? projectData.Images : [];
 
     return (
         <div className="container mx-auto px-5 max-w-[1140px]">

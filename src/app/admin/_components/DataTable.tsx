@@ -3,14 +3,14 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/ToastContext';
-import { Images} from '@/types/types'
+import { IImages } from '@/types'
 import Image from 'next/image';
 
 interface DataTableProps<T extends { 
     ID: number; 
     Name: string; 
     FullPath: string;
-    Images?: Images[] | null;
+    Images?: IImages[] | null;
 }> {
     initialData: T[];
     currentPage: number;
@@ -23,7 +23,7 @@ export function DataTable<T extends {
     ID: number; 
     Name: string; 
     FullPath: string;
-    Images?: Images[] | null;
+    Images?: IImages[] | null;
 }>({ 
     initialData, 
     currentPage, 
