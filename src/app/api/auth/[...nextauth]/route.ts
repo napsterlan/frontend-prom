@@ -1,6 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import { login } from "@/api/apiClient"
+import { login } from "@/api"
 import { authOptions } from "./auth.config"
 
 const secret = process.env.NEXT_PUBLIC_NEXTAUTH_SECRET

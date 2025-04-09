@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { getProjectBySlug } from '@/api/apiClient'; // Импортируем функцию для получения данных проекта
+import { getProjectBySlug } from '@/api'; // Импортируем функцию для получения данных проекта
 import { Project } from '@/types/types';
 import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
 import Image from 'next/image';

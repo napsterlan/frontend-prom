@@ -1,7 +1,7 @@
 'use client';
 
 import { Project, ProjectCategory, IProductCategory, User } from '@/types/types';
-import { createProject, updateProjectById, getManagersList, getCategoryBySlug } from '@/api/apiClient';
+import { createProject, updateProjectById, getManagersList, getCategoryBySlug } from '@/api';
 import { useRouter } from 'next/navigation';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import "react-datepicker/dist/react-datepicker.css";
@@ -25,7 +25,7 @@ import {
 import { LexicalEditor } from '@/app/_components/LexicalEditor/LexicalEditor';
 import { debounce } from 'lodash';
 import { SortableImage } from './SortableImage';
-import { uploadImages } from '@/api/apiClient';
+import { uploadImages } from '@/api';
 import { useToast } from '@/components/ui/ToastContext';
 import { Preloader } from '@/components/ui/Preloader';
 import { toSlug } from '@/utils/transliterate';

@@ -1,4 +1,4 @@
-import { getAllProjectCategories, getCategories } from '@/api/apiClient';
+import { getAllProjectCategories, getCategories } from '@/api';
 import 'react-datepicker/dist/react-datepicker.css';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
 import { notFound } from 'next/navigation';

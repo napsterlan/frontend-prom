@@ -3,7 +3,7 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $createParagraphNode, $insertNodes } from 'lexical';
 import { useCallback } from 'react';
-import { uploadImages } from '@/api/apiClient';
+import { uploadImages } from '@/api';
 import { $createImageNode } from '../nodes/ImageNode';
 
 export function ImagePlugin() {

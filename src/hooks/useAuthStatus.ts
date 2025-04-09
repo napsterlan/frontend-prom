@@ -1,7 +1,7 @@
 'use client'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
-import { getCurrentUser } from '@/api/apiClient'
+import { getCurrentUser } from '@/api'
 
 export function useAuthStatus() {
   const { data: session, status } = useSession()

@@ -17,7 +17,7 @@ export interface INews {
     PublishDate?: string | null;
 }
 
-export interface INewsFormData {
+export interface INewsData {
     title: string;
     description: string;
     metaTitle: string;

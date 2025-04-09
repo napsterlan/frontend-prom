@@ -1,4 +1,4 @@
-import {getAllProjectCategories, getAllProjects, searchFor} from '@/api/apiClient';
+import {getAllProjectCategories, getAllProjects, searchFor} from '@/api';
 import {Project, ProjectCategory} from '@/types/types';
 // import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
 import { ProjectsClient } from './projects-client';

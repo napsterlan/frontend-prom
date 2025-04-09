@@ -4,7 +4,7 @@ import { INews, INewsFormData } from '@/types/news';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/ToastContext';
-import { createNews, updateNews } from '@/api/apiClient';
+import { createNews, updateNews } from '@/api';
 
 interface NewsFormProps {
     news: INews;

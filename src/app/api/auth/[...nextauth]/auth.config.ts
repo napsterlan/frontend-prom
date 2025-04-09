@@ -1,6 +1,6 @@
 import type { NextAuthOptions, User } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import { login } from "@/api/apiClient"
+import { login } from "@/api"
 
 export const authOptions: NextAuthOptions = {
   providers: [

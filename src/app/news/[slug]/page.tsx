@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import {getNewsBySlug} from "@/api/apiClient";
+import {getNewsBySlug} from "@/api";
 import {News} from "@/types/types";
 import {HtmlContent} from "@/app/_components/HtmlComponent/HtmlContent";
 import Image from "next/image";

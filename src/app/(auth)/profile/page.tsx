@@ -2,7 +2,8 @@ import { useSession } from "next-auth/react"
 import { ProtectedRoute } from "@/app/_components/auth/ProtectedRoute"
 import Link from "next/link"
 import { FiUser, FiLock, FiSettings, FiShield } from "react-icons/fi"
-import {getAllProjectCategories, getAllProjects, getCurrentUser, searchFor} from "@/api/apiClient";
+import {getAllProjects, getCurrentUser, searchFor} from "@/api";   
+import { getAllProjectCategories } from "@/api";
 // import {Project, ProjectCategory} from "@/types/types";
 import {User} from "@/types/types"
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth.config";

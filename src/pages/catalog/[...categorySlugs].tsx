@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query'; // Импортируем useQuery из react-query
-import { getCategoryBySlug } from '@/api/apiClient';
+import { getCategoryBySlug } from '@/api';
 import { IProductCategory, ProductView } from '@/types/types'; // поменять тип
 import Image from 'next/image';
 import { Breadcrumbs } from '@/app/_components/Breadcrumbs';

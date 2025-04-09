@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import * as api from  '@/api/apiClient';
+import * as api from  '@/api';
 import {User} from "next-auth";
 import { useSession } from 'next-auth/react';
 interface AuthContextType {

@@ -1,7 +1,7 @@
 'use client';
 
 import { DataTable } from './data-table';
-import { deleteNewsById } from '@/api/apiClient';
+import { deleteNewsById } from '@/api';
 import { INews } from '@/types/news';
 
 interface NewsDataTableProps {

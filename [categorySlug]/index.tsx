@@ -1,4 +1,4 @@
-import { getAllProjectCategories, getProjectCategoryBySlug } from '@/api/apiClient';
+import { getAllProjectCategories, getProjectCategoryBySlug } from '@/api';
 import { Project, ProjectCategory } from '@/types/types';
 import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
 import Link from 'next/link';

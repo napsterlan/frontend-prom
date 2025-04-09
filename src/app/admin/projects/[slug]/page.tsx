@@ -1,4 +1,4 @@
-import { getProjectBySlug, getCategories, getAllProjectCategories } from '@/api/apiClient';
+import { getProjectBySlug, getCategories, getAllProjectCategories } from '@/api';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ProjectForm } from '../_components/project-form';

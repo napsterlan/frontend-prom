@@ -1,4 +1,4 @@
-import { getAllNews } from '@/api/apiClient';
+import { getAllNews } from '@/api';
 import { NewsDataTable } from '../_components/NewsDataTable';
 import Link from 'next/link';
 import { Metadata } from 'next';

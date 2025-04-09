@@ -1,7 +1,7 @@
 'use client';
 
 import { DataTable } from './data-table';
-import { deleteProjectById } from '@/api/apiClient';
+import { deleteProjectById } from '@/api';
 import { Project } from '@/types/project';
 
 interface ProjectsDataTableProps {

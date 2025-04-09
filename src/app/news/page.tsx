@@ -1,6 +1,6 @@
 
 import {News} from "@/types/types";
-import {getAllNews} from "@/api/apiClient";
+import {getAllNews} from "@/api";
 import Link from "next/link";
 import Image from "next/image";
 import { PaginatedNewsPage } from "./_components/PaginatedNewsPage";

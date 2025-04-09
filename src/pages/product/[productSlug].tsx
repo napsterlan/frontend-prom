@@ -10,7 +10,7 @@ import "yet-another-react-lightbox/plugins/thumbnails.css";
 import { auth } from '@/utils/auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
-import { getProductBySlug } from '@/api/apiClient';
+import { getProductBySlug } from '@/api';
 
 interface ProductPageProps {
     initialProductData: Product | null;

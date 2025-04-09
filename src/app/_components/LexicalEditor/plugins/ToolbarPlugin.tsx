@@ -27,7 +27,7 @@ import {
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useToast } from '@/components/ui/ToastContext';
 import { $createLinkNode, $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
-import { uploadImages } from '@/api/apiClient';
+import { uploadImages } from '@/api';
 import { $createImageNode } from '../nodes/ImageNode';
 
 // Иконки
