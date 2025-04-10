@@ -23,6 +23,7 @@ export const uploadFiles = async (files: File[], path: string) => {
 
 // Загрузка изображения
 export const uploadImages = async (files: File[], path: string) => {
+
     const formData = new FormData();
 
     // Добавляем файлы

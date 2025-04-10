@@ -1,4 +1,4 @@
-import { addAuthHeader, removeAuthHeader, createUser, getAuthToken, login } from "./apiAuth"
+import { addAuthHeader, removeAuthHeader, createUser, getAuthToken, login, logout } from "./apiAuth"
 import { getCategories, getCategoryBySlug, getAllProjectCategories, getProjectCategoryBySlug, createProjectCategory, updateProjectCategoryById, deleteProjectCategoryById, getProductsInCategory } from "./apiCategory"
 import { getProductBySlug } from "./apiProduct"
 import { getAllNews, getNewsBySlug, createNews, updateNews, deleteNewsById } from "./apiNews"
@@ -14,6 +14,7 @@ export {
     createUser,
     getAuthToken,
     login,
+    logout,
     getCategories,
     getCategoryBySlug,
     getAllProjectCategories,

@@ -9,7 +9,7 @@ export const transliterate = (text: string): string => {
 
     return text.toLowerCase()
       .split('')
-      .map(char => ru[char as keyof typeof ru] || char)
+      .map(char => ru[char as keyof typeof ru] || char) // добавил as keyof typeof ru
       .join('')
       .replace(/[^a-z0-9]/g, '-')
       .replace(/-+/g, '-')
@@ -30,7 +30,7 @@ export const toSlug = (text: string): string => {
   return text
     .toLowerCase()
     .split('')
-    .map(char => ru[char] || char)
+    .map(char => ru[char as keyof typeof ru] || char) // добавил as keyof typeof ru
     .join('')
     .replace(/[^a-z0-9-]+/g, '-')
     .replace(/^-+|-+$/g, '')

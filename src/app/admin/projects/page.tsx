@@ -2,6 +2,7 @@ import { getAllProjects, getCategories } from '@/api';
 import { ProjectsDataTable } from './_components/ProjectsDataTable';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import { NextPageProps } from '@/types';
 
 export const metadata: Metadata = {
     title: 'Управление проектами',
@@ -12,15 +13,12 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export default async function ProjectsPage({
-    searchParams,
-}: {
-    searchParams?: { page?: string };
-}) {
+export default async function ProjectsPage({params, searchParams}: NextPageProps) {
+    const { page } = await searchParams;
     let projects = [];
     let categories = [];
     let error = null;
-    const currentPage = Number(searchParams?.page) || 1;
+    const currentPage = Number(page) || 1;
 
     try {
         const response = await getAllProjects(currentPage, '');

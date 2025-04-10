@@ -1,4 +1,4 @@
-import { IImages } from "./index";
+import { IImages, IFile, IProject, INews, ITag } from "./index";
 
 // Вид продукта
 export interface IProductView {
@@ -27,17 +27,12 @@ export interface IProductView {
     UpdatedAt: string;
     DeletedAt?: string | null;
     Images?: string[] | null;
-    // ProductAttributes?: any | null;
-    // Files?: any | null;
-    // RelatedProjects?: any | null;
-    // RelatedNews?: any | null;
-    // RelatedProducts?: any | null;
-    // Tags?: any | null;
 }
 
 // Продукт
 export interface IProduct {
     ID: number;
+    ProductID: number;
     Name: string;
     Article: string;
     SKU: string;
@@ -47,45 +42,42 @@ export interface IProduct {
     DealerPrice1?: number;
     DealerPrice2?: number;
     DealerPrice3?: number;
-    Images: IImages[] | null;
-    AttributeGroups: [{
-        Name: string;
-        Order: number;
-        Attributes: [{
-            Name: string;
-            Value: string;
-            Order: number;
-        }]
-    }] 
-    Files: {
-        FileURL: string;
-        FileName: string;
-        FileType: string;
-    }[] | null;
-    RelatedProducts: {
-        ID: number;
-        Name: string;
-        Images: IImages[] | null;
-        fullPath: string;
-    }[] | null;
-    RelatedProjects?: Array<{
-        ProjectID: string | number;
-        Title: string;
-        fullPath: string;
-        CreatedAt: string;
-        Images: IImages[] | null;
-      }>;
-    Tags: {
-        ID: number;
-        Name: string;
-    }[] | null;
     MetaTitle: string;
     MetaDescription: string;
     MetaKeyword: string;
-    FullPath: string;
     Slug: string;
     Status: string;
+    FullPath: string;
     CreatedAt: string;
     UpdatedAt: string;
     DeletedAt: string | null;
+    Images: IImages[] | [];
+    AttributeGroups: IAttributeGroup[] | [];
+    Files: IFile[] | [];
+    RelatedProjects: IProject[] | [];
+    RelatedNews: INews[] | [];
+    RelatedProducts: IProduct[] | [];
+    Tags: ITag[] | [];
 }
+
+interface IAttribute {
+    ID: number;
+    Name: string;
+    Order: number;
+    Value: string;
+    CreatedAt: string;
+    UpdatedAt: string;
+    DeletedAt?: string;
+    AttributeGroupID: number;
+}
+
+interface IAttributeGroup {
+    ID: number;
+    Name: string;
+    Order: number;
+    CreatedAt: string;
+    UpdatedAt: string;
+    DeletedAt?: string;
+    Attributes: IAttribute[] | [];
+}
+

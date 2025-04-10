@@ -8,7 +8,6 @@ export async function getServerSideProps(context: { params: { categorySlug: stri
  
   let projectsList: IProject[] = [];
   let categoriesList: IProjectCategory[] = [];
-//   let error = null;
   
   try {
     const projectResponse = await getProjectCategoryBySlug(categorySlug);

@@ -1,4 +1,5 @@
 import { getAllNews } from '@/api';
+import { NextPageProps } from '@/types';
 import { NewsDataTable } from '../_components/NewsDataTable';
 import Link from 'next/link';
 import { Metadata } from 'next';
@@ -12,14 +13,11 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export default async function NewsPage({
-    searchParams,
-}: {
-    searchParams?: { page?: string };
-}) {
+export default async function NewsPage({ params, searchParams }: NextPageProps) {
+    const { page } = await searchParams;
     let news = [];
     let error = null;
-    const currentPage = Number(searchParams?.page) || 1;
+    const currentPage = Number(page) || 1;
 
     try {
         const response = await getAllNews(currentPage);

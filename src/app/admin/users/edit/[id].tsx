@@ -25,7 +25,7 @@ const UserDetail: React.FC<{ user: IUser }> = ({ user }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await updateUserById(editedUser.ID, editedUser);
+      await updateUserById(editedUser.ID || 0, editedUser); // добавила || 0
       router.push('/admin/users'); // Перенаправление после успешного обновления
     } catch (error) {
       console.error('Ошибка при обновлении пользователя:', error);

@@ -61,7 +61,7 @@ const ProjectCategoriesList = ({ categories }: { categories: IProjectCategory[] 
                   <td className="py-3 px-6">
                     <Image 
                       src={category.Images.length > 0 ? category.Images[0].ImageURL : '/placeholder.png'} 
-                      alt={category.Images.length > 0 ? category.Images[0].AltText : 'Нет изображения'} 
+                      alt={category.Images.length > 0 ? (category.Images[0].AltText || 'Нет изображения') : 'Нет изображения'} 
                       className="object-cover" 
                       width={64}
                       height={64}

@@ -3,16 +3,15 @@
 import { IUser } from '@/types';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { ru } from 'date-fns/locale/ru';
 
-interface ValidationErrors {
-    title?: string;
-    name?: string;
-    userID?: string;
-    publishDate?: string;
+interface IValidationErrors {
+    Title?: string;
+    Name?: string;
+    UserID?: string;
+    PublishDate?: string;
 }
 
-interface ProjectMainInfoProps {
+interface IProjectMainInfoProps {
     /**
      * Данные формы проекта
      */
@@ -20,21 +19,21 @@ interface ProjectMainInfoProps {
         Title: string;
         Name: string;
         Slug: string;
-        metaTitle: string;
-        metaKeyword: string;
-        metaDescription: string;
-        UserID: number | null;
-        PublishDate: Date | null;
+        MetaTitle: string;
+        MetaKeyword: string;
+        MetaDescription: string;
+        UserID?: number | null;
+        PublishDate: string;
         Status: boolean;
     };
     /**
      * Объект с ошибками валидации
      */
-    errors: ValidationErrors;
+    errors: IValidationErrors;
     /**
      * Список менеджеров для выбора
      */
-    managers: IUser[];
+    managers: IUser[] | [];
     /**
      * Флаг автоматической генерации SEO URL
      */
@@ -84,24 +83,24 @@ export function ProjectMainInfo({
     setErrors,
     setIsAutoSlug,
     handleSlugChange
-}: ProjectMainInfoProps) {
+}: IProjectMainInfoProps) {
     return (
         <div className="space-y-4">
             <div>
                 <label className="block mb-2">Title</label>
                 <input
                     type="text"
-                    className={`w-full p-2 border rounded ${errors.title ? 'border-red-500' : ''}`}
+                    className={`w-full p-2 border rounded ${errors.Title ? 'border-red-500' : ''}`}
                     value={formData.Title}
                     onChange={(e) => {
                         setFormData((prev: any) => ({ ...prev, Title: e.target.value }));
-                        if (errors.title) {
+                        if (errors.Title) {
                             setErrors((prev: any) => ({ ...prev, title: undefined }));
                         }
                     }}
                 />
-                {errors.title && (
-                    <p className="text-red-500 text-sm mt-1">{errors.title}</p>
+                {errors.Title && (
+                    <p className="text-red-500 text-sm mt-1">{errors.Title}</p>
                 )}
             </div>
 
@@ -109,17 +108,17 @@ export function ProjectMainInfo({
                 <label className="block mb-2">Name</label>
                 <input
                     type="text"
-                    className={`w-full p-2 border rounded ${errors.name ? 'border-red-500' : ''}`}
+                    className={`w-full p-2 border rounded ${errors.Name ? 'border-red-500' : ''}`}
                     value={formData.Name}
                     onChange={(e) => {
                         setFormData((prev: any) => ({ ...prev, Name: e.target.value }));
-                        if (errors.name) {
+                        if (errors.Name) {
                             setErrors((prev: any) => ({ ...prev, name: undefined }));
                         }
                     }}
                 />
-                {errors.name && (
-                    <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                {errors.Name && (
+                    <p className="text-red-500 text-sm mt-1">{errors.Name}</p>
                 )}
             </div>
 
@@ -151,8 +150,8 @@ export function ProjectMainInfo({
                 <input
                     type="text"
                     className="w-full p-2 border rounded"
-                    value={formData.metaTitle}
-                    onChange={(e) => setFormData((prev: any) => ({ ...prev, metaTitle: e.target.value }))}
+                    value={formData.MetaTitle}
+                    onChange={(e) => setFormData((prev: any) => ({ ...prev, MetaTitle: e.target.value }))}
                 />
             </div>
 
@@ -161,8 +160,8 @@ export function ProjectMainInfo({
                 <input
                     type="text"
                     className="w-full p-2 border rounded"
-                    value={formData.metaKeyword}
-                    onChange={(e) => setFormData((prev: any) => ({ ...prev, metaKeyword: e.target.value }))}
+                    value={formData.MetaKeyword}
+                    onChange={(e) => setFormData((prev: any) => ({ ...prev, MetaKeyword: e.target.value }))}
                 />
             </div>
 
@@ -170,23 +169,17 @@ export function ProjectMainInfo({
                 <label className="block mb-2">metaDescription</label>
                 <textarea
                     className="w-full p-2 border rounded"
-                    value={formData.metaDescription}
-                    onChange={(e) => setFormData((prev: any) => ({ ...prev, metaDescription: e.target.value }))}
+                    value={formData.MetaDescription}
+                    onChange={(e) => setFormData((prev: any) => ({ ...prev, MetaDescription: e.target.value }))}
                 />
             </div>
             
             <div>
                 <label className="block mb-2">Ответственный менеджер</label>
                 <select
-                    className={`w-full p-2 border rounded ${errors.userID ? 'border-red-500' : ''}`}
+                    className={`w-full p-2 border rounded ${errors.UserID ? 'border-red-500' : ''}`}
                     value={formData.UserID || ''}
-                    onChange={(e) => {
-                        const selectedManager = managers.find(m => m.ID === Number(e.target.value));
-                        setFormData((prev: any) => ({ ...prev, UserID: selectedManager?.ID || null }));
-                        if (errors.userID) {
-                            setErrors((prev: any) => ({ ...prev, userID: undefined }));
-                        }
-                    }}
+                    onChange={(e) => setFormData((prev: any) => ({ ...prev, UserID: Number(e.target.value) }))}
                 >
                     <option value="">Выберите менеджера</option>
                     {managers.map((manager) => (
@@ -195,8 +188,8 @@ export function ProjectMainInfo({
                         </option>
                     ))}
                 </select>
-                {errors.userID && (
-                    <p className="text-red-500 text-sm mt-1">{errors.userID}</p>
+                {errors.UserID && (
+                    <p className="text-red-500 text-sm mt-1">{errors.UserID}</p>
                 )}
             </div>
 
@@ -204,10 +197,10 @@ export function ProjectMainInfo({
                 <div className="mb-2">
                     Дата публикации:
                     <DatePicker
-                        selected={formData.PublishDate}
+                        selected={formData.PublishDate ? new Date(formData.PublishDate) : null}
                         onChange={(date) => {
                             setFormData((prev: any) => ({ ...prev, PublishDate: date }));
-                            if (errors.publishDate) {
+                            if (errors.PublishDate) {
                                 setErrors((prev: any) => ({ ...prev, publishDate: undefined }));
                             }
                         }}
@@ -218,18 +211,18 @@ export function ProjectMainInfo({
                         locale="ru"
                         placeholderText="Выберите дату и время"
                         timeIntervals={15}
-                        className={`ml-2 border rounded p-2 w-[200px] ${errors.publishDate ? 'border-red-500' : ''}`}
+                        className={`ml-2 border rounded p-2 w-[200px] ${errors.PublishDate ? 'border-red-500' : ''}`}
                         popperPlacement="bottom-start"
                         customInput={
                             <input
                                 className={`border rounded p-2 w-full focus:outline-none focus:ring-2 ${
-                                    errors.publishDate ? 'border-red-500 focus:ring-red-500' : 'focus:ring-blue-500'
+                                    errors.PublishDate ? 'border-red-500 focus:ring-red-500' : 'focus:ring-blue-500'
                                 }`}
                             />
                         }
                     />
-                    {errors.publishDate && (
-                        <p className="text-red-500 text-sm mt-1">{errors.publishDate}</p>
+                    {errors.PublishDate && (
+                        <p className="text-red-500 text-sm mt-1">{errors.PublishDate}</p>
                     )}
                 </div>
             </div>

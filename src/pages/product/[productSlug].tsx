@@ -414,7 +414,7 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
                             <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                                 {productData.RelatedProducts?.slice(0, showMoreProducts ? undefined : 5).map((relatedProduct) => (
                                     <a
-                                        href={`/product/${relatedProduct.fullPath}`}
+                                        href={`/product/${relatedProduct.FullPath}`}
                                         key={relatedProduct.ID}
                                         className="relative overflow-hidden rounded-[15px] flex flex-col shadow-lg"
                                     >
@@ -460,7 +460,7 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 {productData.RelatedProjects?.slice(0, showMoreProjects ? undefined : 3).map((project) => (
-                                    <a href={`/project/${project.fullPath}`} key={project.ProjectID} className="relative overflow-hidden rounded-[15px] flex flex-col shadow-lg">
+                                    <a href={`/project/${project.FullPath}`} key={project.ID} className="relative overflow-hidden rounded-[15px] flex flex-col shadow-lg">
                                         {project.Images?.[0] && (
                                             <div className="relative">
                                                 <Image
@@ -475,8 +475,8 @@ export default function ProductPage({ initialProductData }: ProductPageProps) {
                                         )}
                                         <div className='z-50 absolute bottom-[0px] left-[0px] w-full pb-[15px] pr-[10px] flex flex-row bg-white bg-opacity-100 font-manrope'>
                                             <span className="text-gray-600 text-sm flex flex-col p-[10px] pl-0">
-                                                <div className='text-[18px] font-[500] text-[#2C364C] text-center bg-[#f7f7f7] bg-opacity-100 opacity-100 px-[10px] py-[2px] font-manrope'>{formatDate(project.CreatedAt).day}</div>
-                                                <div className='text-[15px] font-[400] text-[#f7f7f7] text-center bg-[#2C364C] bg-opacity-100 opacity-100 px-[10px] py-[2px] font-manrope'>{formatDate(project.CreatedAt).month}</div>
+                                                <div className='text-[18px] font-[500] text-[#2C364C] text-center bg-[#f7f7f7] bg-opacity-100 opacity-100 px-[10px] py-[2px] font-manrope'>{project?.CreatedAt ? formatDate(project.CreatedAt).day : ''}</div>
+                                                <div className='text-[15px] font-[400] text-[#f7f7f7] text-center bg-[#2C364C] bg-opacity-100 opacity-100 px-[10px] py-[2px] font-manrope'>{project?.CreatedAt ? formatDate(project.CreatedAt).month : ''}</div>
                                             </span>
                                             <div className="text-lg font-semibold mb-2 flex items-center text-white">
                                                 <h3 className="text-[#2C364C] font-manrope text-[17px] font-[400]">

@@ -1,5 +1,5 @@
 
-import { INews } from "@/types";
+import { INews, NextPageProps } from "@/types";
 import {getAllNews} from "@/api";
 import Link from "next/link";
 import Image from "next/image";
@@ -14,16 +14,13 @@ function formatNewsDate(publishDate: string ) {
 }
 
 
-export default async function NewsPage({
-    searchParams,
-}: {
-    searchParams: {page?: string}
-}) {
-    const page = Number(searchParams.page) || 1;
+export default async function NewsPage({params, searchParams}: NextPageProps) {
+    const { page } = await searchParams;
+    const currentPage = Number(page) || 1;
     let news: INews[] = [];
     let totalPages = 1;
     try {
-        const response = await getAllNews(page);
+        const response = await getAllNews(currentPage);
         news = response.data;
         totalPages = response.metadata.last_page;
     } catch (error) {
@@ -46,7 +43,7 @@ export default async function NewsPage({
                           {_news.Images?.[0] && (
                                       <Image
                                           src={_news.Images[0].ImageURL?_news.Images[0].ImageURL:"./placeholder.png"}
-                                          alt={_news.Images[0].AltText}
+                                          alt={_news.Images[0].AltText || ""}
                                           className="w-full h-48 object-cover rounded-xl mb-4 border-b-1"
                                           width={350}
                                           height={194}
@@ -66,7 +63,7 @@ export default async function NewsPage({
           </div>
           {totalPages > 1 && (
               <PaginatedNewsPage
-                  currentPage={page}
+                  currentPage={currentPage}
                   totalPages={totalPages}
               />
           )}

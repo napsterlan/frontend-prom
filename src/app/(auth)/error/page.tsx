@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 export default function AuthError() {
   const searchParams = useSearchParams()
-  const error = searchParams.get('error')
+  const error = searchParams?.get('error')
 
   const getErrorMessage = (error: string | null) => {
     switch (error) {
@@ -27,7 +27,7 @@ export default function AuthError() {
           Authentication Error
         </h1>
         <p className="text-gray-600 mb-4">
-          {getErrorMessage(error)}
+          {getErrorMessage(error ?? 'error')}
         </p>
         <div className="flex gap-4">
           <Link

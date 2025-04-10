@@ -1,6 +1,7 @@
 import { getNewsBySlug, getCategories, getAllProjectCategories } from '@/api';
+import { NextPageProps } from '@/types';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+// import { notFound } from 'next/navigation';
 import { NewsForm } from '../_components/NewsForm';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
 
@@ -9,15 +10,16 @@ export const metadata: Metadata = {
     description: 'Редактирование существующего проекта',
 };
 
-interface Props {
-    params: {
-        slug: string;
-    };
-}
-
-export default async function EditNewsPage({ params }: Props) {
+export default async function EditNewsPage({ params, searchParams }: NextPageProps) {
     try {
-        const news = await getNewsBySlug(params.slug);
+        const { slug } = await params;
+
+        if (!slug) {
+            console.log('not found 404'); 
+            return;
+        }
+
+        const news = await getNewsBySlug(slug);
         const projectCategories = await getAllProjectCategories();
 
         const productCategories = await getCategories();
@@ -25,7 +27,8 @@ export default async function EditNewsPage({ params }: Props) {
         console.log('news', news);
 
         if (!news) {
-            notFound();
+            console.log('not found 404'); 
+            return;
         }
 
         return (
@@ -43,6 +46,8 @@ export default async function EditNewsPage({ params }: Props) {
         );
     } catch (error) {
         console.error('Error fetching project:', error);
-        notFound();
+        // notFound();
+        console.log('not found 404'); 
+        return;
     }
 } 

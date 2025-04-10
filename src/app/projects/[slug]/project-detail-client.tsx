@@ -29,7 +29,7 @@ export function ProjectDetailClient({ projectData }: IProjectDetailClientProps) 
             {SLIDE_COUNT === 1 && (
                 <Image 
                     src={thumbnailImage.ImageURL}
-                    alt={thumbnailImage.AltText}
+                    alt={thumbnailImage.AltText || ''}
                     width={1110}
                     height={625}
                     className="object-cover rounded-2xl !mb-[50px] !mt-[30px] m-auto"

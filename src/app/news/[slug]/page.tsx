@@ -6,15 +6,18 @@ import Image from "next/image";
 import Carousel from "@/app/_components/Carousel/Carousel";
 import { EmblaOptionsType } from "embla-carousel";
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
+import { NextPageProps } from '@/types';
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params, searchParams }: NextPageProps) {
     try {
-      const response = await getNewsBySlug(params.slug);
+      const { slug } = await params;
+      if (!slug) {
+        notFound();
+      }
+      const response = await getNewsBySlug(slug);
       
       if (!response || !response.data) {
-        return {
-          title: 'Новость не найдена',
-        };
+        notFound();
       }
       
       return {
@@ -22,28 +25,27 @@ export async function generateMetadata({ params }: { params: { slug: string } })
         description: response.data.Description ? response.data.Description.slice(0, 160) : undefined,
       };
     } catch (error) {
-      return {
-        title: 'Новость',
-      };
+      notFound();
     }
 }
 
-export default async function NewsDetailPage({ params }: { params: { slug: string } }) {
-    if (!params?.slug) {
-        return notFound();
+export default async function NewsDetailPage({ params, searchParams }: NextPageProps) {
+    const { slug } = await params;
+    if (!slug) {
+        notFound();
     }
 
     let newsData: INews;
 
     try {
-        const response = await getNewsBySlug(params.slug);
+        const response = await getNewsBySlug(slug);
         if (!response || !response.data) {
-            return notFound();
+            notFound();
         }
         newsData = response.data;
     } catch (error) {
         console.error('Ошибка в getServerSideProps:', error);
-        return notFound();
+        notFound();
     }
 
     const OPTIONS: EmblaOptionsType = { loop: true }
@@ -57,10 +59,10 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
     }
 
     return (
-        <BreadcrumbsWrapper pageName={newsData.Name}>
+        <BreadcrumbsWrapper pageName={newsData.Name || ""}>
             <div className="container mx-auto px-4 max-w-[1140px]">
                 <HtmlContent
-                    html={newsData?.Title?newsData?.Title:newsData?.Name}
+                    html={newsData?.Title?newsData?.Title:newsData?.Name || ""}
                     className="text-[32px] font-semibold text-center bootstrap-header"
                 />
 
@@ -69,7 +71,7 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
                 )}
                 {SLIDE_COUNT == 1 && (
                     <Image src={thumbnailImage.ImageURL}
-                        alt={thumbnailImage.AltText}
+                        alt={thumbnailImage.AltText || ""}
                         width={1110}
                         height={625}
                         className="object-cover rounded-2xl !mb-[50px] !mt-[30px] m-auto"

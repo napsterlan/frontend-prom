@@ -1,6 +1,6 @@
 'use client';
 
-import { IProject, IProjectCategory, IProductCategory, User } from '@/types';
+import { IProject, IProjectCategory, ICategory, IUser, IImages } from '@/types';
 import { createProject, updateProjectById, getManagersList } from '@/api';
 import { useRouter } from 'next/navigation';
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -36,29 +36,29 @@ setDefaultLocale('ru');
 
 const MAX_IMAGES = 20;
 
-interface ValidationErrors {
-    title?: string;
-    name?: string;
-    description?: string;
-    userID?: string;
-    publishDate?: string;
-    images?: string;
-    projectsCategories?: string;
+interface IValidationErrors {
+    Title?: string;
+    Name?: string;
+    Description?: string;
+    UserID?: string;
+    PublishDate?: string;
+    Images?: string;
+    ProjectsCategories?: string;
 }
 
-function validateProject(formData: typeof ProjectForm.prototype.formData): ValidationErrors {
-    const errors: ValidationErrors = {};
+function validateProject(formData: typeof ProjectForm.prototype.formData): IValidationErrors {
+    const errors: IValidationErrors = {};
 
     if (!formData.Title) {
-        errors.title = 'Заголовок обязателен';
+        errors.Title = 'Заголовок обязателен';
     } else if (formData.Title.length > 255) {
-        errors.title = 'Заголовок должен быть меньше 255 символов';
+        errors.Title = 'Заголовок должен быть меньше 255 символов';
     }
 
     if (!formData.Name) {
-        errors.name = 'Название обязательно';
+        errors.Name = 'Название обязательно';
     } else if (formData.Name.length > 255) {
-        errors.name = 'Название должно быть меньше 255 символов';
+        errors.Name = 'Название должно быть меньше 255 символов';
     }
 
     // Проверка пустого описания в формате Lexical Editor
@@ -71,27 +71,27 @@ function validateProject(formData: typeof ProjectForm.prototype.formData): Valid
         );
         
         if (!formData.description || isEmpty) {
-            errors.description = 'Описание обязательно';
+            errors.Description = 'Описание обязательно';
         }
     } catch (e) {
         // Если не удалось распарсить JSON, считаем описание пустым
-        errors.description = 'Описание обязательно';
+        errors.Description = 'Описание обязательно';
     }
 
     if (!formData.UserID) {
-        errors.userID = 'Пользователь обязателен';
+        errors.UserID = 'Пользователь обязателен';
     }
 
     if (!formData.PublishDate) {
-        errors.publishDate = 'Дата публикации обязательна';
+        errors.PublishDate = 'Дата публикации обязательна';
     }
 
-    if (!formData.existingImages.length) {
-        errors.images = 'Как минимум одно изображение обязательно';
+    if (!formData.ExistingImages.length) {
+        errors.Images = 'Как минимум одно изображение обязательно';
     }
 
     if (!formData.CategoriesID.length) {
-        errors.projectsCategories = 'Как минимум одна категория обязательна';
+        errors.ProjectsCategories = 'Как минимум одна категория обязательна';
     }
 
     return errors;
@@ -100,8 +100,22 @@ function validateProject(formData: typeof ProjectForm.prototype.formData): Valid
 interface IProjectFormProps {
     project: IProject;
     projectCategories: IProjectCategory[];
-    productCategories: IProductCategory[];
+    productCategories: ICategory[];
     isEditing: boolean;
+}
+
+interface IProjectFormData extends IProject {
+    ExistingImages: {
+        ID?: number | null;
+        ImageURL: string;
+        AltText: string;
+        Order: number;
+        ShortURL?: string;
+        file?: File;
+        isNew?: boolean;
+    }[] | [];
+    CategoriesID: number[];
+    DeletedImages: number[] | [],
 }
 
 type TabType = 'main' | 'relations';
@@ -110,79 +124,35 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
     const router = useRouter();
     const { showToast } = useToast();
     const [activeTab, setActiveTab] = useState<TabType>('main');
-    const [errors, setErrors] = useState<ValidationErrors>({});
+    const [errors, setErrors] = useState<IValidationErrors>({});
     const [loading, setLoading] = useState(false);
-    const [managers, setManagers] = useState<User[]>([]);
-    const [formData, setFormData] = useState<{
-        ID: number;
-        Title: string;
-        Name: string;
-        description: string;
-        metaTitle: string;
-        metaDescription: string;
-        metaKeyword: string;
-        CategoriesID: number[];
-        MainCategoryID: number | null;
-        Slug: string;
-        Images: {
-            ID?: number;
-            ImageURL: string;
-            Order: number;
-        }[];
-        relatedProducts: {
-            ID: number;
-            Name: string;
-            Images: {
-                ID: number;
-                ImageURL: string;
-                AltText: string;
-                Order: number;
-            }[];
-            fullPath: string;
-        }[];
-        existingImages: Array<{
-          ID?: number;
-          ImageURL: string;
-          AltText: string;
-          Order: number;
-          isNew?: boolean;
-          file?: File;
-          ShortURL?: string;
-        }>;
-        Status: boolean;
-        deletedImages: number[];
-        PublishDate: Date | null;
-        UserID: number | null;
-      }>({
-        ID: project.ID ?? 0,
+    const [managers, setManagers] = useState<IUser[]>([]);
+    const [formData, setFormData] = useState<IProjectFormData>({
+        ID: project.ID ?? null,
         Title: project.Title || '',
         Name: project.Name || '',
-        description: project.Description || '',
-        metaTitle: project.MetaTitle || '',
-        metaDescription: project.MetaDescription || '',
-        metaKeyword: project.MetaKeyword || '',
+        Description: project.Description || '',
+        MetaTitle: project.MetaTitle || '',
+        MetaDescription: project.MetaDescription || '',
+        MetaKeyword: project.MetaKeyword || '',
         CategoriesID: project.ProjectsCategories?.map((cat) => cat.ID) || [],
         MainCategoryID: project.MainCategoryID || null,
         Slug: project.Slug || '',
         Images: [],
-        relatedProducts: project.RelatedProducts?.map(product => ({
-          ...product,
-          Images: product.Images || []
-        })) || [],
-        existingImages: (project.Images || [])
-          .map((img, index) => ({
+        ExistingImages: project.Images?.length ? project.Images.map((img, index) => ({
             ...img,
             Order: typeof img.Order === 'number' ? img.Order : index,
-            ID: img.ID || undefined,
+            ID: img.ID || null,
             ImageURL: img.ImageURL || '',
+            AltText: img.AltText || '',
             ShortURL: img.ShortURL || '',
-          }))
-          .sort((a, b) => (a.Order ?? 0) - (b.Order ?? 0)),
+        }))
+        .sort((a, b) => (a.Order ?? 0) - (b.Order ?? 0)) : [],
+        DeletedImages: [],
         Status: project.Status || false,
-        deletedImages: [],
-        PublishDate: project.PublishDate ? new Date(project.PublishDate) : null,
-        UserID: project.User?.ID || null
-      });
+        PublishDate: project.PublishDate || '',
+        UserID: project.User?.ID || null,
+    });
 
     const [isAutoSlug, setIsAutoSlug] = useState(!isEditing ? true : false);
     useEffect(() => {
@@ -193,7 +163,6 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
             }));
         }
     }, [formData.Title, isAutoSlug]);
-
     const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!isAutoSlug) {
             setFormData(prev => ({
@@ -206,7 +175,7 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newFiles = Array.from(e.target.files || []);
         
-        if (formData.existingImages.length + newFiles.length > MAX_IMAGES) {
+        if (formData.ExistingImages.length + newFiles.length > MAX_IMAGES) {
             alert(`Максимальное количество изображений: ${MAX_IMAGES}`);
             return;
         }
@@ -214,41 +183,50 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
         const newPreviewImages = newFiles.map((file, index) => ({
             ImageURL: URL.createObjectURL(file),
             AltText: '',
-            Order: formData.existingImages.length + index,
+            Order: formData.ExistingImages.length + index,
             isNew: true,
             file: file
         }));
 
         setFormData(prev => ({
             ...prev,
-            existingImages: [...prev.existingImages, ...newPreviewImages],
+            ExistingImages: [...prev.ExistingImages, ...newPreviewImages],
         }));
     };
 
     const handleUploadImages = async () => {
         const processedImages = await Promise.all(
-            formData.existingImages.map(async (image) => {
+            formData.ExistingImages.map(async (image) => {
                 if (!image.isNew) {
                     return {
                         ID: image.ID,
                         ImageURL: image.ShortURL || image.ImageURL,
                         Order: image.Order
                     };
+                } else if (image.file) {
+                    const paths = await uploadImages([image.file], `catalog/projects/${project.ID}`);
+                    return {
+                        ID: image.ID,
+                        ImageURL: paths.filePaths[0],
+                        Order: image.Order
+                    };
+                } else {
+                    return {
+                        ID: image.ID,
+                        ImageURL: image.ImageURL,
+                        Order: image.Order
+                    };
                 }
-
-                const paths = await uploadImages([image.file!], `catalog/projects/${project.ID}`);
-                return {
-                    ID: image.ID,
-                    ImageURL: paths.filePaths[0],
-                    Order: image.Order
-                };
             })
         );
     
         setFormData(prev => ({
             ...prev,
-            Images: processedImages,
-            existingImages: prev.existingImages.map((img, index) => ({
+            Images: {
+                ...prev.Images,
+                ...processedImages
+            },
+            ExistingImages: prev.ExistingImages.map((img, index) => ({
                 ...img,
                 Order: index
             }))
@@ -258,7 +236,6 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
     };
     
     const handleSubmit = async (e: React.FormEvent) => {
-        console.log('formData', formData);
         e.preventDefault();
         
         const validationErrors = validateProject(formData);
@@ -271,7 +248,7 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
         setLoading(true);
         
         try {
-            const existingImagesData = formData.existingImages
+            const ExistingImagesData = formData.ExistingImages
                 .filter(img => !img.isNew)
                 .map((img, index) => ({
                     ID: img.ID,
@@ -280,21 +257,29 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                 }));
             const newImages = await handleUploadImages();
             
-            const allImages = [...existingImagesData, ...newImages.filter(img => !img.ID)];
-            if (isEditing) {
+            const allImages = [...ExistingImagesData, ...newImages.filter(img => !img.ID)];
+            if (isEditing && formData.ID) {
                 await updateProjectById(formData.ID, {
                     ...formData,
                     Images: allImages,
                     MainCategoryID: formData.CategoriesID[0]
                 })
-                .then((res) => router.push(res.data.Slug));
+                .then((res) => {
+                    // window.location.href = `${res.data.Slug}`
+                    router.push(res.data.Slug)
+                    // router.refresh();
+                });
             } else {
                 await createProject({
                     ...formData,
                     Images: allImages,
                     MainCategoryID: formData.CategoriesID[0]
                 })
-                .then((res) => router.push(res.data.Slug));
+                .then((res) => {
+                    // window.location.href = `${res.data.Slug}`
+                    router.push(res.data.Slug)
+                    // router.refresh();
+                });
             }
 
             showToast('Проект успешно сохранен', 'success');
@@ -306,20 +291,20 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
     };
 
     const handleImageDelete = (index: number) => {
-        const imageToDelete = formData.existingImages[index];
+        const imageToDelete = formData.ExistingImages[index];
         
         setFormData(prev => {
-            const newExistingImages = prev.existingImages.filter((_, i) => i !== index);
+            const newExistingImages = prev.ExistingImages.filter((_, i) => i !== index);
             
             if (imageToDelete.ID) {
                 return {
                     ...prev,
-                    existingImages: newExistingImages,
-                    deletedImages: [...prev.deletedImages, imageToDelete.ID]
+                    ExistingImages: newExistingImages,
+                    DeletedImages: [...prev.DeletedImages, imageToDelete.ID]
                 };
             }
             
-            return { ...prev, existingImages: newExistingImages };
+            return { ...prev, ExistingImages: newExistingImages };
         });
     };
 
@@ -331,16 +316,17 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
         }
 
         setFormData(prev => {
-            const oldIndex = prev.existingImages.findIndex((img, i) => 
+            const oldIndex = prev.ExistingImages.findIndex((img, i) => 
                 `${img.ID || img.ImageURL}-${i}` === active.id
             );
-            const newIndex = prev.existingImages.findIndex((img, i) => 
+            const newIndex = prev.ExistingImages.findIndex((img, i) => 
                 `${img.ID || img.ImageURL}-${i}` === over.id
             );
 
             // Получаем новый порядок изображений
-            const reorderedImages = arrayMove(prev.existingImages, oldIndex, newIndex);
+            const reorderedImages = arrayMove(prev.ExistingImages, oldIndex, newIndex);
 
+            console.log('reorderedImages', reorderedImages);
             // Обновляем порядок
             const updatedImages = reorderedImages.map((img, i) => ({
                 ...img,
@@ -349,7 +335,7 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
 
             return {
                 ...prev,
-                existingImages: updatedImages
+                ExistingImages: updatedImages
             };
         });
     };
@@ -480,26 +466,26 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                                     className="hidden"
                                     id="file-upload"
                                     accept="image/*"
-                                    disabled={formData.existingImages.length >= MAX_IMAGES}
+                                    disabled={formData.ExistingImages.length >= MAX_IMAGES}
                                 />
                                 <label 
                                     htmlFor="file-upload" 
                                     className={`inline-block px-4 py-2 rounded-md cursor-pointer ${
-                                        formData.existingImages.length >= MAX_IMAGES 
+                                        formData.ExistingImages.length >= MAX_IMAGES 
                                             ? 'bg-gray-400 cursor-not-allowed' 
                                             : 'bg-blue-500 hover:bg-blue-600 text-white'
                                     }`}
                                 >
-                                    {formData.existingImages.length >= MAX_IMAGES 
+                                    {formData.ExistingImages.length >= MAX_IMAGES 
                                         ? 'Достигнут лимит изображений' 
                                         : 'Добавить изображения'
                                     }
                                 </label>
                                 <div className="text-sm text-gray-500 mt-2">
-                                    {`${formData.existingImages.length}/${MAX_IMAGES} изображений`}
+                                    {`${formData.ExistingImages.length}/${MAX_IMAGES} изображений`}
                                 </div>
-                                {errors.images && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.images}</p>
+                                {errors.Images && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.Images}</p>
                                 )}
 
                                 <DndContext
@@ -508,11 +494,11 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                                     onDragEnd={handleDragEnd}
                                 >
                                     <SortableContext
-                                        items={formData.existingImages.map((image, index) => `${image.ID || image.ImageURL}-${index}`)}
+                                        items={formData.ExistingImages.map((image, index) => `${image.ID || image.ImageURL}-${index}`)}
                                         strategy={rectSortingStrategy}
                                     >
                                         <div className="grid grid-cols-4 mt-4">
-                                            {formData.existingImages.map((image, index) => (
+                                            {formData.ExistingImages.map((image, index) => (
                                                 <SortableImage
                                                     key={`${image.ID || image.ImageURL}-${index}`}
                                                     image={image}
@@ -544,20 +530,20 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                     {/* Блок описания на всю ширину */}
                     <div className="w-full mb-6">
                         <h2 className="text-2xl font-bold mb-4">Описание проекта</h2>
-                        <div className={`w-full ${errors.description ? 'border-2 border-red-500 rounded-md' : ''}`}>
+                        <div className={`w-full ${errors.Description ? 'border-2 border-red-500 rounded-md' : ''}`}>
                             <LexicalEditor
                                 initialContent={project.Description || ''}
                                 onChange={(content) => {
                                     handleEditorChange(content);
-                                    if (errors.description) {
-                                        setErrors({ ...errors, description: undefined });
+                                    if (errors.Description) {
+                                        setErrors({ ...errors, Description: undefined });
                                     }
                                 }}
                                 className="prose max-w-none"
                             />
                         </div>
-                        {errors.description && (
-                            <p className="text-red-500 text-sm mt-1">{errors.description}</p>
+                        {errors.Description && (
+                            <p className="text-red-500 text-sm mt-1">{errors.Description}</p>
                         )}
                     </div>
                 </>
@@ -612,19 +598,19 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                                     );
                                 })}
                             </div>
-                            {errors.projectsCategories && (
-                                <p className="text-red-500 text-sm mb-2">{errors.projectsCategories}</p>
+                            {errors.ProjectsCategories && (
+                                <p className="text-red-500 text-sm mb-2">{errors.ProjectsCategories}</p>
                             )}
 
                             <div className="relative" ref={dropdownRef}>
                                 <input
                                     type="text"
-                                    className={`w-full p-2 border rounded ${errors.projectsCategories ? 'border-red-500' : ''}`}
+                                    className={`w-full p-2 border rounded ${errors.ProjectsCategories ? 'border-red-500' : ''}`}
                                     placeholder="Поиск категорий..."
                                     onChange={(e) => {
                                         handleCategorySearch(e.target.value);
-                                        if (errors.projectsCategories) {
-                                            setErrors({ ...errors, projectsCategories: undefined });
+                                        if (errors.ProjectsCategories) {
+                                            setErrors({ ...errors, ProjectsCategories: undefined });
                                         }
                                     }}
                                     onFocus={() => setIsDropdownOpen(true)}

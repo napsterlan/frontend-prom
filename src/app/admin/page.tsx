@@ -13,7 +13,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      console.log(session)
+    //   console.log(session)
       console.log(status)
       // router.push('/auth/error?error=AccessDenied')
     }

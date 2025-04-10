@@ -4,7 +4,7 @@ import { CSS } from '@dnd-kit/utilities';
 
 interface SortableImageProps {
   image: {
-    ID?: number;
+    ID?: number | null;
     ImageURL: string;
     AltText: string;
     Order: number;

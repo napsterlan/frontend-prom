@@ -72,13 +72,13 @@ const UserList: React.FC<UserListProps> = ({ users }) => {
               <td className="py-3 px-6">{user.Role}</td>
               <td className="py-3 px-6 text-right">
                 <button 
-                  onClick={() => handleEdit(user.ID)} 
+                  onClick={() => handleEdit(user.ID || 0)} // добавила || 0
                   className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2"
                 >
                   Редактировать
                 </button>
                 <button 
-                  onClick={() => handleDelete(user.ID)} 
+                  onClick={() => handleDelete(user.ID || 0)} // добавила || 0
                   className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                 >
                   Удалить

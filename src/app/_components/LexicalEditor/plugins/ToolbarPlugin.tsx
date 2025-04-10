@@ -392,7 +392,7 @@ export default function ToolbarPlugin() {
       const paths = await uploadImages(Array.from(files), 'editor/images');
       
       editor.update(() => {
-        const nodes = paths.filePaths.map(path => {
+        const nodes = paths.filePaths.map((path: string) => {
           // Добавляем полный URL к MinIO
           const apiUrl = process.env.NEXT_PUBLIC_MINIO_URL || 'http://192.168.31.40:9015/promled-website-test/';
           const fullPath = `${apiUrl}${path}`;

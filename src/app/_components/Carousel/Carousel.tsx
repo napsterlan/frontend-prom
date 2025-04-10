@@ -50,7 +50,7 @@ const Carousel: React.FC<PropType> = (props) => {
     // }, [isFullscreen, fullscreenEmblaApi, selectedIndex]);
 
     useEffect(() => {
-        if (!emblaApi) return;
+        if (!emblaApi) return () => {};
 
         const onSelect = () => {
             const currentIndex = emblaApi.selectedScrollSnap();
@@ -62,7 +62,7 @@ const Carousel: React.FC<PropType> = (props) => {
     }, [emblaApi]);
 
     useEffect(() => {
-        if (!fullscreenEmblaApi) return;
+        if (!fullscreenEmblaApi) return () => {};
 
         const onSelect = () => {
             const currentIndex = fullscreenEmblaApi.selectedScrollSnap();
@@ -189,7 +189,7 @@ const Carousel: React.FC<PropType> = (props) => {
                         <div className="embla__slide" key={index} onClick={handleSlideClick}>
                             <Image src={images[index].ImageURL?images[index].ImageURL:'/placeholder.png'}
                                    fill={true}
-                                   alt={images[index].AltText}
+                                   alt={images[index].AltText || ""}
                             className='!relative'/>
                         </div>
                     ))}
@@ -274,7 +274,7 @@ const Carousel: React.FC<PropType> = (props) => {
                                         fill={true}
                                         className={`object-contain transition-transform duration-300 ease-out !h-auto !m-auto
                                          ${isZoomed ? 'scale-150' : 'scale-100'}`}
-                                        alt={images[index].AltText}
+                                        alt={images[index].AltText || ""}
                                     />
                                 </div>
                             )

@@ -1,37 +1,45 @@
 'use client';
 
-import { INews, INewsData, IProjectCategory, IProductCategory } from '@/types';
+import { INews, IProjectCategory, ICategory, IImages } from '@/types';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/ToastContext';
 import { createNews, updateNews } from '@/api';
 
-interface NewsFormProps {
+interface INewsFormProps {
     news: INews;
     isEditing: boolean;
     projectCategories: IProjectCategory[]; 
-    productCategories: IProductCategory[];
+    productCategories: ICategory[];
 }
 
-export function NewsForm({ news, isEditing, projectCategories, productCategories }: NewsFormProps) {
+interface INewsData extends INews {
+    ExistingImages: IImages[] | [];
+    NewImages: File[] | [];
+    DeletedImageIds: number[] | [];
+} 
+
+export function NewsForm({ news, isEditing, projectCategories, productCategories }: INewsFormProps) {
     const router = useRouter();
     const { showToast } = useToast();
     const [formData, setFormData] = useState<INewsData>({
-        title: news.Title,   
-        description: news.Description,
-        metaTitle: news.MetaTitle,
-        metaDescription: news.MetaDescription,
-        metaKeyword: news.MetaKeyword,
-        slug: news.Slug,
-        existingImages: news.Images || [],
-        newImages: [],
-        deletedImageIds: [],
+        ID: news.ID || null,
+        Title: news.Title,   
+        Description: news.Description,
+        MetaTitle: news.MetaTitle,
+        MetaDescription: news.MetaDescription,
+        MetaKeyword: news.MetaKeyword,
+        Slug: news.Slug,
+        ExistingImages: news.Images || [],
+        NewImages: [],
+        DeletedImageIds: [],
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             if (isEditing) {
+                if (!news.ID) throw new Error('ID новости не найден');
                 await updateNews(news.ID, formData);
                 showToast('Новость успешно обновлена', 'success');
             } else {

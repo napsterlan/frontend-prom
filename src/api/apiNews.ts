@@ -1,5 +1,5 @@
 import { apiClient } from "./apiClient";
-import { INewsData } from "@/types";
+import { INews } from "@/types";
 
 // Получение списка всех новостей
 export const getAllNews = async (page: number = 1) => {
@@ -14,13 +14,13 @@ export const getNewsBySlug = async (slug: string) => {
 };
 
 // создание новости
-export const createNews = async (newsData: INewsData) => {
+export const createNews = async (newsData: INews) => {
     const response = await apiClient.post(`/news`, newsData)
     return response.data;
 };
 
 // обновление новости
-export const updateNews = async (id: number, newsData: INewsData) => {
+export const updateNews = async (id: number, newsData: INews) => {
     const response = await apiClient.put(`/news/${id}`, newsData)
     return response.data;
 };

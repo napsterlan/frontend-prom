@@ -72,7 +72,7 @@ export function ProjectsClient({
         searchParams.set('page', page.toString());
         
         setIsLoading(true);
-        router.push(`/projects?${searchParams.toString()}`, { scroll: true });
+        router.push(`/projects?${searchParams.toString()}`);
     };
 
     const clearCategory = () => {
@@ -167,7 +167,7 @@ export function ProjectsClient({
                                         {project.Images?.[0] && (
                                             <Image
                                                 src={project.Images[0].ImageURL?project.Images[0].ImageURL:'./placeholder.png'}
-                                                alt={project.Images[0].AltText}
+                                                alt={project.Images[0].AltText || ''}
                                                 width={350}
                                                 height={200}
                                                 className="w-full h-[200px] object-cover rounded-t-xl"

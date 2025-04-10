@@ -1,9 +1,9 @@
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { QueryClientProvider } from 'react-query';
-import queryClient from '../app/queryClient';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import queryClient from '@/app/queryClient';
+import Header from '@/app/_components/Header';
+import Footer from '@/app/_components/Footer';
 import '../app/globals.css';
 import '../app/font.css';
 import { AuthProvider } from '../contexts/AuthContext';

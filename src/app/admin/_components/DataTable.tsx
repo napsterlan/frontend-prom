@@ -7,9 +7,9 @@ import { IImages } from '@/types'
 import Image from 'next/image';
 
 interface DataTableProps<T extends { 
-    ID: number; 
-    Name: string; 
-    FullPath: string;
+    ID?: number | null; 
+    Name?: string; 
+    FullPath?: string;
     Images?: IImages[] | null;
 }> {
     initialData: T[];
@@ -20,9 +20,9 @@ interface DataTableProps<T extends {
 }
 
 export function DataTable<T extends { 
-    ID: number; 
-    Name: string; 
-    FullPath: string;
+    ID?: number | null; 
+    Name?: string; 
+    FullPath?: string;
     Images?: IImages[] | null;
 }>({ 
     initialData, 
@@ -69,7 +69,7 @@ export function DataTable<T extends {
         const pages = [];
         const maxVisiblePages = 5;
         let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+        const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
         if (endPage - startPage + 1 < maxVisiblePages) {
             startPage = Math.max(1, endPage - maxVisiblePages + 1);
@@ -176,7 +176,7 @@ export function DataTable<T extends {
                                     Редактировать
                                 </Link>
                                 <button 
-                                    onClick={() => handleDelete(item.ID)} 
+                                    onClick={() => handleDelete(item.ID || 0)} 
                                     className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                                 >
                                     Удалить

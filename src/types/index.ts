@@ -1,10 +1,10 @@
 
-import { IResponse, IAuthFormData, IBreadcrumb, IBreadcrumbsState } from "./types";
-import { INews, INewsData } from "./newsTypes";
-import { IProductCategory, IProjectCategory } from "./categoryTypes";
-import { IImages, IFileGroup, IDraggableImage } from "./mediaTypes";
+import { IResponse, IAuthFormData, IBreadcrumb, IBreadcrumbsState, ITag, NextPageParams, NextSearchParams, NextPageProps } from "./types";
+import { INews } from "./newsTypes";
+import { ICategory, IProjectCategory } from "./categoryTypes";
+import { IImages, IFileGroup, IDraggableImage, IFile } from "./mediaTypes";
 import { IProductView, IProduct } from "./productTypes";
-import { IProject, IProjectFormData } from "./projectTypes";
+import { IProject } from "./projectTypes";
 import { IUser } from "./userTypes";
 
 export type {
@@ -12,16 +12,19 @@ export type {
     IAuthFormData,
     IBreadcrumb,
     IBreadcrumbsState,
+    ITag,
     INews,
-    INewsData,
-    IProductCategory,
+    ICategory,
     IProjectCategory,
     IImages,
     IFileGroup,
     IDraggableImage,
+    IFile,
     IProductView,
     IProduct,
     IProject,
-    IProjectFormData,
     IUser,
+    NextPageParams,
+    NextSearchParams,
+    NextPageProps
 }

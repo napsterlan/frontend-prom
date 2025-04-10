@@ -1,7 +1,7 @@
 import { getAllProjectCategories, getCategories } from '@/api';
 import 'react-datepicker/dist/react-datepicker.css';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
-import { notFound } from 'next/navigation';
+// import { notFound } from 'next/navigation';
 import { NewsForm } from '../_components/NewsForm';
 
 export default async function AddNewsPage() {
@@ -21,8 +21,8 @@ export default async function AddNewsPage() {
             Slug: '',
             CreatedAt: '',
             UpdatedAt: '',
-            DeletedAt: null,
-            PublishDate: null,
+            DeletedAt: '',
+            PublishDate: '',
         }
         const productCategories = await getCategories();
 
@@ -41,6 +41,8 @@ export default async function AddNewsPage() {
         );
     } catch (error) {
         console.error('Error fetching project:', error);
-        notFound();
+        // notFound();
+        console.log('not found 404'); 
+        return;
     }
 } 

@@ -1,4 +1,5 @@
 import {getAllProjectCategories, getAllProjects, searchFor} from '@/api';
+import { NextPageProps } from '@/types';
 import { ProjectsClient } from './projects-client';
 
 interface ISearchResult {
@@ -52,18 +53,12 @@ async function getProjects(page: number = 1, category: string = "", search: stri
     }
 }
 
-export default async function ProjectsPage({
-    searchParams,
-}: {
-    searchParams?: {
-        page?: string;
-        category?: string;
-        search?: string;
-    };
-}) {
-    const page = Number(searchParams?.page) || 1;
-    const category = searchParams?.category || "";
-    const search = searchParams?.search || "";
+
+
+export default async function ProjectsPage({params, searchParams}: NextPageProps) {
+    const { page } = await searchParams;
+    const { category } = await searchParams;
+    const { search } = await searchParams;
 
     const [projectsResponse, categoriesResponse] = await Promise.all([
         getProjects(page, category, search),
@@ -79,11 +74,11 @@ export default async function ProjectsPage({
             <ProjectsClient
                 initialProjects={projects}
                 initialCategories={categories}
-                currentPage={page}
+                currentPage={page || 1}
                 totalPages={metadata.last_page}
                 totalRecords={metadata.total_records}
-                searchQuery={search}
-                currentCategory={category}
+                searchQuery={search || ""}
+                currentCategory={category || ""}
             />
         </>
     );

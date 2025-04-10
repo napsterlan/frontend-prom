@@ -51,16 +51,16 @@ export default function ProjectDetailPage({ project }: { project: IProject }) {
       <Breadcrumbs />
       <div className="w-full">
         <Image 
-          src={project?.ProjectImages?.[0]?.Images?.[0]?.ImageURL || '/placeholder-image.jpg'}
-          alt={project?.ProjectImages?.[0]?.Images?.[0]?.AltText || 'Project image'}
+          src={project?.Images?.[0]?.ImageURL || '/placeholder-image.jpg'} // изменила путь к изображению
+          alt={project?.Images?.[0]?.AltText || 'Project image'}  // изменила путь к изображению
           width={1200}
           height={800}
           className="w-full h-auto"
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">{project?.Title}</h1>
+        {/* <div> НЕ СВЯЗЫВАЕМ ПРОДУКТЫ С ПРОЕКТАМИ А ТОЛЬКО КАТЕГОРИИ
+        <h1 className="text-2xl font-bold">{project?.Title}</h1>
           <p>{project?.Description}</p>
           <h2 className="text-xl font-semibold">Связанные товары</h2>
           <ul>
@@ -68,12 +68,12 @@ export default function ProjectDetailPage({ project }: { project: IProject }) {
                 ID: number;
                 Name: string;
                 Images: IImages[] | null;
-                fullPath: string;
+                FullPath: string;
             }) => (
               <li key={product.ID}>{product.Name}</li>
             ))}
           </ul>
-        </div>
+        </div> */}
         <div>
           <h2 className="text-xl font-semibold">Информация о менеджере проекта</h2>
           {/* Здесь можно добавить информацию о менеджере проекта */}

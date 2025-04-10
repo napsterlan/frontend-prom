@@ -56,6 +56,7 @@
     "react-icons": "^5.4.0",
     "react-lightbox-component": "^1.2.1",
     "react-query": "^3.39.3",
+    "tailwind-merge": "^3.2.0",
     "unisender": "^1.1.1",
     "xlsx": "^0.18.5",
     "yet-another-react-lightbox": "^3.21.7"

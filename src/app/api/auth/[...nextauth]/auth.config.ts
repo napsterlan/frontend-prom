@@ -58,34 +58,34 @@ export const authOptions: NextAuthOptions = {
       console.log('Session:', session)
       // Add the token and user data to the session
       if (session.user) {
-        session.user.id = token.id
-        session.user.email = token.email
-        session.user.name = token.name
+        session.user.id = token.id as string
+        session.user.email = token.email as string
+        session.user.name = token.name as string
         session.user.role = token.role
         session.jwt = token.jwt // Add API token to session
       }
       return session
     },
-    async authorized({ req, token }) {
-      console.log('Authorization Check:', {
-        path: req.nextUrl?.pathname,
-        hasToken: !!token,
-        token: token
-      })
+    // async authorized({ req, token }: { req: any, token: any }): Promise<boolean> {
+    //   console.log('Authorization Check:', {
+    //     path: req.nextUrl?.pathname,
+    //     hasToken: !!token,
+    //     token: token
+    //   })
 
-      // Check for protected routes
-      if (req.nextUrl?.pathname.startsWith('/admin')) {
-        return token?.role === 'admin'
-      }
+    //   // Check for protected routes
+    //   if (req.nextUrl?.pathname.startsWith('/admin')) {
+    //     return token?.role === 'admin'
+    //   }
 
-      if (req.nextUrl?.pathname.startsWith('/api/auth')) {
-        return true // Always allow auth endpoints
-      }
+    //   if (req.nextUrl?.pathname.startsWith('/api/auth')) {
+    //     return true // Always allow auth endpoints
+    //   }
 
 
-      // For other protected routes, just check if user is logged in
-      return !!token
-    }
+    //   // For other protected routes, just check if user is logged in
+    //   return !!token
+    // }
   },
   pages: {
     signIn: '/login',

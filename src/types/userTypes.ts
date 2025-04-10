@@ -1,18 +1,30 @@
 // Пользователь
 export interface IUser {
-    ID: number;
-    CreatedAt: string;
-    UpdatedAt: string;
-    DeletedAt: string | null;
-    Username: string;
+    ID?: number;
+    Username?: string;
     Email: string;
-    Role: string;
+    Role?: string;
+    PartnerLevel?: number;
     FirstName: string;
     LastName: string;
     Phone: string;
-    Activated: boolean;
-    Status: boolean;
-    Company: string | null;
-    ImageURL?: string | null;
-    QRCodeURL?: string | null;
+    Activated?: boolean;
+    Status?: boolean;
+    ImageURL?: string;
+    QRCodeURL?: string;
+    Company?: string;
+    CreatedAt?: string;
+    UpdatedAt?: string;
+    DeletedAt?: string;
+    Password?: string;
+}
+
+// Компания пользователя
+export interface ICompany {
+    ID: number,
+    Name: string,
+    INN: string,
+    KPP: string,
+    LegalAddress: string,
+    Users: IUser[] | []
 }

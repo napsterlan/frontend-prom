@@ -1,23 +1,24 @@
 import { getProjectBySlug, getCategories, getAllProjectCategories } from '@/api';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+// import { notFound } from 'next/navigation';
 import { ProjectForm } from '../_components/project-form';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
-
+import { NextPageProps } from '@/types';
 export const metadata: Metadata = {
     title: 'Редактирование проекта',
     description: 'Редактирование существующего проекта',
 };
 
-interface Props {
-    params: {
-        slug: string;
-    };
-}
+export default async function EditProjectPage({ params, searchParams }: NextPageProps) {
+    const { slug } = await params;
 
-export default async function EditProjectPage({ params }: Props) {
+    if (!slug) {
+        console.log('not found 404'); 
+        return;
+    }
+
     try {
-        const project = await getProjectBySlug(params.slug);
+        const project = await getProjectBySlug(slug);
         const projectCategories = await getAllProjectCategories();
 
         const productCategories = await getCategories();
@@ -25,7 +26,9 @@ export default async function EditProjectPage({ params }: Props) {
         console.log('project', project);
 
         if (!project) {
-            notFound();
+            // notFound();
+            console.log('not found 404'); 
+            return;
         }
 
         return (
@@ -43,6 +46,8 @@ export default async function EditProjectPage({ params }: Props) {
         );
     } catch (error) {
         console.error('Error fetching project:', error);
-        notFound();
+        // notFound();
+        console.log('not found 404'); 
+        return;
     }
 } 
