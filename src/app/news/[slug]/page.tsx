@@ -12,12 +12,16 @@ export async function generateMetadata({ params, searchParams }: NextPageProps) 
     try {
       const { slug } = await params;
       if (!slug) {
-        notFound();
+        return {
+            notFound: true,
+        };
       }
       const response = await getNewsBySlug(slug);
       
       if (!response || !response.data) {
-        notFound();
+        return {
+            notFound: true,
+        };
       }
       
       return {
@@ -25,14 +29,18 @@ export async function generateMetadata({ params, searchParams }: NextPageProps) 
         description: response.data.Description ? response.data.Description.slice(0, 160) : undefined,
       };
     } catch (error) {
-      notFound();
+        return {
+            notFound: true,
+        };
     }
 }
 
 export default async function NewsDetailPage({ params, searchParams }: NextPageProps) {
     const { slug } = await params;
     if (!slug) {
-        notFound();
+        return {
+            notFound: true,
+        };
     }
 
     let newsData: INews;
@@ -40,12 +48,16 @@ export default async function NewsDetailPage({ params, searchParams }: NextPageP
     try {
         const response = await getNewsBySlug(slug);
         if (!response || !response.data) {
-            notFound();
+            return {
+                notFound: true,
+            };
         }
         newsData = response.data;
     } catch (error) {
         console.error('Ошибка в getServerSideProps:', error);
-        notFound();
+        return {
+            notFound: true,
+        };
     }
 
     const OPTIONS: EmblaOptionsType = { loop: true }

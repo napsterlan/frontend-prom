@@ -1,7 +1,6 @@
 import { getProjectBySlug } from "@/api";
 // import { Breadcrumbs } from '@/app/_components/Breadcrumbs';
 import { ProjectDetailClient } from './project-detail-client';
-// import { notFound } from 'next/navigation';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
 import { NextPageProps } from '@/types';
 export const dynamic = 'force-dynamic';
@@ -23,15 +22,17 @@ export default async function ProjectDetailPage({ params, searchParams }: NextPa
     const { slug } = await params;
 
     if (!slug) {
-        console.log('not found 404'); 
-        return;
+        return {
+            notFound: true,
+        };
     }
     
     const projectData = await getProject(slug);
 
     if (!projectData) {
-        console.log('not found 404'); 
-        return;
+        return {
+            notFound: true,
+        };
     }
 
     return (

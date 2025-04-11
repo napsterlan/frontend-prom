@@ -1,6 +1,5 @@
 import { getProjectBySlug, getCategories, getAllProjectCategories } from '@/api';
 import { Metadata } from 'next';
-// import { notFound } from 'next/navigation';
 import { ProjectForm } from '@/app/admin/projects/_components/ProjectForm';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
 import { NextPageProps } from '@/types';
@@ -26,9 +25,9 @@ export default async function EditProjectPage({ params, searchParams }: NextPage
         console.log('project', project);
 
         if (!project) {
-            // notFound();
-            console.log('not found 404'); 
-            return;
+            return {
+                notFound: true,
+            };
         }
 
         return (
@@ -46,8 +45,8 @@ export default async function EditProjectPage({ params, searchParams }: NextPage
         );
     } catch (error) {
         console.error('Error fetching project:', error);
-        // notFound();
-        console.log('not found 404'); 
-        return;
+        return {
+            notFound: true,
+        };
     }
 } 

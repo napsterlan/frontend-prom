@@ -1,7 +1,6 @@
 import { getAllProjectCategories, getCategories } from '@/api';
 import 'react-datepicker/dist/react-datepicker.css';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
-// import { notFound } from 'next/navigation';
 import { ProjectForm } from '@/app/admin/projects/_components/ProjectForm';
 
 export default async function AddProjectPage() {
@@ -49,8 +48,8 @@ export default async function AddProjectPage() {
         );
     } catch (error) {
         console.error('Error fetching project:', error);
-        // notFound();
-        console.log('not found 404'); 
-        return;
+        return {
+            notFound: true,
+        };
     }
 } 

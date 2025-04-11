@@ -1,7 +1,6 @@
 import { getNewsBySlug, getCategories } from '@/api';
 import { NextPageProps } from '@/types';
 import { Metadata } from 'next';
-// import { notFound } from 'next/navigation';
 import { NewsForm } from '@/app/admin/news/_components/NewsForm';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
 
@@ -33,8 +32,8 @@ export default async function EditNewsPage({ params }: NextPageProps) {
         );
     } catch (error) {
         console.error('Error fetching news:', error);
-        // notFound();
-        console.log('not found 404'); 
-        return;
+        return {
+            notFound: true,
+        };
     }
 } 
