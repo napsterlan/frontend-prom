@@ -3,6 +3,10 @@
 import { IUser } from '@/types';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { registerLocale } from "react-datepicker";
+import { ru } from 'date-fns/locale/ru';
+
+registerLocale('ru', ru);
 
 interface IValidationErrors {
     Title?: string;
@@ -12,6 +16,10 @@ interface IValidationErrors {
 }
 
 interface IProjectMainInfoProps {
+    /**
+     * Тип формы
+     */
+    type: 'project' | 'news';
     /**
      * Данные формы проекта
      */
@@ -74,7 +82,8 @@ interface IProjectMainInfoProps {
  * />
  * ```
  */
-export function ProjectMainInfo({
+export function FormMainInfo({
+    type,
     formData,
     errors,
     managers,
@@ -174,7 +183,7 @@ export function ProjectMainInfo({
                 />
             </div>
             
-            <div>
+            {type === 'project' &&  <div>
                 <label className="block mb-2">Ответственный менеджер</label>
                 <select
                     className={`w-full p-2 border rounded ${errors.UserID ? 'border-red-500' : ''}`}
@@ -191,7 +200,7 @@ export function ProjectMainInfo({
                 {errors.UserID && (
                     <p className="text-red-500 text-sm mt-1">{errors.UserID}</p>
                 )}
-            </div>
+            </div>}
 
             <div>
                 <div className="mb-2">
@@ -229,14 +238,15 @@ export function ProjectMainInfo({
 
             <div className="mb-2">
                 <label className="block mb-2">Статус</label>
-                <select
-                    className="w-full p-2 border rounded"
-                    value={formData.Status.toString()}
-                    onChange={(e) => setFormData((prev: any) => ({ ...prev, Status: e.target.value === 'true' }))}
+                <div 
+                    onClick={(e) => setFormData((prev: any) => ({ ...prev, Status: !formData.Status }))}
+                    className="flex items-center gap-2 cursor-pointer select-none"
                 >
-                    <option value="true">Включено</option>
-                    <option value="false">Отключено</option>
-                </select>
+                    <div className={`w-8 h-4 rounded-full transition-colors ${formData.Status ? 'bg-blue-500' : 'bg-gray-300'}`}>
+                        <div className={`w-3 h-3 rounded-full bg-white transform transition-transform mt-0.5 ${formData.Status ? 'translate-x-4' : 'translate-x-1'}`} />
+                    </div>
+                    <span className="text-sm text-gray-500">{formData.Status ? 'Включено' : 'Отключено'}</span>
+                </div>
             </div>
         </div>
     );

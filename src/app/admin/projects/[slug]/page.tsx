@@ -1,7 +1,7 @@
 import { getProjectBySlug, getCategories, getAllProjectCategories } from '@/api';
 import { Metadata } from 'next';
 // import { notFound } from 'next/navigation';
-import { ProjectForm } from '../_components/project-form';
+import { ProjectForm } from '@/app/admin/projects/_components/ProjectForm';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
 import { NextPageProps } from '@/types';
 export const metadata: Metadata = {

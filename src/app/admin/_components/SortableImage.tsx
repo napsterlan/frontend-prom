@@ -8,7 +8,7 @@ interface SortableImageProps {
     ImageURL: string;
     AltText: string;
     Order: number;
-    isNew?: boolean;
+    IsNew?: boolean;
   };
   index: number;
   onDelete: () => void;

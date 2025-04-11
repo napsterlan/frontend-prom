@@ -15,7 +15,7 @@ const AddProjectCategory = () => {
       ImageURL: string;
       AltText: string;
       Order: number;
-      isNew: boolean;
+      IsNew: boolean;
     }>;
     newImages: File[];
   }>({
@@ -68,7 +68,7 @@ const AddProjectCategory = () => {
       ImageURL: URL.createObjectURL(file),
       AltText: '',
       Order: formData.existingImages.length + index,
-      isNew: true
+      IsNew: true
     }));
 
     setFormData(prev => ({

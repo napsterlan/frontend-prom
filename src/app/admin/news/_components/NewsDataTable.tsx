@@ -1,10 +1,10 @@
 'use client';
 
-import { DataTable } from './DataTable';
+import { DataTable } from '@/app/admin/_components/DataTable';
 import { deleteNewsById } from '@/api';
 import { INews } from '@/types/newsTypes';
 
-interface NewsDataTableProps {
+interface INewsDataTableProps {
     initialData: INews[];
     currentPage: number;
     totalPages: number;
@@ -16,7 +16,7 @@ export function NewsDataTable({
     currentPage, 
     totalPages, 
     totalRecords 
-}: NewsDataTableProps) {
+}: INewsDataTableProps) {
     return (
         <DataTable 
             initialData={initialData}

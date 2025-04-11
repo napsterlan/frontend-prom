@@ -24,7 +24,7 @@ export function ProjectDetailClient({ projectData }: IProjectDetailClientProps) 
                 className="text-[32px] font-semibold text-center bootstrap-header leading-[1]"
             />
             {SLIDE_COUNT > 1 && (
-                <Carousel slides={SLIDES} options={OPTIONS} images={postImages} />
+                <Carousel slides={SLIDES} options={OPTIONS} images={postImages} priority />
             )}
             {SLIDE_COUNT === 1 && (
                 <Image 
@@ -32,6 +32,7 @@ export function ProjectDetailClient({ projectData }: IProjectDetailClientProps) 
                     alt={thumbnailImage.AltText || ''}
                     width={1110}
                     height={625}
+                    priority
                     className="object-cover rounded-2xl !mb-[50px] !mt-[30px] m-auto"
                 />
             )}

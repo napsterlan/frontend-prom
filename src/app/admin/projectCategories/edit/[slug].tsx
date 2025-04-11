@@ -29,7 +29,7 @@ const EditProjectCategory = ({ category }: { category: IProjectCategory }) => {
       ImageURL: string;
       AltText: string;
       Order: number;
-      isNew: boolean;
+      IsNew: boolean;
     }>;
     newImages: File[];
     deletedImages: number[];
@@ -42,7 +42,7 @@ const EditProjectCategory = ({ category }: { category: IProjectCategory }) => {
         ID: img.ID || undefined,
         ImageURL: img.ImageURL || '',
         AltText: img.AltText || '',
-        isNew: false
+        IsNew: false
       }))
       .sort((a, b) => (a.Order ?? 0) - (b.Order ?? 0)),
     newImages: [],
@@ -91,7 +91,7 @@ const EditProjectCategory = ({ category }: { category: IProjectCategory }) => {
       ImageURL: URL.createObjectURL(file),
       AltText: '',
       Order: formData.existingImages.length + index,
-      isNew: true
+      IsNew: true
     }));
 
     setFormData(prev => ({
@@ -113,7 +113,7 @@ const EditProjectCategory = ({ category }: { category: IProjectCategory }) => {
         );
         
         uploadedImages = formData.existingImages
-          .filter(img => img.isNew)
+          .filter(img => img.IsNew)
           .map((img, index) => ({
             ImageURL: uploadResponse.filePaths[index],
             AltText: img.AltText,
@@ -126,7 +126,7 @@ const EditProjectCategory = ({ category }: { category: IProjectCategory }) => {
         Name: formData.name,
         Images: [
           ...formData.existingImages
-            .filter(img => !img.isNew)
+            .filter(img => !img.IsNew)
             .map(img => ({
               ID: img.ID,
               Order: img.Order

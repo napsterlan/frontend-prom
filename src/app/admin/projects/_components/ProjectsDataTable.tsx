@@ -1,6 +1,6 @@
 'use client';
 
-import { DataTable } from '../../_components/DataTable';
+import { DataTable } from '@/app/admin/_components/DataTable';
 import { deleteProjectById } from '@/api';
 import { IProject } from '@/types';
 

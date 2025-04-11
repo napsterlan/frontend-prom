@@ -25,7 +25,7 @@ export interface IDraggableImage {
     ImageURL: string;
     AltText: string;
     Order: number;
-    isNew: boolean;
+    IsNew: boolean;
 }
 
 export interface IFile {

@@ -1,7 +1,7 @@
 'use client';
 
-import { INews, IProjectCategory, ICategory, IUser } from '@/types';
-import { createNews, updateNews, getManagersList, uploadImages } from '@/api';
+import { IProject, IProjectCategory, ICategory, IUser } from '@/types';
+import { createProject, updateProjectById, getManagersList, uploadImages } from '@/api';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/ToastContext';
@@ -22,7 +22,7 @@ interface IValidationErrors {
     ProjectsCategories?: string;
 }
 
-function validateProject(formData: typeof NewsForm.prototype.formData): IValidationErrors {
+function validateProject(formData: typeof ProjectForm.prototype.formData): IValidationErrors {
     const errors: IValidationErrors = {};
 
     if (!formData.Title) {
@@ -73,15 +73,15 @@ function validateProject(formData: typeof NewsForm.prototype.formData): IValidat
     return errors;
 }
 
-interface INewsFormProps {
-    news: INews;
-    newsCategories: IProjectCategory[];
+interface IProjectFormProps {
+    project: IProject;
+    projectCategories: IProjectCategory[];
     productCategories: ICategory[];
     isEditing: boolean;
     maxImages?: number;
 }
 
-interface INewsFormData extends INews {
+interface IProjectFormData extends IProject {
     ExistingImages: {
         ID?: number | null;
         ImageURL: string;
@@ -97,26 +97,26 @@ interface INewsFormData extends INews {
 
 type TabType = 'main' | 'relations';
 
-export function NewsForm({ news, newsCategories, productCategories, isEditing, maxImages = 20 }: INewsFormProps) {
+export function ProjectForm({ project, projectCategories, productCategories, isEditing, maxImages = 20 }: IProjectFormProps) {
     const router = useRouter();
     const { showToast } = useToast();
     const [activeTab, setActiveTab] = useState<TabType>('main');
     const [errors, setErrors] = useState<IValidationErrors>({});
     const [loading, setLoading] = useState(false);
     const [managers, setManagers] = useState<IUser[]>([]);
-    const [formData, setFormData] = useState<INewsFormData>({
-        ID: news.ID ?? null,
-        Title: news.Title || '',
-        Name: news.Name || '',
-        Description: news.Description || '',
-        MetaTitle: news.MetaTitle || '',
-        MetaDescription: news.MetaDescription || '',
-        MetaKeyword: news.MetaKeyword || '',
-        CategoriesID: news.ProjectsCategories?.map((cat) => cat.ID) || [],
-        MainCategoryID: news.MainCategoryID || null,
-        Slug: news.Slug || '',
+    const [formData, setFormData] = useState<IProjectFormData>({
+        ID: project.ID ?? null,
+        Title: project.Title || '',
+        Name: project.Name || '',
+        Description: project.Description || '',
+        MetaTitle: project.MetaTitle || '',
+        MetaDescription: project.MetaDescription || '',
+        MetaKeyword: project.MetaKeyword || '',
+        CategoriesID: project.ProjectsCategories?.map((cat) => cat.ID) || [],
+        MainCategoryID: project.MainCategoryID || null,
+        Slug: project.Slug || '',
         Images: [],
-        ExistingImages: news.Images?.length ? news.Images.map((img, index) => ({
+        ExistingImages: project.Images?.length ? project.Images.map((img, index) => ({
             ...img,
             Order: typeof img.Order === 'number' ? img.Order : index,
             ID: img.ID || null,
@@ -126,12 +126,13 @@ export function NewsForm({ news, newsCategories, productCategories, isEditing, m
         }))
         .sort((a, b) => (a.Order ?? 0) - (b.Order ?? 0)) : [],
         DeletedImages: [],
-        Status: news.Status || false,
-        PublishDate: news.PublishDate || '',
+        Status: project.Status || false,
+        PublishDate: project.PublishDate || '',
+        UserID: project.User?.ID || null,
     });
 
     const [isAutoSlug, setIsAutoSlug] = useState(!isEditing ? true : false);
-    const [editorContent, setEditorContent] = useState(news.Description || '');
+    const [editorContent, setEditorContent] = useState(project.Description || '');
 
     useEffect(() => {
         if (isAutoSlug && formData.Title) {
@@ -161,7 +162,7 @@ export function NewsForm({ news, newsCategories, productCategories, isEditing, m
                         Order: image.Order
                     };
                 } else if (image.file) {
-                    const paths = await uploadImages([image.file], `catalog/news/${news.ID}`);
+                    const paths = await uploadImages([image.file], `catalog/projects/${project.ID}`);
                     return {
                         ID: image.ID,
                         ImageURL: paths.filePaths[0],
@@ -206,7 +207,7 @@ export function NewsForm({ news, newsCategories, productCategories, isEditing, m
                 .sort((a, b) => a.Order - b.Order);
 
             if (isEditing && formData.ID) {
-                await updateNews(formData.ID, {
+                await updateProjectById(formData.ID, {
                     ...formData,
                     Images: allImages,
                     MainCategoryID: formData.CategoriesID[0]
@@ -215,7 +216,7 @@ export function NewsForm({ news, newsCategories, productCategories, isEditing, m
                     router.push(res.data.Slug)
                 });
             } else {
-                await createNews({
+                await createProject({
                     ...formData,
                     Images: allImages,
                     MainCategoryID: formData.CategoriesID[0]
@@ -307,7 +308,7 @@ export function NewsForm({ news, newsCategories, productCategories, isEditing, m
                         {/* Правая колонка - основная информация */}
                         <div className="w-1/2">
                             <FormMainInfo
-                                type="news"
+                                type="project"
                                 formData={formData}
                                 errors={errors}
                                 managers={managers}
@@ -335,7 +336,7 @@ export function NewsForm({ news, newsCategories, productCategories, isEditing, m
             {/* Связи */}
             {activeTab === 'relations' && (
                 <FormRelations
-                    categories={newsCategories}
+                    categories={projectCategories}
                     selectedCategories={formData.CategoriesID}
                     onCategoriesChange={(categories) => {
                         setFormData(prev => ({ ...prev, CategoriesID: categories }));

@@ -1,6 +1,6 @@
 import { getAllNews } from '@/api';
 import { NextPageProps } from '@/types';
-import { NewsDataTable } from '../_components/NewsDataTable';
+import { NewsDataTable } from './_components/NewsDataTable';
 import Link from 'next/link';
 import { Metadata } from 'next';
 

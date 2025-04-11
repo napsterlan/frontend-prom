@@ -2,7 +2,7 @@ import { getAllProjectCategories, getCategories } from '@/api';
 import 'react-datepicker/dist/react-datepicker.css';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
 // import { notFound } from 'next/navigation';
-import { ProjectForm } from '../_components/project-form';
+import { ProjectForm } from '@/app/admin/projects/_components/ProjectForm';
 
 export default async function AddProjectPage() {
     

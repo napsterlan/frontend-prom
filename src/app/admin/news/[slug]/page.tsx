@@ -2,7 +2,7 @@ import { getNewsBySlug, getCategories, getAllProjectCategories } from '@/api';
 import { NextPageProps } from '@/types';
 import { Metadata } from 'next';
 // import { notFound } from 'next/navigation';
-import { NewsForm } from '../_components/NewsForm';
+import { NewsForm } from '@/app/admin/news/_components/NewsForm';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
 
 export const metadata: Metadata = {
@@ -37,8 +37,8 @@ export default async function EditNewsPage({ params, searchParams }: NextPagePro
                 <h1 className="text-2xl font-bold mb-6">Редактирование новости: {news.data.Name}</h1>
                 <NewsForm 
                     news={news.data} 
-                    projectCategories={projectCategories}
-                    productCategories={productCategories}
+                    newsCategories={projectCategories.data}
+                    productCategories={productCategories.data}
                     isEditing={true}
                 />
             </div>

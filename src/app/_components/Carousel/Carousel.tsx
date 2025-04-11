@@ -20,10 +20,11 @@ type PropType = {
     slides: number[]
     images: IImages[]
     options?: EmblaOptionsType
+    priority?: boolean
 }
 
 const Carousel: React.FC<PropType> = (props) => {
-    const {slides, images, options } = props
+    const {slides, images, options, priority } = props
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [emblaRef, emblaApi] = useEmblaCarousel(options)
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -185,12 +186,15 @@ const Carousel: React.FC<PropType> = (props) => {
             <div className="embla__viewport rounded-2xl" ref={emblaRef}>
 
                 <div className="embla__container">
-                    {slides.map(index => (
+                    {slides.map((index, i) => (
                         <div className="embla__slide" key={index} onClick={handleSlideClick}>
-                            <Image src={images[index].ImageURL?images[index].ImageURL:'/placeholder.png'}
-                                   fill={true}
-                                   alt={images[index].AltText || ""}
-                            className='!relative'/>
+                            <Image 
+                                src={images[index].ImageURL?images[index].ImageURL:'/placeholder.png'}
+                                fill={true}
+                                alt={images[index].AltText || ""}
+                                priority={i === 0}
+                                className='!relative'
+                            />
                         </div>
                     ))}
 
