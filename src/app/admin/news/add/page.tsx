@@ -1,4 +1,4 @@
-import { getAllProjectCategories, getCategories } from '@/api';
+import {  getCategories } from '@/api';
 import 'react-datepicker/dist/react-datepicker.css';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
 // import { notFound } from 'next/navigation';
@@ -7,7 +7,6 @@ import { NewsForm } from '../_components/NewsForm';
 export default async function AddNewsPage() {
     
     try {
-        const newsCategories = await getAllProjectCategories();
         const news= {
             ID: 0,
             Title: '',
@@ -33,7 +32,6 @@ export default async function AddNewsPage() {
                 <h1 className="text-2xl font-bold mb-6">Добавление новости</h1>
                 <NewsForm 
                     news={news}
-                    newsCategories={newsCategories.data}
                     productCategories={productCategories.data}
                     isEditing={false}
                 />

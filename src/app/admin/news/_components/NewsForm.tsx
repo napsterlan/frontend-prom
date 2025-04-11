@@ -1,6 +1,6 @@
 'use client';
 
-import { INews, IProjectCategory, ICategory, IUser } from '@/types';
+import { INews, IUser, IImages, ICategory } from '@/types';
 import { createNews, updateNews, getManagersList, uploadImages } from '@/api';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -10,7 +10,6 @@ import { toSlug } from '@/utils/transliterate';
 import { FormMainInfo } from '../../_components/form/FormMainInfo';
 import { FormImageGallery } from '../../_components/form/FormImageGallery';
 import { FormEditor } from '../../_components/form/FormEditor';
-import { FormRelations } from '../../_components/form/FormRelations';
 
 interface IValidationErrors {
     Title?: string;
@@ -19,7 +18,6 @@ interface IValidationErrors {
     UserID?: string;
     PublishDate?: string;
     Images?: string;
-    ProjectsCategories?: string;
 }
 
 function validateProject(formData: typeof NewsForm.prototype.formData): IValidationErrors {
@@ -66,22 +64,17 @@ function validateProject(formData: typeof NewsForm.prototype.formData): IValidat
         errors.Images = 'Как минимум одно изображение обязательно';
     }
 
-    if (!formData.CategoriesID.length) {
-        errors.ProjectsCategories = 'Как минимум одна категория обязательна';
-    }
-
     return errors;
 }
 
 interface INewsFormProps {
     news: INews;
-    newsCategories: IProjectCategory[];
     productCategories: ICategory[];
     isEditing: boolean;
     maxImages?: number;
 }
 
-interface INewsFormData extends INews {
+interface INewsFormData extends Omit<INews, 'Images'> {
     ExistingImages: {
         ID?: number | null;
         ImageURL: string;
@@ -91,19 +84,18 @@ interface INewsFormData extends INews {
         file?: File;
         IsNew?: boolean;
     }[] | [];
-    CategoriesID: number[];
     DeletedImages: number[] | [];
+    Images?: IImages[] | [];
 }
 
 type TabType = 'main' | 'relations';
 
-export function NewsForm({ news, newsCategories, productCategories, isEditing, maxImages = 20 }: INewsFormProps) {
+export function NewsForm({ news, isEditing, maxImages = 20 }: INewsFormProps) {
     const router = useRouter();
     const { showToast } = useToast();
     const [activeTab, setActiveTab] = useState<TabType>('main');
     const [errors, setErrors] = useState<IValidationErrors>({});
     const [loading, setLoading] = useState(false);
-    const [managers, setManagers] = useState<IUser[]>([]);
     const [formData, setFormData] = useState<INewsFormData>({
         ID: news.ID ?? null,
         Title: news.Title || '',
@@ -112,8 +104,6 @@ export function NewsForm({ news, newsCategories, productCategories, isEditing, m
         MetaTitle: news.MetaTitle || '',
         MetaDescription: news.MetaDescription || '',
         MetaKeyword: news.MetaKeyword || '',
-        CategoriesID: news.ProjectsCategories?.map((cat) => cat.ID) || [],
-        MainCategoryID: news.MainCategoryID || null,
         Slug: news.Slug || '',
         Images: [],
         ExistingImages: news.Images?.length ? news.Images.map((img, index) => ({
@@ -208,8 +198,7 @@ export function NewsForm({ news, newsCategories, productCategories, isEditing, m
             if (isEditing && formData.ID) {
                 await updateNews(formData.ID, {
                     ...formData,
-                    Images: allImages,
-                    MainCategoryID: formData.CategoriesID[0]
+                    Images: allImages
                 })
                 .then((res) => {
                     router.push(res.data.Slug)
@@ -217,41 +206,20 @@ export function NewsForm({ news, newsCategories, productCategories, isEditing, m
             } else {
                 await createNews({
                     ...formData,
-                    Images: allImages,
-                    MainCategoryID: formData.CategoriesID[0]
+                    Images: allImages
                 })
                 .then((res) => {
                     router.push(res.data.Slug)
                 });
             }
 
-            showToast('Проект успешно сохранен', 'success');
+            showToast('Новость успешно сохранена', 'success');
             setLoading(false);
         } catch (error) {
-            showToast('Ошибка при сохранении проекта', 'error');
+            showToast('Ошибка при сохранении новости', 'error');
             setLoading(false);
         }
     };
-
-    useEffect(() => {
-        const fetchManagers = async () => {
-            try {
-                const response = await getManagersList();
-                if (Array.isArray(response?.data)) {
-                    setManagers(response.data);
-                } else if (Array.isArray(response)) {
-                    setManagers(response);
-                } else {
-                    console.error('Unexpected managers data format:', response);
-                    showToast('Ошибка формата данных менеджеров', 'error');
-                }
-            } catch (error) {
-                console.error('Ошибка при загрузке списка менеджеров:', error);
-                showToast('Ошибка при загрузке списка менеджеров', 'error');
-            }
-        };
-        fetchManagers();
-    }, []);
 
     return (
         <form onSubmit={handleSubmit} className="relative">
@@ -287,64 +255,53 @@ export function NewsForm({ news, newsCategories, productCategories, isEditing, m
                     type="submit" 
                     className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md"
                 >
-                    Сохранить проект
+                    Сохранить новость
                 </button>
             </div>
 
             {activeTab === 'main' && (
                 <>
                     {/* Верхний блок с двумя колонками */}
-                    <div className="flex gap-6 mb-6">
+            <div className="flex gap-6 mb-6">
                         {/* Левая колонка - изображения */}
-                        <FormImageGallery
-                            existingImages={formData.ExistingImages}
-                            onImagesChange={(images) => setFormData(prev => ({ ...prev, ExistingImages: images }))}
-                            onDeleteImages={(deletedIds) => setFormData(prev => ({ ...prev, DeletedImages: deletedIds }))}
-                            maxImages={maxImages}
-                            errors={errors}
-                        />
+                <FormImageGallery
+                    existingImages={formData.ExistingImages}
+                    onImagesChange={(images) => setFormData(prev => ({ ...prev, ExistingImages: images }))}
+                    onDeleteImages={(deletedIds) => setFormData(prev => ({ ...prev, DeletedImages: deletedIds }))}
+                    maxImages={maxImages}
+                    errors={errors}
+                />
 
                         {/* Правая колонка - основная информация */}
-                        <div className="w-1/2">
-                            <FormMainInfo
-                                type="news"
-                                formData={formData}
-                                errors={errors}
-                                managers={managers}
-                                isAutoSlug={isAutoSlug}
-                                setFormData={setFormData}
-                                setErrors={setErrors}
-                                setIsAutoSlug={setIsAutoSlug}
-                                handleSlugChange={handleSlugChange}
-                            />
-                        </div>
-                    </div>
+                <div className="w-1/2">
+                    <FormMainInfo
+                        type="news"
+                        formData={formData}
+                        errors={errors}
+                        isAutoSlug={isAutoSlug}
+                        setFormData={setFormData}
+                        setErrors={setErrors}
+                        setIsAutoSlug={setIsAutoSlug}
+                        handleSlugChange={handleSlugChange}
+                    />
+                </div>
+            </div>
 
                     {/* Блок описания на всю ширину */}
-                    <FormEditor
-                        initialContent={editorContent}
-                        onChange={(content) => {
-                            setEditorContent(content);
-                            setFormData(prev => ({ ...prev, Description: content }));
-                        }}
-                        error={errors.Description}
+            <FormEditor
+                initialContent={editorContent}
+                onChange={(content) => {
+                    setEditorContent(content);
+                    setFormData(prev => ({ ...prev, Description: content }));
+                }}
+                error={errors.Description}
                     />
                 </>
             )}
 
             {/* Связи */}
             {activeTab === 'relations' && (
-                <FormRelations
-                    categories={newsCategories}
-                    selectedCategories={formData.CategoriesID}
-                    onCategoriesChange={(categories) => {
-                        setFormData(prev => ({ ...prev, CategoriesID: categories }));
-                        if (errors.ProjectsCategories) {
-                            setErrors({ ...errors, ProjectsCategories: undefined });
-                        }
-                    }}
-                    error={errors.ProjectsCategories}
-                />
+                <p>gfsdgfdsg</p>
             )}
         </form>
     );

@@ -10,7 +10,7 @@ import { toSlug } from '@/utils/transliterate';
 import { FormMainInfo } from '../../_components/form/FormMainInfo';
 import { FormImageGallery } from '../../_components/form/FormImageGallery';
 import { FormEditor } from '../../_components/form/FormEditor';
-import { FormRelations } from '../../_components/form/FormRelations';
+import { FormProjectCategoriesRelations } from './project-form/FormProjectCategoriesRelations';
 
 interface IValidationErrors {
     Title?: string;
@@ -335,17 +335,21 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
 
             {/* Связи */}
             {activeTab === 'relations' && (
-                <FormRelations
-                    categories={projectCategories}
-                    selectedCategories={formData.CategoriesID}
-                    onCategoriesChange={(categories) => {
-                        setFormData(prev => ({ ...prev, CategoriesID: categories }));
-                        if (errors.ProjectsCategories) {
-                            setErrors({ ...errors, ProjectsCategories: undefined });
-                        }
-                    }}
-                    error={errors.ProjectsCategories}
-                />
+                <>
+                    {/* Связь с категориями проектов */}
+                    <FormProjectCategoriesRelations
+                        projectCategories={projectCategories || []}
+                        productCategories={productCategories || []}
+                        selectedProjectCategories={formData.CategoriesID}
+                        onCategoriesChange={(categories) => {
+                            setFormData(prev => ({ ...prev, CategoriesID: categories }));
+                            if (errors.ProjectsCategories) {
+                                setErrors({ ...errors, ProjectsCategories: undefined });
+                            }
+                        }}
+                        error={errors.ProjectsCategories}
+                    />
+                </>
             )}
         </form>
     );

@@ -41,7 +41,7 @@ interface IProjectMainInfoProps {
     /**
      * Список менеджеров для выбора
      */
-    managers: IUser[] | [];
+    managers?: IUser[] | [];
     /**
      * Флаг автоматической генерации SEO URL
      */
@@ -191,7 +191,7 @@ export function FormMainInfo({
                     onChange={(e) => setFormData((prev: any) => ({ ...prev, UserID: Number(e.target.value) }))}
                 >
                     <option value="">Выберите менеджера</option>
-                    {managers.map((manager) => (
+                    {managers && managers.length > 0 && managers.map((manager) => (
                         <option key={manager.ID} value={manager.ID}>
                             {manager.LastName} {manager.FirstName}
                         </option>

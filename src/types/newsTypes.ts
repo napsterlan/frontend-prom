@@ -15,8 +15,6 @@ export interface INews {
     CreatedAt?: string;
     UpdatedAt?: string;
     DeletedAt?: string;
-    MainCategoryID?: number | null;
-    ProjectsCategories?: IProjectCategory[] | [];
     Images?: IImages[] | [];
     FullPath?: string;
 }
