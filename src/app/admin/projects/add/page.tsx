@@ -16,6 +16,8 @@ export default async function AddProjectPage() {
             MetaDescription: '',
             MetaKeyword: '',
             ProjectsCategories: [],
+            RelatedProductCategories: [], // В каких категориях показывать портфолио
+            ProjectInProductCategoriesToShow: [],
             RelatedProducts: [],
             Images: [],
             PublishDate: '',
