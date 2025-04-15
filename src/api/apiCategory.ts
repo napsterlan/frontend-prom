@@ -27,7 +27,7 @@ export const getCategoryBySlug = async (slug: string, page_size: number = 10, pa
 };
 
 // Получение списка всех категорий проектов
-export const getAllProjectCategories = async (page_size: number = 10, page: number = 1) => {
+export const getAllProjectCategories = async () => {
     const response = await apiClient.get('/projects-categories');
     return response.data;
 };
@@ -46,7 +46,7 @@ export const createProjectCategory = async (categoryData: object) => {
 
 // Обновление категории проектов по id
 export const updateProjectCategoryById = async (id: number, categoryData: object) => {
-    const response = await apiClient.put(`/projects-categories/${id}`, categoryData);
+    const response = await apiClient.patch(`/projects-categories/${id}`, categoryData);
     return response.data;
 };
 

@@ -1,16 +1,19 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/ToastContext';
 import { IImages } from '@/types'
 import Image from 'next/image';
+import { type } from 'os';
 
 interface DataTableProps<T extends { 
     ID?: number | null; 
     Name?: string; 
     FullPath?: string;
+    Slug: string;
     Images?: IImages[] | null;
+    Order?: number | null;
 }> {
     initialData: T[];
     currentPage: number;
@@ -23,7 +26,9 @@ export function DataTable<T extends {
     ID?: number | null; 
     Name?: string; 
     FullPath?: string;
+    Slug: string;
     Images?: IImages[] | null;
+    Order?: number | null;
 }>({ 
     initialData, 
     currentPage, 
@@ -32,6 +37,9 @@ export function DataTable<T extends {
     onDelete 
 }: DataTableProps<T>) {
     const router = useRouter();
+    const pathname = usePathname(); 
+
+    console.log('pathname', pathname);
     const { showToast } = useToast();
     const handleDelete = async (itemId: number) => {
         if (confirm('Вы уверены, что хотите удалить этот проект?')) {
@@ -148,6 +156,7 @@ export function DataTable<T extends {
                     <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                         <th className="py-3 px-6 text-left">Фото</th>
                         <th className="py-3 px-6 text-left">Название</th>
+                        {pathname === '/admin/project-catalog' && <th className="py-3 px-6 text-center">Порядок</th>}
                         <th className="py-3 px-6 text-right">Действия</th>
                     </tr>
                 </thead>
@@ -168,9 +177,10 @@ export function DataTable<T extends {
                                 />
                             </td>
                             <td className="py-3 px-6">{item.Name}</td>
+                            {pathname === '/admin/project-catalog' && <td className="py-3 px-6 text-center">{item.Order}</td>}
                             <td className="py-3 px-6 text-right">
                                 <Link
-                                    href={`/admin/${item.FullPath}`}
+                                    href={`${pathname}/${item.Slug}`}
                                     className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2"
                                 >
                                     Редактировать

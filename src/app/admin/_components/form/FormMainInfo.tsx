@@ -19,20 +19,21 @@ interface IProjectMainInfoProps {
     /**
      * Тип формы
      */
-    type: 'project' | 'news';
+    type: 'project' | 'news' | 'projectCategory';
     /**
      * Данные формы проекта
      */
     formData: {
-        Title: string;
+        Title?: string;
         Name: string;
         Slug: string;
         MetaTitle: string;
         MetaKeyword: string;
         MetaDescription: string;
         UserID?: number | null;
-        PublishDate: string;
+        PublishDate?: string;
         Status: boolean;
+        Order?: number | null;
     };
     /**
      * Объект с ошибками валидации
@@ -95,10 +96,11 @@ export function FormMainInfo({
 }: IProjectMainInfoProps) {
     return (
         <div className="space-y-4">
-            <div>
-                <label className="block mb-2">Title</label>
-                <input
-                    type="text"
+            {(type === 'project' || type === 'news') && (
+                <div>
+                    <label className="block mb-2">Title</label>
+                    <input
+                        type="text"
                     className={`w-full p-2 border rounded ${errors.Title ? 'border-red-500' : ''}`}
                     value={formData.Title}
                     onChange={(e) => {
@@ -109,9 +111,10 @@ export function FormMainInfo({
                     }}
                 />
                 {errors.Title && (
-                    <p className="text-red-500 text-sm mt-1">{errors.Title}</p>
-                )}
-            </div>
+                        <p className="text-red-500 text-sm mt-1">{errors.Title}</p>
+                    )}
+                </div>
+            )}
 
             <div>
                 <label className="block mb-2">Name</label>
@@ -202,10 +205,18 @@ export function FormMainInfo({
                 )}
             </div>}
 
-            <div>
-                <div className="mb-2">
-                    Дата публикации:
-                    <DatePicker
+            {type === 'projectCategory' && (
+                <div>
+                    <label className="block mb-2">Порядок сортировки</label>
+                    <input type="number" className="w-full p-2 border rounded" value={formData.Order || 0} onChange={(e) => setFormData((prev: any) => ({ ...prev, Order: Number(e.target.value) }))} />
+                </div>
+            )}
+
+            {(type === 'project' || type === 'news') && (
+                <div>
+                    <div className="mb-2">
+                        Дата публикации:
+                        <DatePicker
                         selected={formData.PublishDate ? new Date(formData.PublishDate) : null}
                         onChange={(date) => {
                             setFormData((prev: any) => ({ ...prev, PublishDate: date }));
@@ -234,7 +245,7 @@ export function FormMainInfo({
                         <p className="text-red-500 text-sm mt-1">{errors.PublishDate}</p>
                     )}
                 </div>
-            </div>
+            </div>)}
 
             <div className="mb-2">
                 <label className="block mb-2">Статус</label>

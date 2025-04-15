@@ -32,10 +32,10 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="relative border rounded-lg p-4 bg-white shadow">
           <h2 className="text-xl font-semibold">Категории реализованных проектов</h2>
-          <Link href="/admin/projectCategories" className="block mt-2 text-blue-500">
+          <Link href="/admin/project-catalog" className="block mt-2 text-blue-500">
             Перейти
           </Link>
-          <Link href="/admin/projectCategories/add" className="absolute top-2 right-2 bg-blue-500 text-white p-2 rounded flex items-center justify-center w-8 h-8">
+          <Link href="/admin/project-catalog/add" className="absolute top-2 right-2 bg-blue-500 text-white p-2 rounded flex items-center justify-center w-8 h-8">
             +
           </Link>
         </div>

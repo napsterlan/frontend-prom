@@ -11,6 +11,7 @@ const pathTranslations: Record<string, string> = {
     'home': 'Главная',
     'news': 'Новости',
     'projects': 'Проекты',
+    'project-catalog': 'Категории проектов',
     'about': 'О нас',
     'contacts': 'Контакты',
     'services': 'Услуги',

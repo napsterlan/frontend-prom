@@ -1,30 +1,29 @@
-import { getAllProjects, getCategories } from '@/api';
-import { ProjectsDataTable } from './_components/ProjectsDataTable';
+import { getAllProjectCategories, getCategories } from '@/api';
+import { ProjectCategoriesDataTable } from './_components/ProjectsDataTable';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { NextPageProps } from '@/types';
 
 export const metadata: Metadata = {
-    title: 'Управление проектами',
-    description: 'Административная панель управления проектами',
+    title: 'Управление категориями проектов',
+    description: 'Административная панель управления категориями проектов',
 };
 
 // Force dynamic rendering and disable caching
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export default async function ProjectsPage({params, searchParams}: NextPageProps) {
+export default async function ProjectCategoriesPage({params, searchParams}: NextPageProps) {
     const { page } = await searchParams;
-    let projects = [];
-    let categories = [];
+    let projectCategories = [];
     let error = null;
     const currentPage = Number(page) || 1;
 
     try {
-        const response = await getAllProjects(currentPage, '');
-        projects = response.data;
-        const categoriesResponse = await getCategories();
-        categories = categoriesResponse.data;
+        const response = await getAllProjectCategories();
+        projectCategories = response.data;
+
+        console.log('projectCategories: ', projectCategories);
         return (
             <div className="container mx-auto px-4">
                 <h1 className="text-2xl font-bold mb-4">Проекты</h1>
@@ -36,27 +35,29 @@ export default async function ProjectsPage({params, searchParams}: NextPageProps
                         Назад
                     </Link>
                     <Link 
-                        href="/admin/projectsCategories/add" 
+                        href="/admin/project-catalog/add" 
                         className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                     >
-                        + Добавить проект
+                        + Добавить категорию проектов
                     </Link>
                 </div>
-                <ProjectsDataTable 
-                    initialData={projects} 
+                <ProjectCategoriesDataTable 
+                    initialData={projectCategories}  
                     currentPage={currentPage}
-                    totalPages={response.metadata.last_page}
-                    totalRecords={response.metadata.total_records}
+                    // totalPages={response.metadata.last_page}
+                    totalPages={1}
+                    // totalRecords={response.metadata.total_records}
+                    totalRecords={1}
                 />
             </div>
         );
     } catch (err) {
         error = 'Ошибка при загрузке данных проектов';
-        console.error('Error fetching projects:', err);
+        console.error('Error fetching project categories:', err);
         
         return (
             <div className="container mx-auto px-4">
-                <h1 className="text-2xl font-bold mb-4">Проекты</h1>
+                <h1 className="text-2xl font-bold mb-4">Категории проектов</h1>
                 <div className="flex space-x-2 mb-4">
                     <Link 
                         href="/admin"
@@ -68,7 +69,7 @@ export default async function ProjectsPage({params, searchParams}: NextPageProps
                         href="/admin/projects/add" 
                         className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                     >
-                        + Добавить проект
+                        + Добавить категорию проектов
                     </Link>
                 </div>
                 <div className="text-red-500">{error}</div>

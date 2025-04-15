@@ -1,5 +1,5 @@
-import { getAllProjects, getCategories } from '@/api';
-import { ProjectsDataTable } from './_components/ProjectsDataTable';
+import { getAllUsers, getCategories } from '@/api';
+import { ProjectsDataTable } from './_components/UsersDataTable';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { NextPageProps } from '@/types';
@@ -13,21 +13,24 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export default async function ProjectsPage({params, searchParams}: NextPageProps) {
+export default async function UsersPage({params, searchParams}: NextPageProps) {
     const { page } = await searchParams;
-    let projects = [];
-    let categories = [];
+    let users = [];
     let error = null;
     const currentPage = Number(page) || 1;
 
+    console.log('currentPage', currentPage);
+
+    
+
     try {
-        const response = await getAllProjects(currentPage, '');
-        projects = response.data;
-        const categoriesResponse = await getCategories();
-        categories = categoriesResponse.data;
+        const response = await getAllUsers();
+        
+        users = response.data;
+        console.log('users', users);
         return (
             <div className="container mx-auto px-4">
-                <h1 className="text-2xl font-bold mb-4">Проекты</h1>
+                <h1 className="text-2xl font-bold mb-4">Пользователи</h1>
                 <div className="flex space-x-2 mb-4">
                     <Link 
                         href="/admin"
@@ -36,14 +39,14 @@ export default async function ProjectsPage({params, searchParams}: NextPageProps
                         Назад
                     </Link>
                     <Link 
-                        href="/admin/projectsCategories/add" 
+                        href="/admin/users/add" 
                         className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                     >
-                        + Добавить проект
+                        + Добавить пользователя
                     </Link>
                 </div>
                 <ProjectsDataTable 
-                    initialData={projects} 
+                    initialData={users} 
                     currentPage={currentPage}
                     totalPages={response.metadata.last_page}
                     totalRecords={response.metadata.total_records}
@@ -51,12 +54,12 @@ export default async function ProjectsPage({params, searchParams}: NextPageProps
             </div>
         );
     } catch (err) {
-        error = 'Ошибка при загрузке данных проектов';
-        console.error('Error fetching projects:', err);
+        error = 'Ошибка при загрузке данных пользователей';
+        console.error('Error fetching users:', err);
         
         return (
             <div className="container mx-auto px-4">
-                <h1 className="text-2xl font-bold mb-4">Проекты</h1>
+                <h1 className="text-2xl font-bold mb-4">Пользователи</h1>
                 <div className="flex space-x-2 mb-4">
                     <Link 
                         href="/admin"
@@ -65,10 +68,10 @@ export default async function ProjectsPage({params, searchParams}: NextPageProps
                         Назад
                     </Link>
                     <Link 
-                        href="/admin/projects/add" 
+                        href="/admin/users/add" 
                         className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                     >
-                        + Добавить проект
+                        + Добавить пользователя
                     </Link>
                 </div>
                 <div className="text-red-500">{error}</div>

@@ -28,7 +28,7 @@ export interface ICategory {
 
 // Категория проектов
 export interface IProjectCategory {
-    ID: number;
+    ID: number | null;
     Name: string;
     MetaTitle: string;
     MetaDescription: string;
@@ -38,13 +38,13 @@ export interface IProjectCategory {
     Status: boolean;
     Order?: number,
     Description: string;
-    ProjectCategoryChildren: {
+    ProjectCategoryChildren?: {
         ID: number | null;
         Title: string;
         fullPath: string;
     }[] | [];
-    Projects: IProject[] | [];
-    Images: IImages[] | [];
+    Projects?: IProject[] | [];
+    Images?: IImages[] | [];
 }
 
 export interface ICategoryTreeById {
