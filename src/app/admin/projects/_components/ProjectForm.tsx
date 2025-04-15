@@ -115,6 +115,7 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
         MetaKeyword: project.MetaKeyword || '',
         CategoriesID: project.ProjectsCategories?.map((cat) => cat.ID) || [],
         MainCategoryID: project.MainCategoryID || null,
+        ProjectsCategories: project.ProjectsCategories || [],
         Slug: project.Slug || '',
         Images: [],
         ExistingImages: project.Images?.length ? project.Images.map((img, index) => ({
@@ -187,7 +188,7 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                 }));
                 
                 // Устанавливаем начальное состояние
-                setRelatedProductCategories(initialCategories);
+                setCategoriesToShow(initialCategories);
                 
                 // Затем делаем запрос для получения полных данных
                 const fullCategories = await Promise.all(
@@ -198,27 +199,13 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                 );
                 
                 // Обновляем состояние полными данными
-                setRelatedProductCategories(fullCategories);
+                setCategoriesToShow(fullCategories);
             };
     
             fetchRelatedProductCategories();
         }
     }, [project.ProjectInProductCategoriesToShow]);
 
-    useEffect(() => {
-        if (project.ProjectInProductCategoriesToShow && project.ProjectInProductCategoriesToShow.length) {
-            const fetchCategoriesToShow = async () => {
-                const categories = await Promise.all(
-                    (project.ProjectInProductCategoriesToShow || []).map(async (category: ICategory) => {
-                        const response = await getCategoryTreeById(category.ID);
-                        return response.data;
-                    })
-                );
-                setCategoriesToShow(categories);
-            };
-            fetchCategoriesToShow();
-        }
-    }, [project.ProjectInProductCategoriesToShow]);
 
     const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!isAutoSlug) {
