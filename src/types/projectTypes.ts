@@ -17,9 +17,9 @@ export interface IProject {
     PublishDate: string;
     MainCategoryID: number | null;
     Images?: IImages[] | [];
-    ProjectsCategories?: IProjectCategory[] | [];
-    RelatedProductCategories?: ICategory[] | [];
-    ProjectInProductCategoriesToShow?: ICategory[] | [];
+    ProjectsCategories: IProjectCategory[];
+    RelatedProductCategories: ICategory[] | number[]; // В каких категориях показывать портфолио
+    ProjectInProductCategoriesToShow: ICategory[] | number[]; // Какие категории показывать в портфолио
     UserID?: number | null;
     User?: IUser | null;
     FullPath?: string;

@@ -21,7 +21,7 @@ export const createNews = async (newsData: INews) => {
 
 // обновление новости
 export const updateNews = async (id: number, newsData: INews) => {
-    const response = await apiClient.put(`/news/${id}`, newsData)
+    const response = await apiClient.patch(`/news/${id}`, newsData)
     return response.data;
 };
 

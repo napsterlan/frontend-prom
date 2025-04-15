@@ -1,7 +1,7 @@
 'use client';
 
-import { INews, IUser, IImages, ICategory } from '@/types';
-import { createNews, updateNews, getManagersList, uploadImages } from '@/api';
+import { INews, IImages, ICategory, ICategoryTreeById } from '@/types';
+import { createNews, getCategoryTreeById, updateNews, uploadImages } from '@/api';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/ToastContext';
@@ -10,6 +10,7 @@ import { toSlug } from '@/utils/transliterate';
 import { FormMainInfo } from '../../_components/form/FormMainInfo';
 import { FormImageGallery } from '../../_components/form/FormImageGallery';
 import { FormEditor } from '../../_components/form/FormEditor';
+import { FormRelations } from '../../_components/form/FormRelations';
 
 interface IValidationErrors {
     Title?: string;
@@ -52,10 +53,6 @@ function validateProject(formData: typeof NewsForm.prototype.formData): IValidat
         errors.Description = 'Описание обязательно';
     }
 
-    if (!formData.UserID) {
-        errors.UserID = 'Пользователь обязателен';
-    }
-
     if (!formData.PublishDate) {
         errors.PublishDate = 'Дата публикации обязательна';
     }
@@ -69,7 +66,6 @@ function validateProject(formData: typeof NewsForm.prototype.formData): IValidat
 
 interface INewsFormProps {
     news: INews;
-    productCategories: ICategory[];
     isEditing: boolean;
     maxImages?: number;
 }
@@ -105,6 +101,8 @@ export function NewsForm({ news, isEditing, maxImages = 20 }: INewsFormProps) {
         MetaDescription: news.MetaDescription || '',
         MetaKeyword: news.MetaKeyword || '',
         Slug: news.Slug || '',
+        RelatedProductCategories: news.RelatedProductCategories || [],
+        NewsInProductCategoriesToShow: news.NewsInProductCategoriesToShow || [],
         Images: [],
         ExistingImages: news.Images?.length ? news.Images.map((img, index) => ({
             ...img,
@@ -122,6 +120,65 @@ export function NewsForm({ news, isEditing, maxImages = 20 }: INewsFormProps) {
 
     const [isAutoSlug, setIsAutoSlug] = useState(!isEditing ? true : false);
     const [editorContent, setEditorContent] = useState(news.Description || '');
+
+    const [relatedProductCategories, setRelatedProductCategories] = useState<ICategoryTreeById[]>(); // В каких категориях показывать новость
+    const [categoriesToShow, setCategoriesToShow] = useState<ICategoryTreeById[]>(); // Какие категории показывать в новости
+    // мапим с бека в юзэффекте
+    useEffect(() => {
+        if (news.RelatedProductCategories?.length) {
+            const fetchRelatedProductCategories = async () => {
+                // Сначала преобразуем в правильный формат
+                const initialCategories = news.RelatedProductCategories.map(category => ({
+                    ID: typeof category === 'number' ? category : category.ID,
+                    Name: typeof category === 'number' ? String(category) : category.Name
+                }));
+                
+                // Устанавливаем начальное состояние
+                setRelatedProductCategories(initialCategories);
+                
+                // Затем делаем запрос для получения полных данных
+                const fullCategories = await Promise.all(
+                    initialCategories.map(async (category) => {
+                        const response = await getCategoryTreeById(category.ID);
+                        return response.data;
+                    })
+                );
+                
+                // Обновляем состояние полными данными
+                setRelatedProductCategories(fullCategories);
+            };
+    
+            fetchRelatedProductCategories();
+        }
+    }, [news.RelatedProductCategories]);
+
+    useEffect(() => {
+        if (news.NewsInProductCategoriesToShow?.length) {
+            const fetchRelatedProductCategories = async () => {
+                // Сначала преобразуем в правильный формат
+                const initialCategories = news.NewsInProductCategoriesToShow.map(category => ({
+                    ID: typeof category === 'number' ? category : category.ID,
+                    Name: typeof category === 'number' ? String(category) : category.Name
+                }));
+                
+                // Устанавливаем начальное состояние
+                setCategoriesToShow(initialCategories);
+                
+                // Затем делаем запрос для получения полных данных
+                const fullCategories = await Promise.all(
+                    initialCategories.map(async (category) => {
+                        const response = await getCategoryTreeById(category.ID);
+                        return response.data;
+                    })
+                );
+                
+                // Обновляем состояние полными данными
+                setCategoriesToShow(fullCategories);
+            };
+    
+            fetchRelatedProductCategories();
+        }
+    }, [news.NewsInProductCategoriesToShow]);
 
     useEffect(() => {
         if (isAutoSlug && formData.Title) {
@@ -176,6 +233,8 @@ export function NewsForm({ news, isEditing, maxImages = 20 }: INewsFormProps) {
         const validationErrors = validateProject(formData);
         setErrors(validationErrors);
         
+        console.log('validationErrors', validationErrors);
+        
         if (Object.keys(validationErrors).length > 0) {
             return;
         }
@@ -194,19 +253,44 @@ export function NewsForm({ news, isEditing, maxImages = 20 }: INewsFormProps) {
             
             const allImages = [...ExistingImagesData, ...newImages.filter(img => !img.ID)]
                 .sort((a, b) => a.Order - b.Order);
-
             if (isEditing && formData.ID) {
                 await updateNews(formData.ID, {
-                    ...formData,
-                    Images: allImages
+                    ID: formData.ID,
+                    Title: formData.Title,
+                    Name: formData.Name,
+                    Description: formData.Description,
+                    PublishDate: formData.PublishDate,
+                    MetaTitle: formData.MetaTitle,
+                    MetaDescription: formData.MetaDescription,
+                    MetaKeyword: formData.MetaKeyword,
+                    Slug: formData.Slug,
+                    Status: formData.Status,
+                    RelatedProductCategories: relatedProductCategories?.map(category => category.ID) || [], // нужно передавать number []
+                    NewsInProductCategoriesToShow: categoriesToShow?.map(category => category.ID) || [], // нужно передавать number []
+                    Images: allImages,
+                    FullPath: formData.FullPath,
+                    DeletedImages: formData.DeletedImages,
                 })
                 .then((res) => {
                     router.push(res.data.Slug)
                 });
             } else {
                 await createNews({
-                    ...formData,
-                    Images: allImages
+                    ID: formData.ID,
+                    Title: formData.Title,
+                    Name: formData.Name,
+                    Description: formData.Description,
+                    PublishDate: formData.PublishDate,
+                    MetaTitle: formData.MetaTitle,
+                    MetaDescription: formData.MetaDescription,
+                    MetaKeyword: formData.MetaKeyword,
+                    Slug: formData.Slug,
+                    Status: formData.Status,
+                    RelatedProductCategories: relatedProductCategories?.map(category => category.ID) || [], // нужно передавать number []
+                    NewsInProductCategoriesToShow: categoriesToShow?.map(category => category.ID) || [], // нужно передавать number []
+                    Images: allImages,
+                    FullPath: formData.FullPath,
+                    DeletedImages: formData.DeletedImages,
                 })
                 .then((res) => {
                     router.push(res.data.Slug)
@@ -301,7 +385,18 @@ export function NewsForm({ news, isEditing, maxImages = 20 }: INewsFormProps) {
 
             {/* Связи */}
             {activeTab === 'relations' && (
-                <p>gfsdgfdsg</p>
+                <div className="space-y-8">
+                    <FormRelations 
+                        categories={relatedProductCategories || []}
+                        setCategories={setRelatedProductCategories}
+                        label="В каких категориях показывать новость"
+                    />
+                    <FormRelations 
+                        categories={categoriesToShow || []}
+                        setCategories={setCategoriesToShow}
+                        label="Какие категории показывать в новости"
+                    />
+                </div>
             )}
         </form>
     );

@@ -20,7 +20,7 @@ export const createProject = async (projectData: object) => {
 
 //Обновление проекта по id
 export const updateProjectById = async (id: number, projectData: object) => {
-    const response = await apiClient.put(`/projects/${id}`, projectData);
+    const response = await apiClient.patch(`/projects/${id}`, projectData);
     return response.data;
 };
 

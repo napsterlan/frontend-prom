@@ -1,5 +1,5 @@
-import { getNewsBySlug, getCategories } from '@/api';
-import { NextPageProps } from '@/types';
+import { getNewsBySlug, getCategoryTreeById } from '@/api';
+import { ICategory, NextPageProps } from '@/types';
 import { Metadata } from 'next';
 import { NewsForm } from '@/app/admin/news/_components/NewsForm';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
@@ -17,14 +17,13 @@ export default async function EditNewsPage({ params }: NextPageProps) {
             return;
         }
         const news = await getNewsBySlug(slug);
-        const productCategories = await getCategories();
+        console.log('news: ', news);
         return (
             <BreadcrumbsWrapper pageName="Редактирование новости">
                 <div className="container mx-auto px-4 py-8">
                     <h1 className="text-2xl font-bold mb-6">Редактирование новости</h1>
                     <NewsForm 
                         news={news.data}
-                        productCategories={productCategories.data}
                         isEditing={true}
                     />
                 </div>
@@ -36,4 +35,4 @@ export default async function EditNewsPage({ params }: NextPageProps) {
             notFound: true,
         };
     }
-} 
+}

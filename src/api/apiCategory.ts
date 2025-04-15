@@ -6,6 +6,18 @@ export const getCategories = async () => {
     return response.data;
 };
 
+export const getCategoriesTree = async (search?: string) => {
+    const response = await apiClient.get('/categories/tree', {
+        params: { search }
+    });
+    return response.data;
+};
+
+export const getCategoryTreeById = async (id: number) => {
+    const response = await apiClient.get(`/categories/tree/${id}`);
+    return response.data;
+};
+
 // Получение информации о конкретной категории по slug
 export const getCategoryBySlug = async (slug: string, page_size: number = 10, page: number = 1) => {
     const response = await apiClient.get(`/category/${slug}`, {
@@ -15,7 +27,7 @@ export const getCategoryBySlug = async (slug: string, page_size: number = 10, pa
 };
 
 // Получение списка всех категорий проектов
-export const getAllProjectCategories = async () => {
+export const getAllProjectCategories = async (page_size: number = 10, page: number = 1) => {
     const response = await apiClient.get('/projects-categories');
     return response.data;
 };

@@ -1,7 +1,7 @@
 'use client';
 
-import { IProject, IProjectCategory, ICategory, IUser } from '@/types';
-import { createProject, updateProjectById, getManagersList, uploadImages } from '@/api';
+import { IProject, IProjectCategory, ICategory, IUser, ICategoryTreeById } from '@/types';
+import { createProject, updateProjectById, getManagersList, uploadImages, getCategoryTreeById } from '@/api';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/ToastContext';
@@ -11,6 +11,7 @@ import { FormMainInfo } from '../../_components/form/FormMainInfo';
 import { FormImageGallery } from '../../_components/form/FormImageGallery';
 import { FormEditor } from '../../_components/form/FormEditor';
 import { FormProjectCategoriesRelations } from './project-form/FormProjectCategoriesRelations';
+import { FormRelations } from '../../_components/form/FormRelations';
 
 interface IValidationErrors {
     Title?: string;
@@ -123,8 +124,9 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
             ImageURL: img.ImageURL || '',
             AltText: img.AltText || '',
             ShortURL: img.ShortURL || '',
-        }))
-        .sort((a, b) => (a.Order ?? 0) - (b.Order ?? 0)) : [],
+        })).sort((a, b) => (a.Order ?? 0) - (b.Order ?? 0)) : [],
+        RelatedProductCategories: project.RelatedProductCategories || [],
+        ProjectInProductCategoriesToShow: project.ProjectInProductCategoriesToShow || [],
         DeletedImages: [],
         Status: project.Status || false,
         PublishDate: project.PublishDate || '',
@@ -142,6 +144,81 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
             }));
         }
     }, [formData.Title, isAutoSlug]);
+
+    const [relatedProductCategories, setRelatedProductCategories] = useState<ICategoryTreeById[]>();
+    const [categoriesToShow, setCategoriesToShow] = useState<ICategoryTreeById[]>();
+
+
+    useEffect(() => {
+        if (project.RelatedProductCategories?.length) {
+            const fetchRelatedProductCategories = async () => {
+                // Сначала преобразуем в правильный формат
+                const initialCategories = project.RelatedProductCategories.map(category => ({
+                    ID: typeof category === 'number' ? category : category.ID,
+                    Name: typeof category === 'number' ? String(category) : category.Name
+                }));
+                
+                // Устанавливаем начальное состояние
+                setRelatedProductCategories(initialCategories);
+                
+                // Затем делаем запрос для получения полных данных
+                const fullCategories = await Promise.all(
+                    initialCategories.map(async (category) => {
+                        const response = await getCategoryTreeById(category.ID);
+                        return response.data;
+                    })
+                );
+                
+                // Обновляем состояние полными данными
+                setRelatedProductCategories(fullCategories);
+            };
+    
+            fetchRelatedProductCategories();
+        }
+    }, [project.RelatedProductCategories]);
+
+    useEffect(() => {
+        if (project.ProjectInProductCategoriesToShow && project.ProjectInProductCategoriesToShow.length) {
+            const fetchRelatedProductCategories = async () => {
+                // Сначала преобразуем в правильный формат
+                const initialCategories = project.ProjectInProductCategoriesToShow.map(category => ({
+                    ID: typeof category === 'number' ? category : category.ID,
+                    Name: typeof category === 'number' ? String(category) : category.Name
+                }));
+                
+                // Устанавливаем начальное состояние
+                setRelatedProductCategories(initialCategories);
+                
+                // Затем делаем запрос для получения полных данных
+                const fullCategories = await Promise.all(
+                    initialCategories.map(async (category) => {
+                        const response = await getCategoryTreeById(category.ID);
+                        return response.data;
+                    })
+                );
+                
+                // Обновляем состояние полными данными
+                setRelatedProductCategories(fullCategories);
+            };
+    
+            fetchRelatedProductCategories();
+        }
+    }, [project.ProjectInProductCategoriesToShow]);
+
+    useEffect(() => {
+        if (project.ProjectInProductCategoriesToShow && project.ProjectInProductCategoriesToShow.length) {
+            const fetchCategoriesToShow = async () => {
+                const categories = await Promise.all(
+                    (project.ProjectInProductCategoriesToShow || []).map(async (category: ICategory) => {
+                        const response = await getCategoryTreeById(category.ID);
+                        return response.data;
+                    })
+                );
+                setCategoriesToShow(categories);
+            };
+            fetchCategoriesToShow();
+        }
+    }, [project.ProjectInProductCategoriesToShow]);
 
     const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!isAutoSlug) {
@@ -208,18 +285,47 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
 
             if (isEditing && formData.ID) {
                 await updateProjectById(formData.ID, {
-                    ...formData,
+                    ID: formData.ID,
+                    Title: formData.Title,
+                    Name: formData.Name,
+                    Description: formData.Description,
+                    MetaTitle: formData.MetaTitle,
+                    MetaDescription: formData.MetaDescription,
+                    MetaKeyword: formData.MetaKeyword,
+                    ProjectsCategories: formData.CategoriesID,
+                    MainCategoryID: formData.CategoriesID[0],
+                    Slug: formData.Slug,
                     Images: allImages,
-                    MainCategoryID: formData.CategoriesID[0]
+                    RelatedProductCategories: relatedProductCategories?.map(category => category.ID) || [],
+                    ProjectInProductCategoriesToShow: categoriesToShow?.map(category => category.ID) || [],
+                    DeletedImages: formData.DeletedImages,
+                    Status: formData.Status,
+                    PublishDate: formData.PublishDate,
+                    UserID: formData.User?.ID,
                 })
                 .then((res) => {
                     router.push(res.data.Slug)
                 });
             } else {
+                console.log('formData', formData);
                 await createProject({
-                    ...formData,
+                    ID: formData.ID,
+                    Title: formData.Title,
+                    Name: formData.Name,
+                    Description: formData.Description,
+                    MetaTitle: formData.MetaTitle,
+                    MetaDescription: formData.MetaDescription,
+                    MetaKeyword: formData.MetaKeyword,
+                    ProjectsCategories: formData.CategoriesID,
+                    MainCategoryID: formData.CategoriesID[0],
+                    Slug: formData.Slug,
                     Images: allImages,
-                    MainCategoryID: formData.CategoriesID[0]
+                    RelatedProductCategories: relatedProductCategories?.map(category => category.ID) || [],
+                    ProjectInProductCategoriesToShow: categoriesToShow?.map(category => category.ID) || [],
+                    DeletedImages: formData.DeletedImages,
+                    Status: formData.Status,
+                    PublishDate: formData.PublishDate,
+                    UserID: formData.UserID,
                 })
                 .then((res) => {
                     router.push(res.data.Slug)
@@ -348,6 +454,16 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                             }
                         }}
                         error={errors.ProjectsCategories}
+                    />
+                    <FormRelations 
+                        categories={relatedProductCategories || []}
+                        setCategories={setRelatedProductCategories}
+                        label="В каких категориях показывать портфолио"
+                    />
+                    <FormRelations 
+                        categories={categoriesToShow || []}
+                        setCategories={setCategoriesToShow}
+                        label="Какие категории показывать в портфолио"
                     />
                 </>
             )}

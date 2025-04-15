@@ -1,144 +1,136 @@
 import { useState, useRef, useEffect } from 'react';
-import { IProjectCategory } from '@/types';
+import { getCategoriesTree } from '@/api';
+import { ICategoryTreeById } from '@/types';
 
 interface IFormRelationsProps {
-  categories: IProjectCategory[];
-  selectedCategories: number[];
-  onCategoriesChange: (categories: number[]) => void;
-  error?: string;
+    categories?: ICategoryTreeById[]; // массив объектов категорий по {ID: number, Name: string}
+    setCategories: (categories: ICategoryTreeById[]) => void;
+    label: string;
 }
 
-export function FormRelations({ 
-  categories, 
-  selectedCategories, 
-  onCategoriesChange,
-  error 
+export function FormRelations({
+    categories,
+    setCategories,
+    label
 }: IFormRelationsProps) {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [filteredCategories, setFilteredCategories] = useState<IProjectCategory[]>(categories);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+    // Все доступные категории из API
+    const [allCategories, setAllCategories] = useState<ICategoryTreeById[]>([]);
+    // Отфильтрованные категории для поиска
+    const [filteredCategories, setFilteredCategories] = useState<ICategoryTreeById[]>([]);
+    
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
+    // Загрузка всех доступных категорий при открытии дропдауна
+    const loadCategories = async () => {
+        try {
+            const response = await getCategoriesTree();
+            setAllCategories(response.data);
+            setFilteredCategories(response.data);
+        } catch (err) {
+            console.error('Ошибка при загрузке категорий:', err);
+        }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    useEffect(() => {
+        if (isDropdownOpen) {
+            loadCategories();
+        }
+    }, [isDropdownOpen]);
 
-  console.log('categories', categories);
-  console.log('filteredCategories', filteredCategories);
+    // const handleDropdownToggle = async () => {
+    //     if (!isDropdownOpen) {
+    //         await loadCategories();
+    //     }
+    //     setIsDropdownOpen(!isDropdownOpen);
+    // };
 
-  useEffect(() => {
-    setFilteredCategories(categories);
-  }, [categories]);
-
-  const handleCategorySearch = (searchValue: string) => {
-    const filtered = categories.filter(cat => 
-      cat.Name.toLowerCase().includes(searchValue.toLowerCase())
-    );
-    setFilteredCategories(filtered);
-  };
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <div>
-          <label className="block mb-2">Показывать в категориях</label>
-          
-          {/* Выбранные категории (чипы) */}
-          <div className="flex flex-wrap gap-2 mb-2">
-            {selectedCategories.map((id, index) => {
-              const category = categories.find(cat => cat.ID === id);
-
-              if (!category) return null;
-              
-              const isMainCategory = index === 0; // Первая(нулевая) категория всегда главная
-              
-              return (
-                <div
-                  key={id}
-                  className={`flex items-center gap-1 px-2 py-1 rounded-full text-sm ${
-                    isMainCategory 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-blue-100 text-blue-800'
-                  }`}
-                  title={isMainCategory ? "Главная категория" : ""}
-                >
-                  <span>{category.Name}</span>
-                  <button
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+          if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+            setIsDropdownOpen(false);
+          }
+        };
+    
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+      }, []);
+    // Поиск по всем доступным категориям
+    const handleCategorySearch = async (searchQuery: string) => {
+        if (searchQuery.trim()) {
+            try {
+                const response = await getCategoriesTree(searchQuery);
+                setFilteredCategories(response.data);
+            } catch (err) {
+                console.error('Ошибка при поиске категорий:', err);
+            }
+        } else {
+            setFilteredCategories(allCategories);
+        }
+    };
+    
+    // Отображение выбранных категорий из пропсов
+    const renderSelectedCategories = () => {
+        return categories?.map((category) => (
+            <div
+                key={category.ID}
+                className="flex items-center justify-between rounded-full px-3 py-2 bg-blue-100 text-blue-800 rounded"
+            >
+                <span>{category.Name}</span>
+                <button
                     type="button"
-                    className={`ml-1 hover:text-red-800 ${
-                      isMainCategory ? 'text-green-600' : 'text-blue-600'
-                    }`}
-                    onClick={() => {
-                      const newCategories = selectedCategories.filter(
-                        (catId) => catId !== id
-                      );
-                      
-                      onCategoriesChange(newCategories);
-                    }}
-                  >
+                    className="text-blue-600 hover:text-red-800"
+                    onClick={() => setCategories(categories?.filter(c => c.ID !== category.ID) || [])}
+                >
                     ×
-                  </button>
+                </button>
+            </div>
+        ));
+    };
+    return (
+        <div className="space-y-6 mt-6">
+            <div>
+                <label className="block mb-2 text-lg font-bold">{label}</label>
+                
+                <div className="flex flex-col gap-2 mb-4">
+                    {renderSelectedCategories()}
                 </div>
-              );
-            })}
-          </div>
-          {error && (
-            <p className="text-red-500 text-sm mb-2">{error}</p>
-          )}
 
-          <div className="relative" ref={dropdownRef}>
-            <input
-              type="text"
-              className={`w-full p-2 border rounded ${error ? 'border-red-500' : ''}`}
-              placeholder="Поиск категорий..."
-              onChange={(e) => {
-                handleCategorySearch(e.target.value);
-              }}
-              onFocus={() => setIsDropdownOpen(true)}
-            />
-            
-            {/* Выпадающий список */}
-            {isDropdownOpen && (
-              <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-96 overflow-y-auto">
-                {filteredCategories?.map((category) => (
-                  <div
-                    key={category.ID}
-                    className={`p-2 hover:bg-gray-100 cursor-pointer ${
-                      selectedCategories.includes(category.ID) 
-                        ? selectedCategories[0] === category.ID 
-                          ? 'bg-green-50' 
-                          : 'bg-blue-50' 
-                        : ''
-                    }`}
-                    onClick={() => {
-                      const isSelected = selectedCategories.includes(category.ID);
-                      let newCategories;
-                      
-                      if (isSelected) {
-                        // Удаляем категорию
-                        newCategories = selectedCategories.filter((id) => id !== category.ID);
-                      } else {
-                        // Добавляем категорию
-                        newCategories = [...selectedCategories, category.ID];
-                      }
-                      
-                      onCategoriesChange(newCategories);
-                    }}
-                  >
-                    {category.Name}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                <div className="relative" ref={dropdownRef}>
+                    <input
+                        type="text"
+                        className="w-full p-2 border rounded"
+                        placeholder="Поиск категорий..."
+                        onChange={(e) => handleCategorySearch(e.target.value)}
+                        onFocus={() => setIsDropdownOpen(true)}
+                    />
+                    
+                    {isDropdownOpen && (
+                        <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-96 overflow-y-auto">
+                            {filteredCategories && filteredCategories.length > 0 && filteredCategories.map((category, index) => (
+                                <div
+                                    key={category.ID}
+                                    className={`p-2 hover:bg-gray-100 cursor-pointer ${
+                                        categories?.some(item => item.ID === category.ID) ? 'bg-blue-50' : ''
+                                    }`}
+                                    onClick={() => {
+                                        const isSelected = categories?.some(item => item.ID === category.ID);
+                                        
+                                        if (isSelected) {
+                                            setCategories(categories?.filter(c => c.ID !== category.ID) || []);
+                                        } else {
+                                            setCategories([...(categories || []), category]);
+                                        }
+                                    }}
+                                >
+                                    {category.Name}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
-} 
+    );
+}

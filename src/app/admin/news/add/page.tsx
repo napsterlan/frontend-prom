@@ -17,13 +17,14 @@ export default async function AddNewsPage() {
             MetaKeyword: '',
             FullPath: '',
             Slug: '',
+            RelatedProductCategories: [], // В каких категориях показывать новость
+            NewsInProductCategoriesToShow: [], //Какие категории показывать в новости
             CreatedAt: '',
             UpdatedAt: '',
             DeletedAt: '',
             PublishDate: '',
             Status: false,
         }
-        const productCategories = await getCategories();
 
         return (
             <BreadcrumbsWrapper pageName="Добавление новости">
@@ -31,7 +32,6 @@ export default async function AddNewsPage() {
                 <h1 className="text-2xl font-bold mb-6">Добавление новости</h1>
                 <NewsForm 
                     news={news}
-                    productCategories={productCategories.data}
                     isEditing={false}
                 />
             </div>

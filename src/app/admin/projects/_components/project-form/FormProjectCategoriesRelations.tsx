@@ -31,9 +31,6 @@ export function FormProjectCategoriesRelations({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  console.log('categories', projectCategories);
-  console.log('filteredCategories', filteredCategories);
-
   useEffect(() => {
     setFilteredCategories(projectCategories || []);
   }, [projectCategories]);
@@ -49,7 +46,7 @@ export function FormProjectCategoriesRelations({
     <div className="space-y-6">
         <div>
           <div>
-            <label className="block mb-2">Показывать в категориях</label>
+            <label className="block mb-2 text-lg font-bold">Показывать в категориях</label>
           
           {/* Выбранные категории (чипы) */}
           <div className="flex flex-wrap gap-2 mb-2">
@@ -63,7 +60,7 @@ export function FormProjectCategoriesRelations({
               return (
                 <div
                   key={id}
-                  className={`flex items-center gap-1 px-2 py-1 rounded-full text-sm ${
+                  className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm ${
                     isMainCategory 
                       ? 'bg-green-100 text-green-800' 
                       : 'bg-blue-100 text-blue-800'

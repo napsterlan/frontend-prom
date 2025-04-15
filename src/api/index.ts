@@ -1,5 +1,7 @@
 import { addAuthHeader, removeAuthHeader, createUser, getAuthToken, login, logout } from "./apiAuth"
-import { getCategories, getCategoryBySlug, getAllProjectCategories, getProjectCategoryBySlug, createProjectCategory, updateProjectCategoryById, deleteProjectCategoryById, getProductsInCategory } from "./apiCategory"
+import { getCategories, getCategoryBySlug, getAllProjectCategories, getProjectCategoryBySlug,
+    createProjectCategory, updateProjectCategoryById, deleteProjectCategoryById, getProductsInCategory,
+    getCategoriesTree, getCategoryTreeById } from "./apiCategory"
 import { getProductBySlug } from "./apiProduct"
 import { getAllNews, getNewsBySlug, createNews, updateNews, deleteNewsById } from "./apiNews"
 import { getAllProjects, getProjectBySlug, createProject, updateProjectById, deleteProjectById } from "./apiProject"
@@ -16,6 +18,7 @@ export {
     login,
     logout,
     getCategories,
+    getCategoriesTree,
     getCategoryBySlug,
     getAllProjectCategories,
     getProjectCategoryBySlug,
@@ -23,6 +26,7 @@ export {
     updateProjectCategoryById,
     deleteProjectCategoryById,
     getProductsInCategory,
+    getCategoryTreeById,
     getProductBySlug,
     getAllNews,
     getNewsBySlug,

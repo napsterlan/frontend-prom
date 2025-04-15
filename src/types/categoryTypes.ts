@@ -2,8 +2,8 @@ import { IImages, IProductView, IProject } from "./index";
 
 // Категория
 export interface ICategory {
-    ID: number | null,
-    CategoryID: number | null,
+    ID: number,
+    CategoryID: number,
     ParentID: number | null,
     Name: string,
     Description?: string,
@@ -47,3 +47,7 @@ export interface IProjectCategory {
     Images: IImages[] | [];
 }
 
+export interface ICategoryTreeById {
+    ID: number;
+    Name: string;
+}
