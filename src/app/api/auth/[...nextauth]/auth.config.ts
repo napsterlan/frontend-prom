@@ -16,15 +16,14 @@ export const authOptions: NextAuthOptions = {
           }
 
           const response = await login(credentials.email, credentials.password)
-          console.log('Login response:', response) // Debug log
 
-          if (response.data?.user) {
+          if (response.data?.User) {
             return {
-              id: response.data.user.id?.toString(),
-              email: response.data.user.email,
-              name: response.data.user.name,
-              role: response.data.user.role,
-              token: response.data.jwt // Store the token from your API
+              id: response.data.User.ID?.toString(),
+              email: response.data.User.Email,
+              name: response.data.User.Name,
+              role: response.data.User.Role,
+              token: response.data.JWT // Store the token from your API
             }
           }
           return null
