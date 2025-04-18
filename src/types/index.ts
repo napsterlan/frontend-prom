@@ -6,7 +6,7 @@ import { ICategory, IProjectCategory, ICategoryTreeById } from "./categoryTypes"
 import { IImages, IFileGroup, IDraggableImage, IFile } from "./mediaTypes";
 import { IProductView, IProduct } from "./productTypes";
 import { IProject } from "./projectTypes";
-import { IUser } from "./userTypes";
+import { IUser, IRegistrationUser,ICompany } from "./userTypes";
 
 export type {
     IResponse,
@@ -26,6 +26,8 @@ export type {
     IProduct,
     IProject,
     IUser,
+    ICompany,
+    IRegistrationUser,
     NextPageParams,
     NextSearchParams,
     NextPageProps

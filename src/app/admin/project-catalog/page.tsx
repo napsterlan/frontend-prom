@@ -47,7 +47,7 @@ export default async function ProjectCategoriesPage({params, searchParams}: Next
                     // totalPages={response.metadata.last_page}
                     totalPages={1}
                     // totalRecords={response.metadata.total_records}
-                    totalRecords={1}
+                    totalRecords={response.data.length}
                 />
             </div>
         );

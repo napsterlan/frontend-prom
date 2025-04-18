@@ -9,8 +9,6 @@ export const createUser = async (userData: object) => {
 //Получение профиля текущего пользователя
 export const getCurrentUser = async (sessionToken?: string) => {
     try {
-        console.log("getCurrentUser called with token:", sessionToken); 
-        
         const response = await apiClient.get('/users/profile', {
             headers: sessionToken ? {
                 Authorization: `Bearer ${sessionToken}`
@@ -35,20 +33,49 @@ export const getManagersList = async () => {
 };
 
 // Список всех пользователей
-export const getAllUsers = async () => {
-    const response = await apiClient.get('/users');
-    return response.data;
+export const getAllUsers = async (page: number = 1, sessionToken?: string) => {
+    try {
+        
+        const response = await apiClient.get(`/users?page=${page}&page_size=12`, {
+            headers: sessionToken ? {
+                Authorization: `Bearer ${sessionToken}`
+            } : {}
+        });
+        
+        // console.log("API response:", response);
+        return response.data;
+    } catch (error: any) {
+        console.log("getAllUsers error:", error);
+        if (error.response?.status === 401 || error.response?.status === 403) {
+            return null;
+        }
+        throw error;
+    }
 };
   
 // Получение пользователя по id
-export const getUserById = async (id: number) => {
-    const response = await apiClient.get(`/users/${id}`);
-    return response.data;
+export const getUserById = async (id: number, sessionToken?: string) => {
+    try {        
+        const response = await apiClient.get(`/users/${id}`, {
+            headers: sessionToken ? {
+                Authorization: `Bearer ${sessionToken}`
+            } : {}
+        });
+        
+        // console.log("API response:", response);
+        return response.data;
+    } catch (error: any) {
+        console.log("getUserById error:", error);
+        if (error.response?.status === 401 || error.response?.status === 403) {
+            return null;
+        }
+        throw error;
+    }
 };
 
 // Обновление пользователя по id
 export const updateUserById = async (id: number, userData: object) => {
-    const response = await apiClient.put(`/users/${id}`, userData);
+    const response = await apiClient.patch(`/users/${id}`, userData);
     return response.data;
 };
 

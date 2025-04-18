@@ -1,44 +1,41 @@
-import { getProjectBySlug, getCategories, getAllProjectCategories } from '@/api';
+import { getUserById } from '@/api';
 import { Metadata } from 'next';
-import { ProjectForm } from '@/app/admin/projects/_components/ProjectForm';
 import BreadcrumbsWrapper from '@/app/_components/BreadcrumbsWrapper';
 import { NextPageProps } from '@/types';
+import { UserForm } from '../_components/UserForm';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
+import { ICompany } from '@/types/userTypes';
 export const metadata: Metadata = {
     title: 'Редактирование проекта',
     description: 'Редактирование существующего проекта',
 };
 
 export default async function EditProjectPage({ params, searchParams }: NextPageProps) {
-    const { slug } = await params;
-
-    if (!slug) {
+    const { id } = await params;
+    const session = await getServerSession(authOptions) 
+    if (!id) {
         console.log('not found 404'); 
         return;
     }
 
     try {
-        const project = await getProjectBySlug(slug);
-        const projectCategories = await getAllProjectCategories();
+        const user = await getUserById(id, session?.jwt);
 
-        const productCategories = await getCategories();
-
-        console.log('project', project);
-
-        if (!project) {
+        if (!user) {
             return {
                 notFound: true,
             };
         }
 
         return (
-            <BreadcrumbsWrapper pageName={project.data.Name}>
+            <BreadcrumbsWrapper pageName={`Редактирование пользователя: ${user.data.FirstName} ${user.data.LastName}`}>
             <div className="container mx-auto px-4 py-8">
-                <h1 className="text-2xl font-bold mb-6">Редактирование проекта: {project.data.Name}</h1>
-                <ProjectForm 
-                    project={project.data} 
-                    projectCategories={projectCategories.data}
-                    productCategories={productCategories.data}
+                <h1 className="text-2xl font-bold mb-6">Редактирование пользователя: {`${user.data.FirstName} ${user.data.LastName}`}</h1>
+                <UserForm 
+                    user={user.data} 
                     isEditing={true}
+                    maxImages={1}
                 />
             </div>
             </BreadcrumbsWrapper>

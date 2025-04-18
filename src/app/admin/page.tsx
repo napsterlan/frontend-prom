@@ -67,6 +67,15 @@ export default function AdminDashboard() {
           </Link>
         </div>
         <div className="relative border rounded-lg p-4 bg-white shadow">
+          <h2 className="text-xl font-semibold">Компании</h2>
+          <Link href="/admin/companies" className="block mt-2 text-blue-500">
+            Перейти
+          </Link>
+          <Link href="/admin/companies/add" className="absolute top-2 right-2 bg-blue-500 text-white p-2 rounded flex items-center justify-center w-8 h-8">
+            +
+          </Link>
+        </div>
+        <div className="relative border rounded-lg p-4 bg-white shadow">
           <h2 className="text-xl font-semibold">BIM конвертор</h2>
           <Link href="/admin/bim-convertor" className="block mt-2 text-blue-500">
             Перейти

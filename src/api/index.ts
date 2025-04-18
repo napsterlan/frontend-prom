@@ -9,6 +9,7 @@ import { getAllInfoPages, getInfoPagesById, createInfoPage, updateInfoPageById, 
 import { searchFor } from "./apiSearch"
 import { uploadFiles, uploadImages, getImageBySlug } from "./apiMedia"
 import { getCurrentUser, getManagersList, getAllUsers, getUserById, updateUserById, deleteUserById } from "./apiUser"
+import { getAllCompanies, getCompanyById, createCompany, updateCompany, deleteCompanyById } from "./apiCompany"
 
 export { 
     addAuthHeader,
@@ -53,4 +54,9 @@ export {
     getUserById,
     updateUserById,
     deleteUserById,
+    getAllCompanies,
+    getCompanyById,
+    createCompany,
+    updateCompany,
+    deleteCompanyById,
 };

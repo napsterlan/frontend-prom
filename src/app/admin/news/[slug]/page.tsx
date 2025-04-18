@@ -25,6 +25,7 @@ export default async function EditNewsPage({ params }: NextPageProps) {
                     <NewsForm 
                         news={news.data}
                         isEditing={true}
+                        maxImages={20}
                     />
                 </div>
             </BreadcrumbsWrapper>

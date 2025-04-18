@@ -390,13 +390,16 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
                     {/* Верхний блок с двумя колонками */}
                     <div className="flex gap-6 mb-6">
                         {/* Левая колонка - изображения */}
-                        <FormImageGallery
-                            existingImages={formData.ExistingImages}
-                            onImagesChange={(images) => setFormData(prev => ({ ...prev, ExistingImages: images }))}
-                            onDeleteImages={(deletedIds) => setFormData(prev => ({ ...prev, DeletedImages: deletedIds }))}
-                            maxImages={maxImages}
-                            errors={errors}
-                        />
+                        <div className="w-1/2">
+                            <FormImageGallery
+                                existingImages={formData.ExistingImages}
+                                onImagesChange={(images) => setFormData(prev => ({ ...prev, ExistingImages: images }))}
+                                onDeleteImages={(deletedIds) => setFormData(prev => ({ ...prev, DeletedImages: deletedIds }))}
+                                maxImages={maxImages}
+                                errors={errors}
+                                imagesRow={4}
+                            />
+                        </div>
 
                         {/* Правая колонка - основная информация */}
                         <div className="w-1/2">
@@ -457,3 +460,34 @@ export function ProjectForm({ project, projectCategories, productCategories, isE
         </form>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

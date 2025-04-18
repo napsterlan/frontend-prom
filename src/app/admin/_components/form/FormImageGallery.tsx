@@ -35,6 +35,8 @@ interface ProjectImagesProps {
     errors?: {
         Images?: string;
     };
+    inputId?: string;
+    imagesRow?: number;
 }
 
 export function FormImageGallery({ 
@@ -42,7 +44,9 @@ export function FormImageGallery({
   onImagesChange, 
   onDeleteImages,
   maxImages,
-  errors 
+  errors,
+  inputId = 'file-upload',
+  imagesRow = 4
 }: ProjectImagesProps) {
   const [deletedImages, setDeletedImages] = useState<number[]>([]);
 
@@ -115,59 +119,62 @@ export function FormImageGallery({
   );
 
   return (
-    <div className="w-1/2">
-      <div className="mb-4">
+    <div className="mb-4">
         <input
-          type="file"
-          multiple
-          onChange={handleFileChange}
-          className="hidden"
-          id="file-upload"
-          accept="image/*"
-          disabled={existingImages.length >= maxImages}
+            type="file"
+            multiple
+            onChange={handleFileChange}
+            className="hidden"
+            id={inputId}
+            accept="image/*"
+            disabled={existingImages.length >= maxImages}
         />
         <label 
-          htmlFor="file-upload" 
-          className={`inline-block px-4 py-2 rounded-md cursor-pointer ${
-            existingImages.length >= maxImages 
-              ? 'bg-gray-400 cursor-not-allowed' 
-              : 'bg-blue-500 hover:bg-blue-600 text-white'
-          }`}
+            htmlFor={inputId} 
+            className={`inline-block px-4 py-2 rounded-md cursor-pointer ${
+                existingImages.length >= maxImages 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-blue-500 hover:bg-blue-600 text-white'
+            }`}
         >
-          {existingImages.length >= maxImages 
-            ? 'Достигнут лимит изображений' 
-            : 'Добавить изображения'
-          }
+            {existingImages.length >= maxImages 
+                ? 'Достигнут лимит изображений' 
+                : 'Добавить изображения'
+            }
         </label>
         <div className="text-sm text-gray-500 mt-2">
-          {`${existingImages.length}/${maxImages} изображений`}
+            {`${existingImages.length}/${maxImages} изображений`}
         </div>
         {errors?.Images && (
-          <p className="text-red-500 text-sm mt-1">{errors.Images}</p>
+            <p className="text-red-500 text-sm mt-1">{errors.Images}</p>
         )}
 
         <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
         >
-          <SortableContext
-            items={existingImages.map((image, index) => `${image.ID || image.ImageURL}-${index}`)}
-            strategy={rectSortingStrategy}
-          >
-            <div className="grid grid-cols-4 mt-4">
-              {existingImages.map((image, index) => (
-                <SortableImage
-                  key={`${image.ID || image.ImageURL}-${index}`}
-                  image={image}
-                  index={index}
-                  onDelete={() => handleImageDelete(index)}
-                />
-              ))}
-            </div>
-          </SortableContext>
+            <SortableContext
+                items={existingImages.map((image, index) => `${image.ID || image.ImageURL}-${index}`)}
+                strategy={rectSortingStrategy}
+            >
+                <div className={`grid mt-4 ${
+                    imagesRow === 4 ? 'grid-cols-4' : 
+                    imagesRow === 3 ? 'grid-cols-3' : 
+                    imagesRow === 2 ? 'grid-cols-2' : 
+                    'grid-cols-1'
+                }`}>
+                    {existingImages.map((image, index) => (
+                        <SortableImage
+                        key={`${image.ID || image.ImageURL}-${index}`}
+                        image={image}
+                        index={index}
+                        onDelete={() => handleImageDelete(index)}
+                    />
+                    ))}
+                </div>
+            </SortableContext>
         </DndContext>
-      </div>
     </div>
   );
 } 

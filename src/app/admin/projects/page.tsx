@@ -22,6 +22,7 @@ export default async function ProjectsPage({params, searchParams}: NextPageProps
 
     try {
         const response = await getAllProjects(currentPage, '');
+        console.log('Response:', response);
         projects = response.data;
         const categoriesResponse = await getCategories();
         categories = categoriesResponse.data;

@@ -22,6 +22,8 @@ export default async function NewsPage({ params, searchParams }: NextPageProps) 
     try {
         const response = await getAllNews(currentPage);
         news = response.data;
+
+        console.log('news', news);
         
         return (
             <div className="container mx-auto px-4">

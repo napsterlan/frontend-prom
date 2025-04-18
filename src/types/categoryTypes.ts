@@ -28,7 +28,7 @@ export interface ICategory {
 
 // Категория проектов
 export interface IProjectCategory {
-    ID: number | null;
+    ID: number;
     Name: string;
     MetaTitle: string;
     MetaDescription: string;

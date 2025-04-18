@@ -1,9 +1,9 @@
 'use client';
 
 import { DataTable } from '@/app/admin/_components/DataTable';
-import { deleteProjectById } from '@/api';
+import { deleteProjectById, deleteProjectCategoryById } from '@/api';
 import { IProject } from '@/types';
-
+import Image from 'next/image';
 interface IProjectsDataTableProps {
     initialData: IProject[];
     currentPage: number;
@@ -18,12 +18,53 @@ export function ProjectsDataTable({
     totalRecords 
 }: IProjectsDataTableProps) {
     return (
-        <DataTable 
-            initialData={initialData}
+        <DataTable
+            data={initialData}
+            columns={[
+            {
+                key: 'image',
+                header: 'Фото',
+                width: '100px',
+                render: (item: IProject) => (
+                <Image 
+                    src={item.Images?.[0]?.ImageURL || '/placeholder.png'}
+                    alt={item.Images?.[0]?.AltText || 'Заглушка'}
+                    width={86}
+                    height={86}
+                    className="object-cover"
+                    onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/placeholder.png';
+                    }}
+                />
+                )
+            },
+            {
+                key: 'Name',
+                header: 'Название'
+            },
+            ]}
+            actions={[
+            {
+                label: 'Редактировать',
+                href: (item: IProject) => `/admin/projects/${item.Slug}`,
+            },
+            {
+                label: 'Удалить',
+                variant: 'destructive',
+                showConfirm: true,
+                confirmMessage: 'Вы уверены, что хотите удалить этот проект?',
+                onClick: (item: IProject) => deleteProjectById(item?.ID || 0),
+                successMessage: 'Проект успешно удален',
+                errorMessage: 'Ошибка при удалении проекта'
+            }
+            ]}
+            baseUrl="/admin/projects"
+            idField="ID"
+            pathField="Slug"
             currentPage={currentPage}
             totalPages={totalPages}
             totalRecords={totalRecords}
-            onDelete={deleteProjectById}
         />
     );
 } 

@@ -56,6 +56,7 @@ export function FormRelations({
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
       }, []);
+      
     // Поиск по всем доступным категориям
     const handleCategorySearch = async (searchQuery: string) => {
         if (searchQuery.trim()) {

@@ -37,7 +37,7 @@ export interface ITag {
 // Параметры маршрута
 export type NextPageParams = Promise<{
     slug?: string;
-    id?: string;    // для [id]
+    id?: number;    // для [id]
     categoryId?: string; // для [categoryId]
 }>;
 

@@ -37,8 +37,6 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       // When user signs in, add their data to the token
-      console.log('JWT token:', token)
-      console.log('User:', user)
       if (user) {
         return {
         ...token,
@@ -53,8 +51,6 @@ export const authOptions: NextAuthOptions = {
 
     },
     async session({ session, token }) {
-      console.log('Session token:', token)
-      console.log('Session:', session)
       // Add the token and user data to the session
       if (session.user) {
         session.user.id = token.id as string

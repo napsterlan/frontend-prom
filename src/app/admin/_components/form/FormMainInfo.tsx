@@ -82,7 +82,7 @@ interface IProjectMainInfoProps {
  *   handleSlugChange={handleSlugChange}
  * />
  * ```
- */
+ */ 
 export function FormMainInfo({
     type,
     formData,

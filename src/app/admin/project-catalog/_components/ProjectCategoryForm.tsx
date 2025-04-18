@@ -76,7 +76,7 @@ export function ProjectCategoryForm({ projectCategories, isEditing }: IProjectFo
     const [errors, setErrors] = useState<IValidationErrors>({});
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<IProjectCategoryFormData>({
-        ID: projectCategories.ID || null,
+        ID: projectCategories.ID,
         Name: projectCategories.Name || '',
         Description: projectCategories.Description || '',
         MetaTitle: projectCategories.MetaTitle || '',
@@ -238,6 +238,7 @@ export function ProjectCategoryForm({ projectCategories, isEditing }: IProjectFo
                 {/* Верхний блок с двумя колонками */}
                 <div className="flex gap-6 mb-6">
                     {/* Левая колонка - изображения */}
+                    <div className="w-1/2">
                     <FormImageGallery
                         existingImages={formData.ExistingImages}
                         onImagesChange={(images) => setFormData(prev => ({ ...prev, ExistingImages: images }))}
@@ -245,6 +246,7 @@ export function ProjectCategoryForm({ projectCategories, isEditing }: IProjectFo
                         maxImages={20}
                         errors={errors}
                     />
+                    </div>
 
                     {/* Правая колонка - основная информация */}
                     <div className="w-1/2">

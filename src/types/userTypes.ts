@@ -1,7 +1,6 @@
 // Пользователь
 export interface IUser {
     ID?: number;
-    Username?: string;
     Email: string;
     Role?: string;
     PartnerLevel?: number;
@@ -9,22 +8,48 @@ export interface IUser {
     LastName: string;
     Phone: string;
     Activated?: boolean;
-    Status?: boolean;
+    Status: boolean;
     ImageURL?: string;
     QRCodeURL?: string;
-    Company?: string;
+    Company: ICompany[];
     CreatedAt?: string;
     UpdatedAt?: string;
     DeletedAt?: string;
     Password?: string;
 }
 
+export interface IRegistrationUser {
+    Email: string;
+    Role?: string;
+    PartnerLevel?: number;
+    FirstName: string;
+    LastName: string;
+    Phone: string;
+    Status: boolean;
+    ImageURL?: string;
+    QRCodeURL?: string;
+    Company: ICompany;
+    Password?: string;
+}
+
 // Компания пользователя
 export interface ICompany {
     ID: number,
-    Name: string,
-    INN: string,
-    KPP: string,
-    LegalAddress: string,
-    Users: IUser[] | []
+    Name?: string,
+    INN?: string,
+    KPP?: string,
+    LegalAddress?: string,
+    Users?: IUser[],
+    Addresses?: IAddress[],
+    FullName?: string,
+    Status?: boolean
+}
+
+export interface IAddress {
+    ID?: number,
+    Address?: string,
+    City?: string,
+    Company?: string,
+    Country?: string,
+    Region?: string,
 }
