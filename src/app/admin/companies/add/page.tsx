@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     description: 'Редактирование существующего проекта',
 };
 
-export default async function AddUserPage({ params, searchParams }: NextPageProps) {
+export default async function AddCompanyPage({ params, searchParams }: NextPageProps) {
     const company = {
         ID: 0,
         Name: '',
@@ -22,14 +22,11 @@ export default async function AddUserPage({ params, searchParams }: NextPageProp
     };
 
     return (
-        <BreadcrumbsWrapper pageName="Добавление пользователя">
-        <div className="container mx-auto px-4 py-8">
-            <h1 className="text-2xl font-bold mb-6">Добавление пользователя</h1>
+        <BreadcrumbsWrapper pageName="Добавление компании">
             <CompaniesForm 
                 company={company} 
                 isEditing={false}
             />
-        </div>
         </BreadcrumbsWrapper>
     );
 } 

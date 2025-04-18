@@ -20,14 +20,11 @@ export default async function EditProjectCategoryPage({ params }: NextPageProps)
         const projectCategory = await getProjectCategoryBySlug(slug);
         
         return (
-            <BreadcrumbsWrapper pageName="Редактирование категории проектов">
-                <div className="container mx-auto px-4 py-8">
-                    <h1 className="text-2xl font-bold mb-6">Редактирование категории проектов</h1>
+            <BreadcrumbsWrapper pageName={`Редактирование категории проектов: ${projectCategory.data.Name}`}>
                     <ProjectCategoryForm 
                         projectCategories={projectCategory.data}
                         isEditing={true}
                     />
-                </div>
             </BreadcrumbsWrapper>
         );
     } catch (error) {

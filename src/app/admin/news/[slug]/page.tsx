@@ -17,17 +17,13 @@ export default async function EditNewsPage({ params }: NextPageProps) {
             return;
         }
         const news = await getNewsBySlug(slug);
-        console.log('news: ', news);
         return (
-            <BreadcrumbsWrapper pageName="Редактирование новости">
-                <div className="container mx-auto px-4 py-8">
-                    <h1 className="text-2xl font-bold mb-6">Редактирование новости</h1>
-                    <NewsForm 
+            <BreadcrumbsWrapper pageName={`Редактирование новости: ${news.data.Title}`}>
+                <NewsForm 
                         news={news.data}
                         isEditing={true}
                         maxImages={20}
                     />
-                </div>
             </BreadcrumbsWrapper>
         );
     } catch (error) {

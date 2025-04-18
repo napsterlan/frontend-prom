@@ -47,11 +47,13 @@ export function ProjectsDataTable({
             actions={[
             {
                 label: 'Редактировать',
+                icon: '/icon/action/link.svg',
                 href: (item: IProject) => `/admin/projects/${item.Slug}`,
             },
             {
                 label: 'Удалить',
                 variant: 'destructive',
+                icon: '/icon/action/delete.svg',
                 showConfirm: true,
                 confirmMessage: 'Вы уверены, что хотите удалить этот проект?',
                 onClick: (item: IProject) => deleteProjectById(item?.ID || 0),

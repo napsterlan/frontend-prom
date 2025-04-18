@@ -6,6 +6,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --colors-primary: #00D696;
 }
 
 @media (prefers-color-scheme: light) {

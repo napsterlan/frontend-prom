@@ -15,9 +15,9 @@ export function FormCompany({
     setCompanies,
     label,
 }: IFormCompanyProps) {
-    // Все доступные категории из API
+    // Все доступные компании из API
     const [allCompanies, setAllCompanies] = useState<ICompany[]>([]);
-    // Отфильтрованные категории для поиска
+    // Отфильтрованные компании для поиска
     const [filteredCompanies, setFilteredCompanies] = useState<ICompany[]>([]);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
@@ -77,7 +77,7 @@ export function FormCompany({
         }
     };
     
-    // Отображение выбранных категорий из пропсов
+    // Отображение выбранных компаний из пропсов
     const renderSelectedCompanies = () => { 
         if (Array.isArray(companies)) {
                 return companies.map((company) => (
@@ -110,7 +110,7 @@ export function FormCompany({
                         <input
                             type="text"
                             className="w-full p-2 border rounded"
-                            placeholder="Поиск категорий..."
+                            placeholder="Поиск компаний..."
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onFocus={() => setIsDropdownOpen(true)}
                         />

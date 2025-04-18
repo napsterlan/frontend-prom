@@ -48,11 +48,13 @@ export function NewsDataTable({
             actions={[
             {
                 label: 'Редактировать',
+                icon: '/icon/action/link.svg',
                 href: (item: INews) => `/admin/news/${item.Slug}`,
             },
             {
                 label: 'Удалить',
                 variant: 'destructive',
+                icon: '/icon/action/delete.svg',
                 showConfirm: true,
                 confirmMessage: 'Вы уверены, что хотите удалить этот проект?',
                 onClick: (item: INews) => deleteNewsById(item?.ID || 0),

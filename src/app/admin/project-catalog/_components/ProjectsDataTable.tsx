@@ -53,11 +53,13 @@ export function ProjectCategoriesDataTable({
         actions={[
           {
             label: 'Редактировать',
+            icon: '/icon/action/link.svg',
             href: (item: IProject) => `/admin/project-catalog/${item.Slug}`
           },
           {
             label: 'Удалить',
             variant: 'destructive',
+            icon: '/icon/action/delete.svg',
             showConfirm: true,
             confirmMessage: 'Вы уверены, что хотите удалить этот проект?',
             onClick: (item: IProject) => deleteProjectCategoryById(item?.ID || 0)
@@ -71,4 +73,4 @@ export function ProjectCategoriesDataTable({
         totalRecords={totalRecords}
       />
     );
-} 
+}

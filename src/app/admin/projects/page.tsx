@@ -37,7 +37,7 @@ export default async function ProjectsPage({params, searchParams}: NextPageProps
                         Назад
                     </Link>
                     <Link 
-                        href="/admin/projectsCategories/add" 
+                        href="/admin/projects/add" 
                         className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                     >
                         + Добавить проект

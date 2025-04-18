@@ -37,15 +37,12 @@ export default async function AddProjectPage() {
 
         return (
             <BreadcrumbsWrapper pageName="Добавление проекта">
-            <div className="container mx-auto px-4 py-8">
-                <h1 className="text-2xl font-bold mb-6">Добавление проекта</h1>
                 <ProjectForm 
                     project={project}
                     projectCategories={projectCategories.data}
                     productCategories={productCategories.data}
                     isEditing={false}
                 />
-            </div>
             </BreadcrumbsWrapper>
         );
     } catch (error) {

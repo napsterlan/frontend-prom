@@ -16,14 +16,16 @@ interface Column<T> {
 }
 
 interface Action<T> {
-  label: string;
-  onClick?: (item: T) => void | Promise<void>;
-  variant?: 'default' | 'destructive';
-  showConfirm?: boolean;
-  confirmMessage?: string;
-  href?: (item: T) => string;
-  successMessage?: string;
-  errorMessage?: string;
+    label: string;
+    icon: string; // путь к изображению иконки
+    iconSize?: number; // опциональный размер иконки
+    onClick?: (item: T) => void | Promise<void>;
+    variant?: 'default' | 'destructive';
+    showConfirm?: boolean;
+    confirmMessage?: string;
+    href?: (item: T) => string;
+    successMessage?: string;
+    errorMessage?: string;
 }
 
 interface DataTableProps<T> {
@@ -218,7 +220,7 @@ export function DataTable<T>({
               </th>
             ))}
             {actions?.length > 0 && (
-              <th className="py-2 px-3 text-right">Действия</th>
+              <th className="py-2 px-3 text-right"></th>
             )}
           </tr>
         </thead>
@@ -243,25 +245,30 @@ export function DataTable<T>({
                         <Link
                           key={index}
                           href={action.href(item)}
-                          className={`${
-                            action.variant === 'destructive'
-                              ? 'bg-red-500 hover:bg-red-600'
-                              : 'bg-blue-500 hover:bg-blue-600'
-                          } text-white px-3 py-1 rounded`}
+                          className="text-blue-500 p-2 rounded-full transition-colors hover:bg-gray-200"
+                          title={action.label}
+                          target="_blank"
                         >
-                          {action.label}
+                          <Image 
+                            src={action.icon} 
+                            alt={action.label}
+                            width={action.iconSize || 24}
+                            height={action.iconSize || 24}
+                          />
                         </Link>
                       ) : (
                         <button
                           key={index}
                           onClick={() => handleAction(action, item)}
-                          className={`${
-                            action.variant === 'destructive'
-                              ? 'bg-red-500 hover:bg-red-600'
-                              : 'bg-blue-500 hover:bg-blue-600'
-                          } text-white px-3 py-1 rounded`}
+                          className="p-2 rounded-full transition-colors hover:bg-gray-200"
+                          title={action.label}
                         >
-                          {action.label}
+                          <Image 
+                            src={action.icon} 
+                            alt={action.label}
+                            width={action.iconSize || 24}
+                            height={action.iconSize || 24}
+                          />
                         </button>
                       )
                     ))}

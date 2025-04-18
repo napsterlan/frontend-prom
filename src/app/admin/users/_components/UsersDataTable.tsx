@@ -58,11 +58,13 @@ export function UsersDataTable({
             actions={[
             {
                 label: 'Редактировать',
+                icon: '/icon/action/link.svg',
                 href: (item: IUser) => `/admin/users/${item.ID}`,
             },
             {
                 label: 'Удалить',
                 variant: 'destructive',
+                icon: '/icon/action/delete.svg',
                 showConfirm: true,
                 confirmMessage: 'Вы уверены, что хотите удалить этого пользователя?',
                 onClick: (item: IUser) => deleteUserById(item?.ID || 0),

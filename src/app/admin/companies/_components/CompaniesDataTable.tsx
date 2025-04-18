@@ -48,6 +48,7 @@ export function CompaniesDataTable({
             {
                 label: 'Редактировать',
                 href: (item: ICompany) => `/admin/companies/${item.ID}`,
+                icon: '/icon/action/link.svg',
             },
             {
                 label: 'Удалить',
@@ -56,7 +57,8 @@ export function CompaniesDataTable({
                 confirmMessage: 'Вы уверены, что хотите удалить эту компанию?',
                 onClick: (item: ICompany) => deleteCompanyById(item?.ID || 0),
                 successMessage: 'Компания успешно удалена',
-                errorMessage: 'Ошибка при удалении компании'
+                errorMessage: 'Ошибка при удалении компании',
+                icon: '/icon/action/delete.svg',
             }
             ]}
             baseUrl="/admin/companies"

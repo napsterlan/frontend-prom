@@ -30,14 +30,11 @@ export default async function EditProjectPage({ params, searchParams }: NextPage
 
         return (
             <BreadcrumbsWrapper pageName={`Редактирование пользователя: ${user.data.FirstName} ${user.data.LastName}`}>
-            <div className="container mx-auto px-4 py-8">
-                <h1 className="text-2xl font-bold mb-6">Редактирование пользователя: {`${user.data.FirstName} ${user.data.LastName}`}</h1>
                 <UserForm 
                     user={user.data} 
                     isEditing={true}
                     maxImages={1}
                 />
-            </div>
             </BreadcrumbsWrapper>
         );
     } catch (error) {

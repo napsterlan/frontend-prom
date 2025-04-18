@@ -113,7 +113,6 @@ export function LexicalEditor({ initialContent = '', onChange, className = '' }:
             ErrorBoundary={EditorErrorBoundary}
           />
           <HistoryPlugin />
-          <AutoFocusPlugin />
           <ListPlugin />
           <LinkPlugin />
           <ImagePlugin />

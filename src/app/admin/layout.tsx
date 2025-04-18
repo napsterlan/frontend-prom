@@ -20,7 +20,7 @@ export default async function AdminLayout({
 
     return (
         <div className="flex flex-col items-center min-h-screen">
-            <div className="py-8 w-full">
+            <div className="p-6 w-full">
                 {children}
             </div>
         </div>

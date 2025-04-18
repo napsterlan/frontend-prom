@@ -9,6 +9,8 @@ module.exports = {
       colors: {
         PLGreen: '#5CD69C',
         PLDarkBlue: '#1A1F2A',
+
+        primary: 'var(--colors-primary)',
       }
     },
     fontFamily:{

@@ -24,14 +24,11 @@ export default async function AddUserPage({ params, searchParams }: NextPageProp
 
     return (
         <BreadcrumbsWrapper pageName="Добавление пользователя">
-        <div className="container mx-auto px-4 py-8">
-            <h1 className="text-2xl font-bold mb-6">Добавление пользователя</h1>
             <UserForm 
                 user={user} 
                 isEditing={false}
                 maxImages={1}
             />
-        </div>
         </BreadcrumbsWrapper>
     );
 } 

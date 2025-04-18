@@ -18,7 +18,6 @@ export const getAllCompanies = async ({
                 Authorization: `Bearer ${sessionToken}`
             } : {}
         });
-        console.log('response', response.data);
         return response.data;
     } catch (error: any) {
         console.log("getAllCompanies error:", error);
@@ -43,8 +42,8 @@ export const createCompany = async (company: ICompany) => {
     return response.data;
 };
 
-export const updateCompany = async (id: number, company: ICompany) => {
-    const response = await apiClient.put(`/companies/${id}`, company);
+export const updateCompanyById = async (id: number, company: ICompany) => {
+    const response = await apiClient.patch(`/companies/${id}`, company);
     return response.data;
 };
 

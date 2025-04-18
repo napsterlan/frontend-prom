@@ -29,13 +29,10 @@ export default async function EditCompanyPage({ params, searchParams }: NextPage
 
         return (
             <BreadcrumbsWrapper pageName={`Редактирование компании: ${company.data.Name}`}>
-            <div className="container mx-auto px-4 py-8">
-                <h1 className="text-2xl font-bold mb-6">Редактирование компании: {`${company.data.Name}`}</h1>
                 <CompaniesForm 
                     company={company.data} 
                     isEditing={true}
                 />
-            </div>
             </BreadcrumbsWrapper>
         );
     } catch (error) {

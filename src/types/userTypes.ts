@@ -48,8 +48,9 @@ export interface ICompany {
 export interface IAddress {
     ID?: number,
     Address?: string,
-    City?: string,
-    Company?: string,
     Country?: string,
+    City?: string,
     Region?: string,
+    Company?: ICompany[],
+    MainAdress?: number,
 }

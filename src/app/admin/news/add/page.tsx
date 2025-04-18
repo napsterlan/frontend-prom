@@ -28,13 +28,10 @@ export default async function AddNewsPage() {
 
         return (
             <BreadcrumbsWrapper pageName="Добавление новости">
-            <div className="container mx-auto px-4 py-8">
-                <h1 className="text-2xl font-bold mb-6">Добавление новости</h1>
                 <NewsForm 
                     news={news}
                     isEditing={false}
                 />
-            </div>
             </BreadcrumbsWrapper>
         );
     } catch (error) {

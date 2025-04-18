@@ -31,16 +31,13 @@ export default async function EditProjectPage({ params, searchParams }: NextPage
         }
 
         return (
-            <BreadcrumbsWrapper pageName={project.data.Name}>
-            <div className="container mx-auto px-4 py-8">
-                <h1 className="text-2xl font-bold mb-6">Редактирование проекта: {project.data.Name}</h1>
+            <BreadcrumbsWrapper pageName={`Редактирование проекта: ${project.data.Name}`}>
                 <ProjectForm 
                     project={project.data} 
                     projectCategories={projectCategories.data}
                     productCategories={productCategories.data}
                     isEditing={true}
                 />
-            </div>
             </BreadcrumbsWrapper>
         );
     } catch (error) {
